@@ -35,10 +35,9 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0 z-10">
               <img
-                src="https://seenjeemkw.com/assets/logo-lg-WLxzaRHo.svg"
-                alt="Seen Jeem Logo"
+                src="/logo-rakez.png"
+                alt="ركز"
                 className="h-10 md:h-12 w-auto hover:scale-105 transition-transform"
-                style={{ filter: "brightness(0) saturate(100%) invert(20%) sepia(50%) saturate(400%) hue-rotate(250deg)" }}
               />
             </Link>
 

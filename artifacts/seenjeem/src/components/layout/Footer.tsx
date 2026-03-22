@@ -8,10 +8,9 @@ export function Footer() {
 
           <div className="flex flex-col items-center md:items-start gap-4">
             <img
-              src="https://seenjeemkw.com/assets/logo-lg-WLxzaRHo.svg"
-              alt="Seen Jeem"
+              src="/logo-rakez.png"
+              alt="ركز"
               className="h-12 w-auto"
-              style={{ filter: "brightness(0) saturate(100%) invert(20%) sepia(50%) saturate(400%) hue-rotate(250deg)" }}
             />
           </div>
 

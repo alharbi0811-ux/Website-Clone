@@ -12,7 +12,7 @@ export function About() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-black text-primary mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
           >
-            سين جيم
+            ركز
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}

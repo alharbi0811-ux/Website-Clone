@@ -12,10 +12,9 @@ export function Hero() {
           className="mb-8"
         >
           <img
-            src="https://seenjeemkw.com/assets/logo-lg-WLxzaRHo.svg"
-            alt="Seen Jeem"
+            src="/logo-rakez.png"
+            alt="ركز"
             className="w-48 md:w-72 lg:w-96"
-            style={{ filter: "brightness(0) saturate(100%) invert(20%) sepia(50%) saturate(400%) hue-rotate(250deg)" }}
           />
         </motion.div>
 
