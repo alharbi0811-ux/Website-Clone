@@ -164,14 +164,18 @@ export default function ScorePage() {
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
       {/* Top Bar */}
       <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between relative">
           {/* Right side — Logo + Team turn */}
           <div className="flex items-center gap-4 shrink-0">
             <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
-            <span className="text-white/80 font-medium text-sm">{gameData.gameName}</span>
             <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl font-bold text-sm border border-white/20">
               دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
             </div>
+          </div>
+
+          {/* Center — Game name */}
+          <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+            <span className="text-white font-bold text-lg">{gameData.gameName}</span>
           </div>
 
           {/* Left side — Action buttons */}
