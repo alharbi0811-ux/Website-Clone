@@ -21,9 +21,10 @@ export function Hero() {
           className="mb-8"
         >
           <img
-            src="/logo-rakez.png"
+            src="/logo-white.png"
             alt="ركز"
             className="w-48 md:w-72 lg:w-96"
+            style={{ mixBlendMode: "screen" }}
           />
         </motion.div>
 

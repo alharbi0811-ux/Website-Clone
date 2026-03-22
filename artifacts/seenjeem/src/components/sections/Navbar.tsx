@@ -35,9 +35,10 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0 z-10">
               <img
-                src="/logo-rakez.png"
+                src="/logo-white.png"
                 alt="ركز"
                 className="h-10 md:h-12 w-auto hover:scale-105 transition-transform"
+                style={{ mixBlendMode: "screen" }}
               />
             </Link>
 
