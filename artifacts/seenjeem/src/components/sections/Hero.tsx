@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-24 pb-12">
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-12">
       {/* Background image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden rounded-b-[3rem]">
         <img
           src="/hero-bg.png"
           alt=""
