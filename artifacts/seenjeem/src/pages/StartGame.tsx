@@ -157,6 +157,29 @@ export default function StartGame() {
   const [, navigate] = useLocation();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [infoCard, setInfoCard] = useState<Category | null>(null);
+  const [gameName, setGameName] = useState("");
+  const [team1Name, setTeam1Name] = useState("");
+  const [team2Name, setTeam2Name] = useState("");
+  const [team1Tools, setTeam1Tools] = useState<string[]>([]);
+  const [team2Tools, setTeam2Tools] = useState<string[]>([]);
+  const [showSplitTeams, setShowSplitTeams] = useState(false);
+
+  const HELP_TOOLS = [
+    { id: "double", name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg", color: "#7B2FBE" },
+    { id: "call", name: "اتصال بصديق", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-call.png", color: "#22c55e" },
+    { id: "pit", name: "الحفرة", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-replace.png", color: "#22c55e" },
+    { id: "rest", name: "استريح", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-hand.png", color: "#ef4444" },
+  ];
+
+  const toggleTool = (team: 1 | 2, toolId: string) => {
+    const setter = team === 1 ? setTeam1Tools : setTeam2Tools;
+    const current = team === 1 ? team1Tools : team2Tools;
+    if (current.includes(toolId)) {
+      setter(current.filter(t => t !== toolId));
+    } else if (current.length < 3) {
+      setter([...current, toolId]);
+    }
+  };
 
   const MAX = 6;
 
@@ -357,68 +380,156 @@ export default function StartGame() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-12 border-2 border-[#7B2FBE] rounded-3xl p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
+              className="mt-12"
             >
-              {/* Game Info Header */}
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-black text-foreground mb-2">ملخص اللعبة</h2>
-                <p className="text-foreground/60">تأكد من اختيار الفئات المناسبة</p>
+              <h2 className="text-3xl font-black text-foreground mb-8 text-center">حدد معلومات الفرق</h2>
+
+              <div className="flex justify-center mb-8">
+                <div className="relative w-full max-w-sm">
+                  <input
+                    type="text"
+                    value={gameName}
+                    onChange={(e) => setGameName(e.target.value)}
+                    className="w-full border-2 border-gray-200 rounded-full py-3 px-6 text-right text-foreground font-medium focus:outline-none focus:border-[#7B2FBE] transition-colors"
+                    placeholder="اسم اللعبة"
+                  />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-bold bg-white px-2">اسم اللعبة</span>
+                </div>
               </div>
 
-              {/* Teams Display */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                {/* Team 1 */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="bg-gradient-to-br from-[#7B2FBE]/10 to-[#7B2FBE]/5 rounded-2xl p-6 border border-[#7B2FBE]/30"
-                >
-                  <h3 className="text-xl font-black text-[#7B2FBE] mb-4 text-center">فريقك</h3>
-                  <div className="space-y-2">
-                    {team1.map((id, idx) => {
-                      const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
-                      return (
-                        <div
-                          key={id}
-                          className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-sm">
-                            {idx + 1}
-                          </div>
-                          <span className="text-foreground font-semibold flex-1">{cat?.name}</span>
-                        </div>
-                      );
-                    })}
+                <div className="text-center">
+                  <h3 className="text-2xl font-black text-foreground mb-4">الفريق الأول</h3>
+                  <div className="relative w-full max-w-xs mx-auto mb-6">
+                    <input
+                      type="text"
+                      value={team1Name}
+                      onChange={(e) => setTeam1Name(e.target.value)}
+                      className="w-full border-2 border-gray-200 rounded-full py-3 px-6 text-right text-foreground font-medium focus:outline-none focus:border-[#7B2FBE] transition-colors"
+                      placeholder="اسم الفريق"
+                    />
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-bold bg-white px-2">اسم الفريق</span>
                   </div>
-                </motion.div>
 
-                {/* Team 2 */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="bg-gradient-to-br from-[#7B2FBE]/10 to-[#7B2FBE]/5 rounded-2xl p-6 border border-[#7B2FBE]/30"
-                >
-                  <h3 className="text-xl font-black text-[#7B2FBE] mb-4 text-center">الفريق المنافس</h3>
-                  <div className="space-y-2">
-                    {team2.map((id, idx) => {
-                      const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
+                  <p className="text-sm font-bold text-foreground/70 mb-3">الفريق الأول : اختر 3 وسائل مساعدة</p>
+                  <div className="flex justify-center gap-3">
+                    {HELP_TOOLS.map(tool => {
+                      const selected = team1Tools.includes(tool.id);
                       return (
-                        <div
-                          key={id}
-                          className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20"
+                        <button
+                          key={tool.id}
+                          onClick={() => toggleTool(1, tool.id)}
+                          className="flex flex-col items-center gap-1"
                         >
-                          <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-sm">
-                            {idx + 1}
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${selected ? "ring-3 ring-[#7B2FBE] bg-[#7B2FBE]/10" : "bg-gray-100"}`}>
+                            <img
+                              src={tool.icon}
+                              alt={tool.name}
+                              className="w-10 h-10 object-contain"
+                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }}
+                            />
                           </div>
-                          <span className="text-foreground font-semibold flex-1">{cat?.name}</span>
-                        </div>
+                          <span className="text-[10px] font-bold text-foreground/60">{tool.name}</span>
+                        </button>
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
+
+                <div className="text-center">
+                  <h3 className="text-2xl font-black text-foreground mb-4">الفريق الثاني</h3>
+                  <div className="relative w-full max-w-xs mx-auto mb-6">
+                    <input
+                      type="text"
+                      value={team2Name}
+                      onChange={(e) => setTeam2Name(e.target.value)}
+                      className="w-full border-2 border-gray-200 rounded-full py-3 px-6 text-right text-foreground font-medium focus:outline-none focus:border-[#7B2FBE] transition-colors"
+                      placeholder="اسم الفريق"
+                    />
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-bold bg-white px-2">اسم الفريق</span>
+                  </div>
+
+                  <p className="text-sm font-bold text-foreground/70 mb-3">الفريق الثاني : اختر 3 وسائل مساعدة</p>
+                  <div className="flex justify-center gap-3">
+                    {HELP_TOOLS.map(tool => {
+                      const selected = team2Tools.includes(tool.id);
+                      return (
+                        <button
+                          key={tool.id}
+                          onClick={() => toggleTool(2, tool.id)}
+                          className="flex flex-col items-center gap-1"
+                        >
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${selected ? "ring-3 ring-[#7B2FBE] bg-[#7B2FBE]/10" : "bg-gray-100"}`}>
+                            <img
+                              src={tool.icon}
+                              alt={tool.name}
+                              className="w-10 h-10 object-contain"
+                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-bold text-foreground/60">{tool.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
 
-              {/* Start Button */}
+              <button
+                onClick={() => setShowSplitTeams(!showSplitTeams)}
+                className="w-full bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] text-white font-black text-lg py-4 rounded-xl flex items-center justify-between px-6 mb-8"
+              >
+                <motion.span
+                  animate={{ rotate: showSplitTeams ? 180 : 0 }}
+                  className="text-2xl"
+                >
+                  ∧
+                </motion.span>
+                <span>قسملي الفرق</span>
+              </button>
+
+              <AnimatePresence>
+                {showSplitTeams && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden mb-8"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-50 rounded-2xl">
+                      <div>
+                        <h4 className="text-lg font-black text-[#7B2FBE] mb-3 text-center">فئات الفريق الأول</h4>
+                        <div className="space-y-2">
+                          {team1.map((id, idx) => {
+                            const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
+                            return (
+                              <div key={id} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20">
+                                <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-xs">{idx + 1}</div>
+                                <span className="text-foreground font-semibold">{cat?.name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-black text-[#7B2FBE] mb-3 text-center">فئات الفريق الثاني</h4>
+                        <div className="space-y-2">
+                          {team2.map((id, idx) => {
+                            const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
+                            return (
+                              <div key={id} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20">
+                                <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-xs">{idx + 1}</div>
+                                <span className="text-foreground font-semibold">{cat?.name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -431,17 +542,19 @@ export default function StartGame() {
                     const t1Cats = team1.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
                     const t2Cats = team2.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
                     localStorage.setItem("rakez-game-data", JSON.stringify({
-                      team1Name: "الفريق الأول",
-                      team2Name: "الفريق الثاني",
-                      gameName: "ركز",
+                      team1Name: team1Name || "الفريق الأول",
+                      team2Name: team2Name || "الفريق الثاني",
+                      gameName: gameName || "ركز",
                       team1Categories: t1Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
                       team2Categories: t2Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
+                      team1Tools,
+                      team2Tools,
                     }));
                     navigate("/score-page");
                   }}
                   className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1"
                 >
-                  ابدأ اللعبة 🎮
+                  ابدأ اللعب
                 </button>
               </motion.div>
             </motion.div>
