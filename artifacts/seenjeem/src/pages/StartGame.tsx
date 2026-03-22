@@ -25,8 +25,8 @@ const SECTIONS: Section[] = [
     categories: [
       { id: "new-gulf-outfit", name: "طقم فنان خليجي", img: `${CDN}/1772110864905-588292764.jpg` },
       { id: "new-faisal", name: "فيصل بوغازي", img: `${CDN}/1773064818148-154584863.jpg` },
-      { id: "new-live1", name: "Live", img: `${CDN}/1772459128688-499091855.jpg` },
-      { id: "new-live2", name: "Live", img: `${CDN}/1772459069961-721054682.jpg` },
+      { id: "new-live1", name: "الغميضة", img: `${CDN}/1772459128688-499091855.jpg` },
+      { id: "new-live2", name: "شارع الأعشى", img: `${CDN}/1772459069961-721054682.jpg` },
       { id: "new-muzaffar", name: "مسرح المظفر", img: `${CDN}/1773857820860-639734911.jpg` },
       { id: "new-manae", name: "مسرح المانع", img: `${CDN}/1773857753928-637269502.jpg` },
     ],
