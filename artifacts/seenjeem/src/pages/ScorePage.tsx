@@ -196,7 +196,7 @@ export default function ScorePage() {
             </button>
             <button
               onClick={handleExit}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15 text-[#ffffff] border-t-[#ffffff26] border-r-[#ffffff26] border-b-[#ffffff26] border-l-[#ffffff26] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] pt-[10px] pb-[10px] pl-[15px] pr-[15px]"
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-2 rounded-xl transition-all border border-white/15 text-[#ffffff] border-t-[#ffffff26] border-r-[#ffffff26] border-b-[#ffffff26] border-l-[#ffffff26] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] pt-[10px] pb-[15px] pl-[10px] pr-[15px] text-[15px] font-black text-justify"
             >
               <LogOut size={14} />
               الخروج
