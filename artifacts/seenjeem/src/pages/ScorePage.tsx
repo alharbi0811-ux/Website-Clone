@@ -211,10 +211,10 @@ export default function ScorePage() {
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 p-6 lg:p-8 flex items-center justify-center">
-        <div className="w-full max-w-6xl">
+      <div className="flex-1 p-8 flex items-center justify-center">
+        <div className="w-full">
           {/* Team 1 Categories - Top Row */}
-          <div className="grid grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
+          <div className="grid grid-cols-3 gap-8 mb-8">
             {gameData.team1Categories.map((cat, catIdx) => (
               <CategoryCard
                 key={cat.id}
@@ -228,7 +228,7 @@ export default function ScorePage() {
           </div>
 
           {/* Team 2 Categories - Bottom Row */}
-          <div className="grid grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-3 gap-8">
             {gameData.team2Categories.map((cat, catIdx) => (
               <CategoryCard
                 key={cat.id}
