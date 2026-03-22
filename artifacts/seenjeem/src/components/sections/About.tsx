@@ -11,9 +11,7 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-black text-primary mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-          >
-            ركز
-          </motion.h2>
+          >ركـــز</motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
