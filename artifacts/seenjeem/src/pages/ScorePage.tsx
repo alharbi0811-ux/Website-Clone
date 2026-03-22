@@ -380,7 +380,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-3 rounded-xl font-black text-2xl transition-all
+                  w-full flex-1 rounded-xl font-black text-2xl transition-all
                   ${played
                     ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
                     : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
@@ -413,7 +413,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-3 rounded-xl font-black text-2xl transition-all
+                  w-full flex-1 rounded-xl font-black text-2xl transition-all
                   ${played
                     ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
                     : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
