@@ -2,6 +2,7 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 
@@ -21,8 +22,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          {/* Main App Container with explicit RTL direction to ensure everything acts accordingly */}
-          <div dir="rtl" className="w-full min-h-screen">
+          <div dir="rtl" className="light w-full min-h-screen">
             <Router />
           </div>
         </WouterRouter>

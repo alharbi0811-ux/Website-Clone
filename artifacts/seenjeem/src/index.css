@@ -111,7 +111,41 @@
   background: hsl(var(--primary));
 }
 
-/* Glassmorphism utilities */
+/* ===== Light Mode Overrides ===== */
+.light {
+  --background: 0 0% 97%;
+  --foreground: 270 25% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 270 25% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 270 25% 10%;
+  --primary: 270 70% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 270 50% 88%;
+  --secondary-foreground: 270 25% 10%;
+  --muted: 270 15% 92%;
+  --muted-foreground: 270 10% 45%;
+  --accent: 270 70% 52%;
+  --accent-foreground: 0 0% 100%;
+  --border: 270 20% 82%;
+  --input: 270 20% 82%;
+  --ring: 270 70% 52%;
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(138, 43, 226, 0.18);
+  box-shadow: 0 4px 32px rgba(138, 43, 226, 0.08), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+.light .glass-panel:hover {
+  border-color: rgba(138, 43, 226, 0.35);
+  box-shadow: 0 8px 40px rgba(138, 43, 226, 0.14), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+/* ===== Dark Glassmorphism utilities ===== */
 .glass-panel {
   background: rgba(8, 4, 18, 0.55);
   backdrop-filter: blur(20px);

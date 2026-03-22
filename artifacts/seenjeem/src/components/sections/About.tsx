@@ -18,7 +18,7 @@ export function About() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, delay: 0.2 }}
-            className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed font-medium"
+            className="text-xl md:text-2xl text-foreground max-w-4xl mx-auto leading-relaxed font-medium"
           >
             لعبة أسئلة جماعية تضم أكثر من 200 فئة منوعة وتحتوي على أقسام خاصة بالكبار و الطلبة والأطفال
           </motion.p>

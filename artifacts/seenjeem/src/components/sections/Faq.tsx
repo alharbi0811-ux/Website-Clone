@@ -46,13 +46,13 @@ export function Faq() {
   return (
     <section className="py-20 bg-background/50 relative">
       <div className="container mx-auto px-4 max-w-4xl">
-        
+
         <div className="text-center mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-black text-white"
+            className="text-4xl md:text-5xl font-black text-foreground"
           >
             الأسئلة الشائعة
           </motion.h2>
@@ -60,30 +60,30 @@ export function Faq() {
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
               key={idx}
-              className="bg-card rounded-2xl border border-white/10 overflow-hidden shadow-lg"
+              className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                className="w-full px-6 py-5 flex items-center justify-between text-right hover:bg-white/5 transition-colors focus:outline-none"
+                className="w-full px-6 py-5 flex items-center justify-between text-right hover:bg-foreground/5 transition-colors focus:outline-none"
               >
-                <span className="text-lg md:text-xl font-bold text-white pl-4 leading-relaxed">
+                <span className="text-lg md:text-xl font-bold text-foreground pl-4 leading-relaxed">
                   {faq.q}
                 </span>
-                <img 
-                  src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/angle-arrow-icon.png" 
-                  alt="Arrow" 
-                  className={`w-6 h-6 object-contain transition-transform duration-300 flex-shrink-0 filter brightness-0 invert ${
+                <img
+                  src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/angle-arrow-icon.png"
+                  alt="Arrow"
+                  className={`w-6 h-6 object-contain transition-transform duration-300 flex-shrink-0 brightness-0 ${
                     openIndex === idx ? "rotate-90" : "rotate-180"
                   }`}
                 />
               </button>
-              
+
               <AnimatePresence>
                 {openIndex === idx && (
                   <motion.div
@@ -93,7 +93,7 @@ export function Faq() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 pb-6 pt-2 text-white/80 font-medium text-lg leading-relaxed border-t border-white/5">
+                    <div className="px-6 pb-6 pt-2 text-foreground font-medium text-lg leading-relaxed border-t border-border">
                       {faq.a}
                     </div>
                   </motion.div>
