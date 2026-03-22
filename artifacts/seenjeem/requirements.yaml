@@ -1,0 +1,11 @@
+packages:
+  "framer-motion": "For page transitions, scroll animations, and game-show style effects"
+  "embla-carousel-react": "For the horizontal scrolling carousels (Categories, TV Shows)"
+  "lucide-react": "For UI icons"
+
+images: []
+
+notes:
+  - This is a static frontend-only clone. No real backend API is consumed.
+  - The application relies heavily on provided CDN image URLs.
+  - The entire application is designed for RTL (Right-to-Left) Arabic layout.
