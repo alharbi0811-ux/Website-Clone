@@ -37,7 +37,7 @@ export function Navbar() {
               <img
                 src="/logo-rakez.png"
                 alt="ركز"
-                className="h-14 md:h-16 w-auto hover:scale-105 transition-transform"
+                className="h-20 md:h-24 w-auto hover:scale-105 transition-transform"
               />
             </Link>
 
