@@ -24,37 +24,6 @@ export function About() {
           </motion.p>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
-          
-          {/* Boy Character */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="hidden lg:block w-48 xl:w-64"
-          >
-            <img 
-              src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/boy-img.png" 
-              alt="Boy Player" 
-              className="w-full h-auto drop-shadow-2xl animate-[bounce_4s_infinite]"
-            />
-          </motion.div>
-
-          {/* Girl Character */}
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="hidden lg:block w-48 xl:w-64"
-          >
-            <img 
-              src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/girl-img.png" 
-              alt="Girl Player" 
-              className="w-full h-auto drop-shadow-2xl animate-[bounce_5s_infinite_0.5s]"
-            />
-          </motion.div>
-
-        </div>
       </div>
     </section>
   );
