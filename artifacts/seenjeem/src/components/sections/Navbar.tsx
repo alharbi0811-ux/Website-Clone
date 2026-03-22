@@ -46,7 +46,7 @@ export function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-foreground hover:text-primary font-medium text-lg transition-colors relative group"
+                  className="text-white hover:text-white/70 font-medium text-lg transition-colors relative group"
                 >
                   {link.name}
                   <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
@@ -57,7 +57,7 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="text-foreground hover:text-primary flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-foreground/8 transition-colors">
+            <button className="text-white hover:text-white/70 flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-white/10 transition-colors">
               <User size={20} />
               <span>تسجيل الدخول</span>
             </button>
@@ -68,7 +68,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-foreground z-10 p-2"
+            className="md:hidden text-white z-10 p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}

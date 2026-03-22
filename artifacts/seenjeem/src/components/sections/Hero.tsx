@@ -3,6 +3,15 @@ import { motion } from "framer-motion";
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-24 pb-12">
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/hero-bg.png"
+          alt=""
+          className="w-full h-full object-cover object-top"
+        />
+      </div>
+
       <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center mt-12 md:mt-24">
 
         <motion.div
@@ -22,7 +31,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground mb-6 text-gradient"
+          className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6"
           style={{ lineHeight: 1.2 }}
         >
           الجواب عليك، و السؤال علينا
@@ -32,7 +41,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-xl md:text-2xl lg:text-3xl text-foreground font-medium mb-12 max-w-3xl leading-relaxed"
+          className="text-xl md:text-2xl lg:text-3xl text-white/90 font-medium mb-12 max-w-3xl leading-relaxed"
         >
           ٦ فئات، ٣٦ سؤال، و معاهم ٣ وسائل مساعدة
         </motion.p>
