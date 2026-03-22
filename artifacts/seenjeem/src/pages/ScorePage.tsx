@@ -104,7 +104,7 @@ export default function ScorePage() {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
-          <span className="text-white font-black text-xl hidden sm:block">ركز</span>
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
         </div>
 
         <div className="flex items-center gap-3">
