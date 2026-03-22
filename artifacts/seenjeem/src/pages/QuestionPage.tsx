@@ -245,58 +245,54 @@ export default function QuestionPage() {
           />
         </div>
 
-        <div className="flex-1 flex flex-col p-6 gap-4">
-          <div className="flex-1 border-4 border-[#7B2FBE] rounded-3xl p-6 flex flex-col bg-white">
-            <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-[#7B2FBE]/20">
-              <div className="bg-[#7B2FBE] text-white font-black px-6 py-2 rounded-full text-sm">
+        <div className="flex-1 flex flex-col p-6">
+          <div className="flex-1 border-4 border-[#7B2FBE] rounded-3xl p-8 flex flex-col bg-white">
+            {/* Title */}
+            <div className="text-center mb-4">
+              <h2 className="text-3xl font-black text-[#7B2FBE] mb-2">
                 {questionData.categoryName}
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={toggleTimer}
-                  className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center text-[#7B2FBE] transition-colors"
-                >
-                  {isTimerRunning ? <Pause size={18} /> : <Play size={18} />}
-                </button>
-                <div className="text-[#7B2FBE] font-black text-xl font-mono min-w-[80px] text-center">
-                  {formatTime(timer)}
-                </div>
-                <button
-                  onClick={resetTimer}
-                  className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center text-[#7B2FBE] transition-colors"
-                >
-                  <RotateCw size={18} />
-                </button>
-              </div>
-              <div className="bg-[#7B2FBE] text-white font-black px-6 py-2 rounded-full text-sm">
-                {questionData.points} نقطة
-              </div>
-            </div>
-
-            <div className="mb-6 flex-1 flex flex-col justify-center">
-              <h2 className="text-2xl font-black text-foreground leading-relaxed text-center mb-6">
-                {questionData.question}
               </h2>
-
-              <div className="flex-1 flex items-center justify-center overflow-hidden">
-                {questionData.image ? (
-                  <img
-                    src={questionData.image}
-                    alt="صورة السؤال"
-                    className="max-w-full max-h-[300px] object-contain"
-                  />
-                ) : (
-                  <div className="text-6xl text-gray-300">؟</div>
-                )}
-              </div>
+              <p className="text-sm text-gray-500 font-medium">
+                السؤال رقم {questionData.points}
+              </p>
             </div>
 
-            <button
-              onClick={() => setShowAnswer(true)}
-              className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-8 rounded-full shadow-lg transition-colors self-center"
-            >
-              الإجابة
-            </button>
+            {/* Question */}
+            <div className="text-center mb-8">
+              <p className="text-xl font-bold text-foreground leading-relaxed">
+                {questionData.question}
+              </p>
+            </div>
+
+            {/* Image/Content Area */}
+            <div className="flex-1 flex items-center justify-center mb-8 overflow-hidden">
+              {questionData.image ? (
+                <img
+                  src={questionData.image}
+                  alt="صورة السؤال"
+                  className="max-w-full max-h-[350px] object-contain"
+                />
+              ) : (
+                <div className="text-8xl text-gray-300">؟</div>
+              )}
+            </div>
+
+            {/* Bottom Buttons */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={toggleTimer}
+                className="flex items-center gap-2 bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 text-[#7B2FBE] font-black py-3 px-6 rounded-full transition-colors text-sm"
+              >
+                <span>{formatTime(timer)}</span>
+              </button>
+
+              <button
+                onClick={() => setShowAnswer(true)}
+                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
+              >
+                اختر الإجابة
+              </button>
+            </div>
           </div>
         </div>
       </div>
