@@ -173,7 +173,7 @@ export default function ScorePage() {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10 pl-[25px] pr-[25px]" />
         </div>
 
         <div className="flex items-center gap-3">
