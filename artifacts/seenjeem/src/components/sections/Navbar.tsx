@@ -41,7 +41,7 @@ export function Navbar() {
               />
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
+            <nav className="hidden md:flex items-center gap-12">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
