@@ -165,13 +165,9 @@ export default function ScorePage() {
       {/* Top Bar */}
       <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10">
         <div className="flex items-center justify-between">
-          {/* Right side — Logo */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Right side — Logo + Team turn */}
+          <div className="flex items-center gap-4 shrink-0">
             <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
-          </div>
-
-          {/* Center — Game name + Team turn */}
-          <div className="flex items-center gap-4">
             <span className="text-white/80 font-medium text-sm">{gameData.gameName}</span>
             <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl font-bold text-sm border border-white/20">
               دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
