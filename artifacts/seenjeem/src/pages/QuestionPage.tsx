@@ -223,6 +223,28 @@ export default function QuestionPage() {
       </div>
 
       <div className="flex-1 flex">
+        <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 flex flex-col gap-6">
+          <TeamSidebar
+            teamName={gameData.team1Name}
+            score={team1Score}
+            tools={team1Tools}
+            usedTools={usedTools.team1}
+            onUseTool={(toolId) => handleUseTool(1, toolId)}
+            isCurrentTeam={questionData.currentTeam === 1}
+          />
+
+          <div className="border-t-2 border-gray-200"></div>
+
+          <TeamSidebar
+            teamName={gameData.team2Name}
+            score={team2Score}
+            tools={team2Tools}
+            usedTools={usedTools.team2}
+            onUseTool={(toolId) => handleUseTool(2, toolId)}
+            isCurrentTeam={questionData.currentTeam === 2}
+          />
+        </div>
+
         <div className="flex-1 flex flex-col p-6 relative">
           <div className="absolute top-4 left-4 z-10">
             <div className="bg-[#7B2FBE] text-white font-black text-sm px-4 py-2 rounded-lg shadow-lg">
@@ -252,7 +274,7 @@ export default function QuestionPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -301,28 +323,6 @@ export default function QuestionPage() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-
-        <div className="w-[280px] bg-gray-50 border-r-2 border-gray-100 p-4 flex flex-col gap-6">
-          <TeamSidebar
-            teamName={gameData.team1Name}
-            score={team1Score}
-            tools={team1Tools}
-            usedTools={usedTools.team1}
-            onUseTool={(toolId) => handleUseTool(1, toolId)}
-            isCurrentTeam={questionData.currentTeam === 1}
-          />
-
-          <div className="border-t-2 border-gray-200"></div>
-
-          <TeamSidebar
-            teamName={gameData.team2Name}
-            score={team2Score}
-            tools={team2Tools}
-            usedTools={usedTools.team2}
-            onUseTool={(toolId) => handleUseTool(2, toolId)}
-            isCurrentTeam={questionData.currentTeam === 2}
-          />
         </div>
       </div>
     </div>
