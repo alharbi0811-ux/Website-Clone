@@ -18,7 +18,6 @@ export function Navbar() {
   const navLinks = [
     { name: "الرئيسية", href: "/" },
     { name: "ألعابي", href: "#" },
-    { name: "تواصل معنا", href: "#" },
   ];
 
   return (

@@ -3,24 +3,6 @@ import { motion } from "framer-motion";
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-24 pb-12">
-      {/* Decorative Banners */}
-      <div className="absolute top-0 left-0 w-full flex justify-between pointer-events-none opacity-80 z-0">
-        <img 
-          src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/eid-2026/sem-jem-right-toran.png" 
-          alt="" 
-          className="w-1/3 md:w-1/4 max-w-[300px] object-contain drop-shadow-2xl"
-        />
-        <img 
-          src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/eid-2026/sem-jem-banner-toran.png" 
-          alt="" 
-          className="w-1/3 md:w-1/2 max-w-[600px] object-contain object-top drop-shadow-2xl"
-        />
-        <img 
-          src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/eid-2026/sem-jem-left-toran.png" 
-          alt="" 
-          className="w-1/3 md:w-1/4 max-w-[300px] object-contain drop-shadow-2xl"
-        />
-      </div>
 
       <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center mt-12 md:mt-24">
         
