@@ -163,50 +163,45 @@ export default function ScorePage() {
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between shadow-lg border-b border-white/10">
-        <div className="flex items-center gap-4">
-          <img
-            src={`${CDN}/logos/logo.webp`}
-            alt="ركز"
-            className="h-10 brightness-0 invert"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl font-bold text-sm border border-white/20">
-            دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10">
+        <div className="flex items-center justify-between">
+          {/* Right side — Logo */}
+          <div className="flex items-center gap-3 shrink-0">
+            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
           </div>
-          <div className="text-white/90 font-medium text-sm hidden md:block">
-            {gameData.gameName}
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleEndGame}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
-          >
-            <Eye size={14} />
-            <span className="hidden sm:inline">انتهاء اللعبة</span>
-          </button>
-          <button
-            onClick={handleResetBoard}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
-          >
-            <RotateCcw size={14} />
-            <span className="hidden sm:inline">إعادة</span>
-          </button>
-          <button
-            onClick={handleExit}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
-          >
-            <LogOut size={14} />
-            <span className="hidden sm:inline">الخروج</span>
-          </button>
+          {/* Center — Game name + Team turn */}
+          <div className="flex items-center gap-4">
+            <span className="text-white/80 font-medium text-sm">{gameData.gameName}</span>
+            <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl font-bold text-sm border border-white/20">
+              دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
+            </div>
+          </div>
+
+          {/* Left side — Action buttons */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleEndGame}
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
+            >
+              <Eye size={14} />
+              انتهاء اللعبة
+            </button>
+            <button
+              onClick={handleResetBoard}
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
+            >
+              <RotateCcw size={14} />
+              إعادة
+            </button>
+            <button
+              onClick={handleExit}
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
+            >
+              <LogOut size={14} />
+              الخروج
+            </button>
+          </div>
         </div>
       </div>
 
