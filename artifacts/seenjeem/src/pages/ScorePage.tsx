@@ -163,48 +163,48 @@ export default function ScorePage() {
   return (
     <div className="min-h-screen bg-[#e8e0f0] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-8 py-6 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg">
+        <div className="flex items-center gap-3">
           <img
             src={`${CDN}/logos/logo.webp`}
             alt="ركز"
-            className="h-16 brightness-0 invert"
+            className="h-10 brightness-0 invert"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-16 pl-[25px] pr-[25px]" />
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10 pl-[25px] pr-[25px]" />
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-bold text-lg">
+        <div className="flex items-center gap-3">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
             دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
           </div>
-          <div className="text-white/80 font-medium text-xl hidden md:block ml-[1250px]">
+          <div className="text-white/80 font-medium text-sm hidden md:block ml-[1250px]">
             {gameData.gameName}
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleEndGame}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
           >
-            <Eye size={20} />
+            <Eye size={14} />
             <span className="hidden sm:inline">انتهاء اللعبة</span>
           </button>
           <button
             onClick={handleResetBoard}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
           >
-            <RotateCcw size={20} />
+            <RotateCcw size={14} />
             <span className="hidden sm:inline">إعادة</span>
           </button>
           <button
             onClick={handleExit}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
           >
-            <LogOut size={20} />
+            <LogOut size={14} />
             <span className="hidden sm:inline">الخروج</span>
           </button>
         </div>
@@ -378,10 +378,10 @@ function CategoryCard({
   teamColor: string;
 }) {
   return (
-    <div className="bg-[#d4cce0] rounded-3xl overflow-hidden shadow-lg flex flex-col">
+    <div className="bg-[#d4cce0] rounded-3xl overflow-hidden shadow-lg flex flex-col h-80">
       <div className="flex flex-1">
         {/* Left score column */}
-        <div className="flex flex-col justify-center gap-3 p-3 md:p-4 flex-1">
+        <div className="flex flex-col justify-center gap-4 p-5 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
@@ -393,7 +393,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-3 md:py-4 rounded-2xl font-black text-lg md:text-2xl transition-all
+                  w-full py-4 rounded-2xl font-black text-3xl transition-all
                   ${played
                     ? "bg-[#b8afc5] text-[#8a7f99] cursor-not-allowed"
                     : "bg-[#e8e2ef] hover:bg-[#7B2FBE] text-gray-600 hover:text-white cursor-pointer shadow-sm hover:shadow-lg"
@@ -407,7 +407,7 @@ function CategoryCard({
         </div>
 
         {/* Category image */}
-        <div className="w-[30%] min-w-[100px] relative self-stretch">
+        <div className="w-[35%] min-w-[120px] relative self-stretch">
           <img
             src={category.img}
             alt={category.name}
@@ -416,7 +416,7 @@ function CategoryCard({
         </div>
 
         {/* Right score column */}
-        <div className="flex flex-col justify-center gap-3 p-3 md:p-4 flex-1">
+        <div className="flex flex-col justify-center gap-4 p-5 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
@@ -428,7 +428,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-3 md:py-4 rounded-2xl font-black text-lg md:text-2xl transition-all
+                  w-full py-4 rounded-2xl font-black text-3xl transition-all
                   ${played
                     ? "bg-[#b8afc5] text-[#8a7f99] cursor-not-allowed"
                     : "bg-[#e8e2ef] hover:bg-[#7B2FBE] text-gray-600 hover:text-white cursor-pointer shadow-sm hover:shadow-lg"
@@ -444,7 +444,7 @@ function CategoryCard({
 
       {/* Category name bar */}
       <div
-        className="text-center py-3 font-black text-white text-lg md:text-xl"
+        className="text-center py-4 font-black text-white text-2xl"
         style={{ backgroundColor: teamColor }}
       >
         {category.name}
