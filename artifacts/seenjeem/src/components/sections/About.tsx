@@ -40,20 +40,6 @@ export function About() {
             />
           </motion.div>
 
-          {/* Screen Image */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="w-full max-w-3xl"
-          >
-            <img 
-              src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/screen-sin-jim.png"
-              alt="سين جيم"
-              className="w-full h-auto drop-shadow-2xl rounded-2xl"
-            />
-          </motion.div>
-
           {/* Girl Character */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
