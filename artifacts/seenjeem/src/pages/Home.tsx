@@ -4,7 +4,6 @@ import { About } from "@/components/sections/About";
 import { HelpTools } from "@/components/sections/HelpTools";
 import { SocialReels } from "@/components/sections/SocialReels";
 import { Faq } from "@/components/sections/Faq";
-import { Cta } from "@/components/sections/Cta";
 import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
@@ -17,7 +16,6 @@ export default function Home() {
         <HelpTools />
         <SocialReels />
         <Faq />
-        <Cta />
       </main>
       <Footer />
     </div>
