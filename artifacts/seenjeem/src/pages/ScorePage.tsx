@@ -270,7 +270,7 @@ export default function ScorePage() {
             >
               <Minus size={14} />
             </button>
-            <div className="bg-white/90 text-[#7B2FBE] font-black text-xl min-w-[60px] text-center py-1.5 px-3 rounded-xl shadow-inner">
+            <div className="bg-white/90 text-[#7B2FBE] font-black text-xl min-w-[60px] text-center py-1.5 px-3 rounded-xl shadow-inner pl-[50px] pr-[50px] pt-[10px] pb-[10px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px]">
               {team2Score}
             </div>
             <button
