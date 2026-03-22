@@ -245,86 +245,121 @@ export default function QuestionPage() {
           />
         </div>
 
-        <div className="flex-1 flex flex-col p-6 relative">
-          <div className="absolute top-4 left-4 z-10">
-            <div className="bg-[#7B2FBE] text-white font-black text-sm px-4 py-2 rounded-lg shadow-lg">
-              {questionData.points} نقطة
-            </div>
-          </div>
-
-          <div className="mb-6 mt-2">
-            <h2 className="text-xl md:text-2xl font-black text-foreground leading-relaxed text-right">
-              {questionData.question}
-            </h2>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center bg-gray-50 rounded-2xl border-2 border-gray-100 overflow-hidden mb-6">
-            {questionData.image ? (
-              <img
-                src={questionData.image}
-                alt="صورة السؤال"
-                className="max-w-full max-h-[400px] object-contain"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-4 text-gray-300">
-                <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
-                  <span className="text-6xl">؟</span>
-                </div>
+        <div className="flex-1 flex flex-col p-6 gap-4">
+          <div className="flex-1 border-4 border-[#7B2FBE] rounded-3xl p-6 flex flex-col bg-white">
+            <div className="flex items-center justify-between mb-4 pb-4 border-b-2 border-[#7B2FBE]/20">
+              <div className="bg-[#7B2FBE] text-white font-black px-6 py-2 rounded-full text-sm">
+                {questionData.categoryName}
               </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setShowAnswer(!showAnswer)}
-              className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-8 rounded-xl shadow-lg transition-colors"
-            >
-              {showAnswer ? "إخفاء الإجابة" : "الإجابة"}
-            </motion.button>
-
-            <div className="bg-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-gray-500">
-              {questionData.categoryName}
-            </div>
-          </div>
-
-          <AnimatePresence>
-            {showAnswer && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden mt-4"
-              >
-                <div className="bg-gradient-to-l from-[#7B2FBE]/10 to-[#9333ea]/10 border-2 border-[#7B2FBE]/30 rounded-2xl p-6">
-                  <p className="text-2xl font-black text-[#7B2FBE] text-center">
-                    {questionData.answer}
-                  </p>
-                  <div className="flex justify-center gap-4 mt-6">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleCorrect}
-                      className="bg-green-500 hover:bg-green-600 text-white font-black text-lg py-3 px-10 rounded-xl shadow-lg transition-colors"
-                    >
-                      إجابة صحيحة ✓
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleWrong}
-                      className="bg-red-500 hover:bg-red-600 text-white font-black text-lg py-3 px-10 rounded-xl shadow-lg transition-colors"
-                    >
-                      إجابة خاطئة ✗
-                    </motion.button>
-                  </div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={toggleTimer}
+                  className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center text-[#7B2FBE] transition-colors"
+                >
+                  {isTimerRunning ? <Pause size={18} /> : <Play size={18} />}
+                </button>
+                <div className="text-[#7B2FBE] font-black text-xl font-mono min-w-[80px] text-center">
+                  {formatTime(timer)}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <button
+                  onClick={resetTimer}
+                  className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center text-[#7B2FBE] transition-colors"
+                >
+                  <RotateCw size={18} />
+                </button>
+              </div>
+              <div className="bg-[#7B2FBE] text-white font-black px-6 py-2 rounded-full text-sm">
+                {questionData.points} نقطة
+              </div>
+            </div>
+
+            <div className="mb-6 flex-1 flex flex-col justify-center">
+              <h2 className="text-2xl font-black text-foreground leading-relaxed text-center mb-6">
+                {questionData.question}
+              </h2>
+
+              <div className="flex-1 flex items-center justify-center overflow-hidden">
+                {questionData.image ? (
+                  <img
+                    src={questionData.image}
+                    alt="صورة السؤال"
+                    className="max-w-full max-h-[300px] object-contain"
+                  />
+                ) : (
+                  <div className="text-6xl text-gray-300">؟</div>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowAnswer(true)}
+              className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-8 rounded-full shadow-lg transition-colors self-center"
+            >
+              الإجابة
+            </button>
+          </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showAnswer && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col p-6"
+            dir="rtl"
+          >
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <button
+                onClick={() => setShowAnswer(false)}
+                className="flex items-center gap-1.5 bg-[#7B2FBE]/15 hover:bg-[#7B2FBE]/25 text-[#7B2FBE] px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+              >
+                <ArrowRight size={16} />
+                العودة
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center gap-8">
+              <h1 className="text-4xl font-black text-[#7B2FBE] text-center">
+                {questionData.categoryName}
+              </h1>
+
+              <div className="text-center max-w-2xl">
+                <p className="text-gray-600 text-lg mb-6">
+                  {questionData.question}
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-l from-[#7B2FBE] to-[#9333ea] text-white rounded-3xl p-12 text-center max-w-2xl shadow-2xl">
+                <p className="text-5xl font-black mb-4">الإجابة:</p>
+                <p className="text-4xl font-black leading-relaxed">
+                  {questionData.answer}
+                </p>
+              </div>
+
+              <div className="flex gap-6 mt-8">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleCorrect}
+                  className="bg-green-500 hover:bg-green-600 text-white font-black text-lg py-4 px-12 rounded-full shadow-lg transition-colors"
+                >
+                  إجابة صحيحة ✓
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleWrong}
+                  className="bg-red-500 hover:bg-red-600 text-white font-black text-lg py-4 px-12 rounded-full shadow-lg transition-colors"
+                >
+                  إجابة خاطئة ✗
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
