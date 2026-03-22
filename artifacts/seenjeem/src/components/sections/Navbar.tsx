@@ -22,10 +22,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
         isScrolled
-          ? "glass-panel shadow-[0_8px_32px_rgba(138,43,226,0.15)] py-3"
-          : "bg-transparent py-5"
+          ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3"
+          : "py-5"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,10 +35,9 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0 z-10">
               <img
-                src="/logo-white.png"
+                src="/logo-rakez.png"
                 alt="ركز"
                 className="h-10 md:h-12 w-auto hover:scale-105 transition-transform"
-                style={{ mixBlendMode: "screen" }}
               />
             </Link>
 
@@ -47,7 +46,7 @@ export function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-white hover:text-white/70 font-medium text-lg transition-colors relative group"
+                  className="text-foreground hover:text-primary font-medium text-lg transition-colors relative group"
                 >
                   {link.name}
                   <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
@@ -58,7 +57,7 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="text-white hover:text-white/70 flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-white/10 transition-colors">
+            <button className="text-foreground hover:text-primary flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-foreground/5 transition-colors">
               <User size={20} />
               <span>تسجيل الدخول</span>
             </button>
@@ -69,7 +68,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-white z-10 p-2"
+            className="md:hidden text-foreground z-10 p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
