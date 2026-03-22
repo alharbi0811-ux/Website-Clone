@@ -211,10 +211,10 @@ export default function ScorePage() {
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 p-3 md:p-5 flex items-center justify-center">
-        <div className="w-full max-w-4xl">
+      <div className="flex-1 p-6 lg:p-8 flex items-center justify-center">
+        <div className="w-full max-w-6xl">
           {/* Team 1 Categories - Top Row */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="grid grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
             {gameData.team1Categories.map((cat, catIdx) => (
               <CategoryCard
                 key={cat.id}
@@ -228,7 +228,7 @@ export default function ScorePage() {
           </div>
 
           {/* Team 2 Categories - Bottom Row */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
+          <div className="grid grid-cols-3 gap-6 md:gap-8">
             {gameData.team2Categories.map((cat, catIdx) => (
               <CategoryCard
                 key={cat.id}
@@ -381,10 +381,10 @@ function CategoryCard({
   teamColor: string;
 }) {
   return (
-    <div className="bg-[#d4cce0] rounded-2xl overflow-hidden shadow-md flex flex-col">
+    <div className="bg-[#d4cce0] rounded-3xl overflow-hidden shadow-lg flex flex-col">
       <div className="flex flex-1">
         {/* Left score column */}
-        <div className="flex flex-col justify-center gap-2 p-2 md:p-3 flex-1">
+        <div className="flex flex-col justify-center gap-3 p-3 md:p-4 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
@@ -396,7 +396,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-2 md:py-3 rounded-xl font-black text-sm md:text-lg transition-all
+                  w-full py-3 md:py-4 rounded-2xl font-black text-lg md:text-2xl transition-all
                   ${played
                     ? "bg-[#b8afc5] text-[#8a7f99] cursor-not-allowed"
                     : "bg-[#e8e2ef] hover:bg-[#7B2FBE] text-gray-600 hover:text-white cursor-pointer shadow-sm hover:shadow-lg"
@@ -410,7 +410,7 @@ function CategoryCard({
         </div>
 
         {/* Category image */}
-        <div className="w-[30%] min-w-[80px] relative self-stretch">
+        <div className="w-[30%] min-w-[100px] relative self-stretch">
           <img
             src={category.img}
             alt={category.name}
@@ -419,7 +419,7 @@ function CategoryCard({
         </div>
 
         {/* Right score column */}
-        <div className="flex flex-col justify-center gap-2 p-2 md:p-3 flex-1">
+        <div className="flex flex-col justify-center gap-3 p-3 md:p-4 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
@@ -431,7 +431,7 @@ function CategoryCard({
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-2 md:py-3 rounded-xl font-black text-sm md:text-lg transition-all
+                  w-full py-3 md:py-4 rounded-2xl font-black text-lg md:text-2xl transition-all
                   ${played
                     ? "bg-[#b8afc5] text-[#8a7f99] cursor-not-allowed"
                     : "bg-[#e8e2ef] hover:bg-[#7B2FBE] text-gray-600 hover:text-white cursor-pointer shadow-sm hover:shadow-lg"
@@ -447,7 +447,7 @@ function CategoryCard({
 
       {/* Category name bar */}
       <div
-        className="text-center py-2 font-black text-white text-sm md:text-base"
+        className="text-center py-3 font-black text-white text-lg md:text-xl"
         style={{ backgroundColor: teamColor }}
       >
         {category.name}
