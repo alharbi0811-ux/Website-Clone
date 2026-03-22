@@ -1,51 +1,29 @@
 import { motion } from "framer-motion";
-import { Phone, Swords, HandMetal, Coffee } from "lucide-react";
-import { type LucideIcon } from "lucide-react";
 
-const tools: {
-  title: string;
-  desc: string;
-  timing: string;
-  Icon: LucideIcon;
-  gradient: string;
-  iconBg: string;
-  iconColor: string;
-}[] = [
+const tools = [
   {
     title: "اتصال بصديق",
     desc: "صديقك اللي يعرف كل شي هذا وقته دق عليه !",
     timing: "تستخدمها بعد ما تشوف السؤال",
-    Icon: Phone,
-    gradient: "from-violet-500/10 to-purple-600/5",
-    iconBg: "bg-gradient-to-br from-violet-500 to-purple-700",
-    iconColor: "text-white",
+    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-call.png",
   },
   {
     title: "الحفرة",
     desc: "احفر لهم! جاوب صح, واخصم عدد النقاط اللي فزت فيها من نقاط الفريق الثاني",
     timing: "تستخدمها قبل ما تشوف السؤال",
-    Icon: Swords,
-    gradient: "from-purple-500/10 to-violet-600/5",
-    iconBg: "bg-gradient-to-br from-purple-600 to-violet-800",
-    iconColor: "text-white",
+    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-replace.png",
   },
   {
     title: "جاوب جوابين",
     desc: "متردد بجوابين؟ هذه لك. جاوب بالآثنين عشان تضمن النقاط",
     timing: "تستخدمها بعد ما تشوف السؤال",
-    Icon: HandMetal,
-    gradient: "from-fuchsia-500/10 to-purple-600/5",
-    iconBg: "bg-gradient-to-br from-fuchsia-500 to-purple-700",
-    iconColor: "text-white",
+    icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg",
   },
   {
     title: "استريح",
     desc: "اختار اكثر شخص مثقف ضدك, وخله يستريح شوي عن المشاركة في إجابة هالسؤال",
     timing: "تستخدمها بعد ما تشوف السؤال",
-    Icon: Coffee,
-    gradient: "from-violet-400/10 to-purple-500/5",
-    iconBg: "bg-gradient-to-br from-violet-400 to-purple-600",
-    iconColor: "text-white",
+    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-hand.png",
   },
 ];
 
@@ -73,13 +51,19 @@ export function HelpTools() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               key={idx}
-              className={`bg-gradient-to-b ${tool.gradient} border border-purple-200/60 glass-panel rounded-3xl p-8 text-center flex flex-col items-center hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group`}
+              className="bg-gradient-to-b from-violet-500/10 to-purple-600/5 border border-purple-300/40 glass-panel rounded-3xl p-8 text-center flex flex-col items-center hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-              {/* Icon container */}
-              <div className={`w-20 h-20 mb-6 relative z-10 rounded-2xl ${tool.iconBg} flex items-center justify-center shadow-[0_8px_24px_rgba(123,47,190,0.35)] group-hover:shadow-[0_12px_32px_rgba(123,47,190,0.5)] group-hover:scale-110 transition-all duration-300`}>
-                <tool.Icon size={36} className={tool.iconColor} strokeWidth={1.8} />
+              <div className="w-24 h-24 mb-6 relative z-10">
+                <img
+                  src={tool.icon}
+                  alt={tool.title}
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                  style={{
+                    filter: "sepia(1) hue-rotate(220deg) saturate(3) brightness(1.05) drop-shadow(0 4px 16px rgba(123,47,190,0.4))",
+                  }}
+                />
               </div>
 
               <h3 className="text-2xl font-bold text-foreground mb-4 z-10">
