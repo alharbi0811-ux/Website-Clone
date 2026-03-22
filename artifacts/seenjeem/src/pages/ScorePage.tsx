@@ -189,7 +189,7 @@ export default function ScorePage() {
             </button>
             <button
               onClick={handleResetBoard}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl transition-all border border-white/15 pl-[8px] pr-[8px] pt-[10px] pb-[10px] text-[15px] font-black text-justify rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px]"
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl transition-all border border-white/15 pt-[10px] pb-[10px] text-[15px] font-black text-justify rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] pl-[10px] pr-[10px]"
             >
               <RotateCcw size={14} />
               إعادة
