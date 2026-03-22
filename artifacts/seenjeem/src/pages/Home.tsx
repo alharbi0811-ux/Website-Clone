@@ -1,10 +1,7 @@
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
-import { Categories } from "@/components/sections/Categories";
 import { HelpTools } from "@/components/sections/HelpTools";
-import { Gift } from "@/components/sections/Gift";
-import { TvShow } from "@/components/sections/TvShow";
 import { SocialReels } from "@/components/sections/SocialReels";
 import { Faq } from "@/components/sections/Faq";
 import { Cta } from "@/components/sections/Cta";
@@ -17,10 +14,7 @@ export default function Home() {
       <main>
         <Hero />
         <About />
-        <Categories />
         <HelpTools />
-        <Gift />
-        <TvShow />
         <SocialReels />
         <Faq />
         <Cta />

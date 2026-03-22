@@ -40,37 +40,18 @@ export function About() {
             />
           </motion.div>
 
-          {/* Video Container */}
+          {/* Screen Image */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="w-full max-w-4xl relative rounded-3xl overflow-hidden border-4 border-white/10 shadow-[0_0_50px_rgba(138,43,226,0.3)] glass-panel"
+            className="w-full max-w-3xl"
           >
-            <div className="aspect-video relative">
-              <iframe 
-                src="https://www.youtube.com/embed/kr7eygkKC6k" 
-                title="شرح لعبة سين جيم" 
-                className="absolute top-0 left-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowFullScreen
-              ></iframe>
-            </div>
-            
-            {/* Play CTA below video */}
-            <div className="p-6 bg-card/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <img 
-                  src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/radius-plus-icon.png" 
-                  alt="Plus" 
-                  className="w-12 h-12"
-                />
-                <span className="text-2xl font-bold text-white">اشتر باقه وألعب</span>
-              </div>
-              <button className="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform hover:-translate-y-1 w-full sm:w-auto">
-                الباقات
-              </button>
-            </div>
+            <img 
+              src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/screen-sin-jim.png"
+              alt="سين جيم"
+              className="w-full h-auto drop-shadow-2xl rounded-2xl"
+            />
           </motion.div>
 
           {/* Girl Character */}

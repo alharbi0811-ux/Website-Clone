@@ -66,30 +66,6 @@ export function Hero() {
             <span className="relative z-10">إنشاء لعبة</span>
             <div className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
           </button>
-          
-          <button className="group relative w-full sm:w-auto bg-secondary text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_20px_rgba(138,43,226,0.4)] hover:shadow-[0_0_30px_rgba(138,43,226,0.6)] hover:-translate-y-1 transition-all overflow-hidden">
-            <span className="relative z-10">إنشاء بطولة</span>
-            <div className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
-          </button>
-        </motion.div>
-
-        {/* Special Logos */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="flex items-center justify-center gap-8 md:gap-16 opacity-80 hover:opacity-100 transition-opacity"
-        >
-          <img 
-            src="https://seenjeemkw.com/assets/games-especially-logo-CDiQRXrl.webp" 
-            alt="Games Especially" 
-            className="h-16 md:h-24 object-contain"
-          />
-          <img 
-            src="https://seenjeemkw.com/assets/ramadaniyat-logo-2irMXK4D.webp" 
-            alt="Ramadaniyat" 
-            className="h-16 md:h-24 object-contain"
-          />
         </motion.div>
 
       </div>
