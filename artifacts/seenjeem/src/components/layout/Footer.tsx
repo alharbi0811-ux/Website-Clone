@@ -12,9 +12,6 @@ export function Footer() {
               alt="Seen Jeem" 
               className="h-12 w-auto opacity-80"
             />
-            <p className="text-white/50 text-sm">
-              © {new Date().getFullYear()} سين جيم. جميع الحقوق محفوظة.
-            </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-white/70 font-medium">
