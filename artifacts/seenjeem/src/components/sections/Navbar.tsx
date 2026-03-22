@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,7 +62,10 @@ export function Navbar() {
               <User size={20} />
               <span>تسجيل الدخول</span>
             </button>
-            <button className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all">
+            <button
+              onClick={() => navigate("/start-game")}
+              className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all"
+            >
               إنشاء لعبة
             </button>
           </div>
@@ -97,7 +101,10 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col gap-4 pt-4">
-                <button className="bg-[#7B2FBE] text-white font-bold py-3 px-6 rounded-xl w-full text-center shadow-[0_0_18px_rgba(123,47,190,0.6)]">
+                <button
+                  onClick={() => { navigate("/start-game"); setMobileMenuOpen(false); }}
+                  className="bg-[#7B2FBE] text-white font-bold py-3 px-6 rounded-xl w-full text-center shadow-[0_0_18px_rgba(123,47,190,0.6)]"
+                >
                   إنشاء لعبة
                 </button>
                 <button className="flex items-center justify-center gap-2 text-foreground/70 py-3 mt-2 font-medium">
