@@ -61,10 +61,6 @@ export function Navbar() {
               <span>تسجيل الدخول</span>
             </button>
             
-            <button className="bg-secondary hover:bg-secondary/90 text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] hover:-translate-y-0.5 transition-all">
-              إنشاء بطولة
-            </button>
-            
             <button className="bg-gradient-to-r from-primary to-[#ff9d42] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_15px_rgba(255,136,26,0.5)] hover:shadow-[0_0_25px_rgba(255,136,26,0.7)] hover:-translate-y-0.5 transition-all">
               إنشاء لعبة
             </button>
@@ -102,9 +98,6 @@ export function Navbar() {
               ))}
               
               <div className="flex flex-col gap-4 pt-4">
-                <button className="bg-secondary text-white font-bold py-3 px-6 rounded-xl w-full text-center">
-                  إنشاء بطولة
-                </button>
                 <button className="bg-primary text-white font-bold py-3 px-6 rounded-xl w-full text-center">
                   إنشاء لعبة
                 </button>
