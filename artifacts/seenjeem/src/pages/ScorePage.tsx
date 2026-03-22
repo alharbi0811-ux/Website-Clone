@@ -204,7 +204,6 @@ export default function ScorePage() {
           </div>
         </div>
       </div>
-
       {/* Game Board — fills all remaining space */}
       <div className="flex-1 min-h-0 p-4 flex flex-col gap-4">
         <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
@@ -232,9 +231,8 @@ export default function ScorePage() {
           ))}
         </div>
       </div>
-
       {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between border-t border-white/10">
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between border-t border-white/10 pt-[22px] pb-[22px]">
         <div className="flex items-center gap-3 flex-1">
           <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black text-sm min-w-[100px] text-center border border-white/20">
             {gameData.team1Name}
@@ -287,7 +285,6 @@ export default function ScorePage() {
           </div>
         </div>
       </div>
-
       {/* End Game Modal */}
       <AnimatePresence>
         {(showEndModal || allPlayed) && (
