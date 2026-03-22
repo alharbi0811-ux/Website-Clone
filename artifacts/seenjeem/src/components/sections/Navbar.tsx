@@ -31,29 +31,30 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0 z-10">
-            <img
-              src="https://seenjeemkw.com/assets/logo-lg-WLxzaRHo.svg"
-              alt="Seen Jeem Logo"
-              className="h-10 md:h-12 w-auto hover:scale-105 transition-transform"
-              style={{ filter: "brightness(0) saturate(100%) invert(20%) sepia(50%) saturate(400%) hue-rotate(250deg)" }}
-            />
-          </Link>
+          {/* Logo + Navigation grouped together */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex-shrink-0 z-10">
+              <img
+                src="https://seenjeemkw.com/assets/logo-lg-WLxzaRHo.svg"
+                alt="Seen Jeem Logo"
+                className="h-10 md:h-12 w-auto hover:scale-105 transition-transform"
+                style={{ filter: "brightness(0) saturate(100%) invert(20%) sepia(50%) saturate(400%) hue-rotate(250deg)" }}
+              />
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-foreground/80 hover:text-primary font-medium text-lg transition-colors relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-              </a>
-            ))}
-          </nav>
+            <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-foreground hover:text-primary font-medium text-lg transition-colors relative group"
+                >
+                  {link.name}
+                  <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+              ))}
+            </nav>
+          </div>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
