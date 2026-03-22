@@ -61,7 +61,7 @@ export function HelpTools() {
                   alt={tool.title}
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
                   style={{
-                    filter: "sepia(1) hue-rotate(220deg) saturate(3) brightness(1.05) drop-shadow(0 4px 16px rgba(123,47,190,0.4))",
+                    filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15) drop-shadow(0 4px 16px rgba(123,47,190,0.4))",
                   }}
                 />
               </div>
