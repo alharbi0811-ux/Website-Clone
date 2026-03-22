@@ -356,24 +356,89 @@ export default function StartGame() {
             ))}
           </div>
 
+          {/* Game Info Section */}
+          {selectedIds.length === MAX && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-12 border-2 border-[#7B2FBE] rounded-3xl p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
+            >
+              {/* Game Info Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-black text-foreground mb-2">ملخص اللعبة</h2>
+                <p className="text-foreground/60">تأكد من اختيار الفئات المناسبة</p>
+              </div>
+
+              {/* Teams Display */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {/* Team 1 */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="bg-gradient-to-br from-[#7B2FBE]/10 to-[#7B2FBE]/5 rounded-2xl p-6 border border-[#7B2FBE]/30"
+                >
+                  <h3 className="text-xl font-black text-[#7B2FBE] mb-4 text-center">فريقك</h3>
+                  <div className="space-y-2">
+                    {team1.map((id, idx) => {
+                      const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
+                      return (
+                        <div
+                          key={id}
+                          className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-sm">
+                            {idx + 1}
+                          </div>
+                          <span className="text-foreground font-semibold flex-1">{cat?.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+
+                {/* Team 2 */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="bg-gradient-to-br from-[#7B2FBE]/10 to-[#7B2FBE]/5 rounded-2xl p-6 border border-[#7B2FBE]/30"
+                >
+                  <h3 className="text-xl font-black text-[#7B2FBE] mb-4 text-center">الفريق المنافس</h3>
+                  <div className="space-y-2">
+                    {team2.map((id, idx) => {
+                      const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
+                      return (
+                        <div
+                          key={id}
+                          className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-sm">
+                            {idx + 1}
+                          </div>
+                          <span className="text-foreground font-semibold flex-1">{cat?.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Start Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="flex justify-center"
+              >
+                <button className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1">
+                  ابدأ اللعبة 🎮
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+
         </div>
       </main>
-
-      {/* Floating start button */}
-      <AnimatePresence>
-        {selectedIds.length === MAX && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
-          >
-            <button className="bg-[#7B2FBE] text-white font-black text-xl py-4 px-14 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] hover:bg-[#8B35D6] hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1 transition-all">
-              ابدأ اللعبة 🎮
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Info Modal */}
       <AnimatePresence>
