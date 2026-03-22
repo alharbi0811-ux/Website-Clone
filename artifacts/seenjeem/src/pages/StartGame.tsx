@@ -23,10 +23,6 @@ const SECTIONS: Section[] = [
   {
     name: "أجدد الفئات",
     categories: [
-      { id: "new-jordan", name: "الأردن", img: `${CDN}/1771768010525-771576054.jpg` },
-      { id: "new-jo-logos", name: "شعارات أردنية", img: `${CDN}/1773680488694-532963419.jpg` },
-      { id: "new-uae-art", name: "فن إماراتي", img: `${CDN}/1773239229651-684456354.jpg` },
-      { id: "new-jo-football", name: "كرة قدم أردنية", img: `${CDN}/1771078614665-784276205.png` },
       { id: "new-gulf-outfit", name: "طقم فنان خليجي", img: `${CDN}/1772110864905-588292764.jpg` },
       { id: "new-faisal", name: "فيصل بوغازي", img: `${CDN}/1773064818148-154584863.jpg` },
       { id: "new-live1", name: "Live", img: `${CDN}/1772459128688-499091855.jpg` },
