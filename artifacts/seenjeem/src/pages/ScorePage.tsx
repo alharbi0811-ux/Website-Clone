@@ -161,145 +161,138 @@ export default function ScorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
-      {/* Top Bar - Glassmorphic */}
-      <div className="bg-gradient-to-l from-[#7B2FBE]/80 to-[#5a1f8e]/80 backdrop-blur-md px-6 py-4 flex items-center justify-between shadow-lg border-b border-white/20">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
+      {/* Top Bar */}
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between shadow-lg border-b border-white/10">
         <div className="flex items-center gap-4">
           <img
             src={`${CDN}/logos/logo.webp`}
             alt="ركز"
-            className="h-12 brightness-0 invert"
+            className="h-10 brightness-0 invert"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-12 pl-[25px] pr-[25px]" />
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="bg-white/20 backdrop-blur-md text-white px-6 py-3 rounded-2xl font-bold text-base border border-white/30 shadow-lg">
+        <div className="flex items-center gap-4">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-xl font-bold text-sm border border-white/20">
             دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
           </div>
-          <div className="text-white/90 font-medium text-base hidden md:block">
+          <div className="text-white/90 font-medium text-sm hidden md:block">
             {gameData.gameName}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleEndGame}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all border border-white/20 shadow-lg"
+            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
           >
-            <Eye size={16} />
+            <Eye size={14} />
             <span className="hidden sm:inline">انتهاء اللعبة</span>
           </button>
           <button
             onClick={handleResetBoard}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all border border-white/20 shadow-lg"
+            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={14} />
             <span className="hidden sm:inline">إعادة</span>
           </button>
           <button
             onClick={handleExit}
-            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all border border-white/20 shadow-lg"
+            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl text-xs font-bold transition-all border border-white/15"
           >
-            <LogOut size={16} />
+            <LogOut size={14} />
             <span className="hidden sm:inline">الخروج</span>
           </button>
         </div>
       </div>
 
-      {/* Game Board - Centered */}
-      <div className="flex-1 px-10 py-10 flex items-center justify-center">
-        <div className="w-full max-w-7xl">
-          {/* Team 1 Categories - Top Row */}
-          <div className="grid grid-cols-3 gap-6 mb-6">
-            {gameData.team1Categories.map((cat, catIdx) => (
-              <CategoryCard
-                key={cat.id}
-                category={cat}
-                catIdx={catIdx}
-                playedCells={playedCells}
-                onCellClick={handleCellClick}
-                teamColor="#7B2FBE"
-              />
-            ))}
-          </div>
-
-          {/* Team 2 Categories - Bottom Row */}
-          <div className="grid grid-cols-3 gap-6">
-            {gameData.team2Categories.map((cat, catIdx) => (
-              <CategoryCard
-                key={cat.id}
-                category={cat}
-                catIdx={catIdx + 3}
-                playedCells={playedCells}
-                onCellClick={handleCellClick}
-                teamColor="#9333ea"
-              />
-            ))}
-          </div>
+      {/* Game Board — fills all remaining space */}
+      <div className="flex-1 min-h-0 p-4 flex flex-col gap-4">
+        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+          {gameData.team1Categories.map((cat, catIdx) => (
+            <CategoryCard
+              key={cat.id}
+              category={cat}
+              catIdx={catIdx}
+              playedCells={playedCells}
+              onCellClick={handleCellClick}
+              teamColor="#7B2FBE"
+            />
+          ))}
+        </div>
+        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+          {gameData.team2Categories.map((cat, catIdx) => (
+            <CategoryCard
+              key={cat.id}
+              category={cat}
+              catIdx={catIdx + 3}
+              playedCells={playedCells}
+              onCellClick={handleCellClick}
+              teamColor="#9333ea"
+            />
+          ))}
         </div>
       </div>
 
-      {/* Bottom Bar - Glassmorphic */}
-      <div className="bg-gradient-to-l from-[#7B2FBE]/80 to-[#5a1f8e]/80 backdrop-blur-md px-6 py-4 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.15)] border-t border-white/20">
-        {/* Team 1 Score */}
-        <div className="flex items-center gap-4 flex-1">
-          <div className="bg-white/20 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl font-black text-sm min-w-[120px] text-center border border-white/30 shadow-lg">
+      {/* Bottom Bar */}
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between border-t border-white/10">
+        <div className="flex items-center gap-3 flex-1">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black text-sm min-w-[100px] text-center border border-white/20">
             {gameData.team1Name}
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setTeam1Score((s) => Math.max(0, s - 200))}
-              className="w-9 h-9 rounded-full bg-red-500/80 hover:bg-red-600 backdrop-blur-sm text-white flex items-center justify-center transition-colors border border-white/20 shadow-lg"
+              className="w-8 h-8 rounded-full bg-red-500/80 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
             >
-              <Minus size={16} />
+              <Minus size={14} />
             </button>
-            <div className="bg-white/20 backdrop-blur-md text-[#7B2FBE] font-black text-2xl min-w-[70px] text-center py-2 px-4 rounded-xl border border-white/30 shadow-lg">
+            <div className="bg-white/90 text-[#7B2FBE] font-black text-xl min-w-[60px] text-center py-1.5 px-3 rounded-xl shadow-inner">
               {team1Score}
             </div>
             <button
               onClick={() => setTeam1Score((s) => s + 200)}
-              className="w-9 h-9 rounded-full bg-green-500/80 hover:bg-green-600 backdrop-blur-sm text-white flex items-center justify-center transition-colors border border-white/20 shadow-lg"
+              className="w-8 h-8 rounded-full bg-green-500/80 hover:bg-green-600 text-white flex items-center justify-center transition-colors"
             >
-              <Plus size={16} />
+              <Plus size={14} />
             </button>
           </div>
         </div>
 
-        {/* Center - Game Icon */}
-        <div className="flex items-center justify-center px-6">
-          <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg">
-            <Gamepad2 size={28} className="text-white" />
+        <div className="flex items-center justify-center px-4">
+          <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+            <Gamepad2 size={24} className="text-white" />
           </div>
         </div>
 
-        {/* Team 2 Score */}
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        <div className="flex items-center gap-3 flex-1 justify-end">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setTeam2Score((s) => Math.max(0, s - 200))}
-              className="w-9 h-9 rounded-full bg-red-500/80 hover:bg-red-600 backdrop-blur-sm text-white flex items-center justify-center transition-colors border border-white/20 shadow-lg"
+              className="w-8 h-8 rounded-full bg-red-500/80 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
             >
-              <Minus size={16} />
+              <Minus size={14} />
             </button>
-            <div className="bg-white/20 backdrop-blur-md text-[#7B2FBE] font-black text-2xl min-w-[70px] text-center py-2 px-4 rounded-xl border border-white/30 shadow-lg">
+            <div className="bg-white/90 text-[#7B2FBE] font-black text-xl min-w-[60px] text-center py-1.5 px-3 rounded-xl shadow-inner">
               {team2Score}
             </div>
             <button
               onClick={() => setTeam2Score((s) => s + 200)}
-              className="w-9 h-9 rounded-full bg-green-500/80 hover:bg-green-600 backdrop-blur-sm text-white flex items-center justify-center transition-colors border border-white/20 shadow-lg"
+              className="w-8 h-8 rounded-full bg-green-500/80 hover:bg-green-600 text-white flex items-center justify-center transition-colors"
             >
-              <Plus size={16} />
+              <Plus size={14} />
             </button>
           </div>
-          <div className="bg-white/20 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl font-black text-sm min-w-[120px] text-center border border-white/30 shadow-lg">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black text-sm min-w-[100px] text-center border border-white/20">
             {gameData.team2Name}
           </div>
         </div>
       </div>
+
       {/* End Game Modal */}
       <AnimatePresence>
         {(showEndModal || allPlayed) && (
@@ -321,10 +314,10 @@ export default function ScorePage() {
                 <Trophy size={64} className="text-yellow-300 mx-auto mb-4" />
                 <h2 className="text-3xl font-black text-white mb-2">
                   {team1Score > team2Score
-                    ? `🎉 فاز ${gameData.team1Name}!`
+                    ? `فاز ${gameData.team1Name}!`
                     : team2Score > team1Score
-                    ? `🎉 فاز ${gameData.team2Name}!`
-                    : "تعادل! 🤝"}
+                    ? `فاز ${gameData.team2Name}!`
+                    : "تعادل!"}
                 </h2>
               </div>
 
@@ -378,28 +371,24 @@ function CategoryCard({
   teamColor: string;
 }) {
   return (
-    <motion.div 
-      whileHover={{ y: -5 }}
-      className="bg-white/30 backdrop-blur-md rounded-3xl overflow-hidden shadow-xl flex flex-col h-80 border border-white/40 hover:border-white/60 transition-all"
-    >
-      <div className="flex flex-1">
-        {/* Left score column */}
-        <div className="flex flex-col justify-center gap-3 p-5 flex-1">
+    <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 min-h-0">
+      <div className="flex flex-1 min-h-0">
+        <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
             return (
               <motion.button
                 key={`l-${points}`}
-                whileHover={!played ? { scale: 1.08 } : {}}
+                whileHover={!played ? { scale: 1.05 } : {}}
                 whileTap={!played ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-4 rounded-2xl font-black text-3xl transition-all border
+                  w-full py-3 rounded-xl font-black text-2xl transition-all
                   ${played
-                    ? "bg-[#e8e2ef]/50 text-[#8a7f99] cursor-not-allowed border-gray-300/30"
-                    : "bg-white/50 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-md hover:shadow-lg border-white/40 hover:border-white/60"
+                    ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
+                    : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
                   }
                 `}
               >
@@ -409,8 +398,7 @@ function CategoryCard({
           })}
         </div>
 
-        {/* Category image */}
-        <div className="w-[35%] min-w-[120px] relative self-stretch overflow-hidden">
+        <div className="w-[30%] min-w-[90px] relative self-stretch">
           <img
             src={category.img}
             alt={category.name}
@@ -418,23 +406,22 @@ function CategoryCard({
           />
         </div>
 
-        {/* Right score column */}
-        <div className="flex flex-col justify-center gap-3 p-5 flex-1">
+        <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
             const key = `${catIdx}-${points}`;
             const played = playedCells.has(key);
             return (
               <motion.button
                 key={`r-${points}`}
-                whileHover={!played ? { scale: 1.08 } : {}}
+                whileHover={!played ? { scale: 1.05 } : {}}
                 whileTap={!played ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points)}
                 disabled={played}
                 className={`
-                  w-full py-4 rounded-2xl font-black text-3xl transition-all border
+                  w-full py-3 rounded-xl font-black text-2xl transition-all
                   ${played
-                    ? "bg-[#e8e2ef]/50 text-[#8a7f99] cursor-not-allowed border-gray-300/30"
-                    : "bg-white/50 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-md hover:shadow-lg border-white/40 hover:border-white/60"
+                    ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
+                    : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
                   }
                 `}
               >
@@ -445,13 +432,12 @@ function CategoryCard({
         </div>
       </div>
 
-      {/* Category name bar - Glassmorphic */}
       <div
-        className="text-center py-5 font-black text-white text-3xl backdrop-blur-sm border-t border-white/20"
-        style={{ backgroundColor: `${teamColor}cc` }}
+        className="shrink-0 text-center py-3 font-black text-white text-xl"
+        style={{ backgroundColor: teamColor }}
       >
         {category.name}
       </div>
-    </motion.div>
+    </div>
   );
 }
