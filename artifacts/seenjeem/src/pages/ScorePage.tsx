@@ -51,7 +51,55 @@ export default function ScorePage() {
         ],
       });
     }
-  }, [navigate]);
+
+    const scores = localStorage.getItem("rakez-scores");
+    if (scores) {
+      const parsed = JSON.parse(scores);
+      setTeam1Score(parsed.team1Score || 0);
+      setTeam2Score(parsed.team2Score || 0);
+    }
+
+    const savedCells = localStorage.getItem("rakez-played-cells");
+    if (savedCells) {
+      setPlayedCells(new Set(JSON.parse(savedCells)));
+    }
+
+    const savedTeam = localStorage.getItem("rakez-current-team");
+    if (savedTeam) {
+      setCurrentTeam(JSON.parse(savedTeam) as 1 | 2);
+    }
+
+    const answered = localStorage.getItem("rakez-answered-cell");
+    if (answered) {
+      const { catIdx, points, correct, team } = JSON.parse(answered);
+      localStorage.removeItem("rakez-answered-cell");
+      const key = `${catIdx}-${points}`;
+      setPlayedCells((prev) => {
+        const next = new Set(prev);
+        next.add(key);
+        return next;
+      });
+      if (correct) {
+        if (team === 1) setTeam1Score((s) => s + points);
+        else setTeam2Score((s) => s + points);
+      }
+      setCurrentTeam((t) => (t === 1 ? 2 : 1));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (playedCells.size > 0) {
+      localStorage.setItem("rakez-played-cells", JSON.stringify([...playedCells]));
+    }
+  }, [playedCells]);
+
+  useEffect(() => {
+    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score }));
+  }, [team1Score, team2Score]);
+
+  useEffect(() => {
+    localStorage.setItem("rakez-current-team", JSON.stringify(currentTeam));
+  }, [currentTeam]);
 
   if (!gameData) return null;
 
@@ -59,19 +107,31 @@ export default function ScorePage() {
   const totalCells = allCategories.length * POINTS.length;
   const allPlayed = playedCells.size >= totalCells;
 
+  const SAMPLE_QUESTIONS = [
+    "ما هو أكبر كوكب في المجموعة الشمسية؟",
+    "في أي عام استقلت الكويت؟",
+    "ما هي عاصمة اليابان؟",
+  ];
+
   const handleCellClick = (catIdx: number, points: number) => {
     const key = `${catIdx}-${points}`;
     if (playedCells.has(key)) return;
 
-    setPlayedCells((prev) => new Set(prev).add(key));
+    const category = allCategories[catIdx];
+    const qIdx = POINTS.indexOf(points);
 
-    if (currentTeam === 1) {
-      setTeam1Score((s) => s + points);
-    } else {
-      setTeam2Score((s) => s + points);
-    }
+    localStorage.setItem("rakez-current-question", JSON.stringify({
+      categoryId: category.id,
+      categoryName: category.name,
+      points,
+      catIdx,
+      currentTeam,
+      question: SAMPLE_QUESTIONS[qIdx] || "سؤال تجريبي",
+      answer: "الإجابة التجريبية",
+      image: category.img,
+    }));
 
-    setCurrentTeam((t) => (t === 1 ? 2 : 1));
+    navigate("/question");
   };
 
   const handleEndGame = () => {
@@ -80,6 +140,11 @@ export default function ScorePage() {
 
   const handleExit = () => {
     localStorage.removeItem("rakez-game-data");
+    localStorage.removeItem("rakez-scores");
+    localStorage.removeItem("rakez-played-cells");
+    localStorage.removeItem("rakez-current-team");
+    localStorage.removeItem("rakez-used-tools");
+    localStorage.removeItem("rakez-current-question");
     navigate("/start-game");
   };
 
@@ -89,6 +154,10 @@ export default function ScorePage() {
     setTeam2Score(0);
     setCurrentTeam(1);
     setShowEndModal(false);
+    localStorage.removeItem("rakez-played-cells");
+    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: 0, team2Score: 0 }));
+    localStorage.setItem("rakez-current-team", JSON.stringify(1));
+    localStorage.removeItem("rakez-used-tools");
   };
 
   return (

@@ -96,13 +96,15 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 Arabic trivia game "ركز" (Rakez) — a React + Vite web app cloned from seenjeemkw.com.
 
 - **Theme**: Light mode, purple (#7B2FBE) / white glassmorphism, RTL Arabic
-- **Routing**: wouter — `/` (Home), `/start-game` (StartGame), `/score-page` (ScorePage)
+- **Routing**: wouter — `/` (Home), `/start-game` (StartGame), `/score-page` (ScorePage), `/question` (QuestionPage)
 - **Pages**:
   - `Home.tsx` — Landing page with Navbar, Hero, HelpTools
-  - `StartGame.tsx` — Category selection (8 sections, 6 max picks: 3/team), saves to localStorage and navigates to `/score-page`
-  - `ScorePage.tsx` — Game board with 2×3 grid of category cards, score tracking with +/- buttons, team turns, end-game modal
+  - `StartGame.tsx` — Category selection (8 sections, 6 max picks: 3/team), team info form (names, help tools), saves to localStorage and navigates to `/score-page`
+  - `ScorePage.tsx` — Game board with 2×3 grid of category cards, clicking a cell navigates to `/question`, score tracking, team turns, end-game modal
+  - `QuestionPage.tsx` — Question display with timer (30s countdown), points badge, question text/image, right sidebar with team scores & help tools, answer reveal with correct/wrong buttons, navigates back to ScorePage with result
 - **CDN**: `https://d442zbpa1tgal.cloudfront.net` for category images
-- **Data flow**: StartGame saves `rakez-game-data` to localStorage → ScorePage reads it
+- **Data flow**: StartGame → localStorage (`rakez-game-data`) → ScorePage → localStorage (`rakez-current-question`) → QuestionPage → localStorage (`rakez-answered-cell`) → ScorePage
+- **localStorage keys**: `rakez-game-data`, `rakez-scores`, `rakez-played-cells`, `rakez-current-team`, `rakez-current-question`, `rakez-answered-cell`, `rakez-used-tools`
 - **Sections**: أجدد الفئات, الكويت, عام, إسلامي, دول, حروف, ولا كلمة, التفكير
 
 ### `scripts` (`@workspace/scripts`)
