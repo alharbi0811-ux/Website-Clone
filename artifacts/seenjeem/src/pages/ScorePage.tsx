@@ -393,11 +393,11 @@ function CategoryCard({
           })}
         </div>
 
-        <div className="w-[30%] min-w-[90px] relative self-stretch">
+        <div className="w-[30%] min-w-[90px] relative self-stretch flex items-center justify-center p-2">
           <img
             src={category.img}
             alt={category.name}
-            className="w-full h-full object-cover"
+            className="max-w-full max-h-full object-contain"
           />
         </div>
 
