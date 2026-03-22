@@ -211,33 +211,35 @@ export default function ScorePage() {
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 p-3 md:p-5">
-        {/* Team 1 Categories - Top Row */}
-        <div className="grid grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-4">
-          {gameData.team1Categories.map((cat, catIdx) => (
-            <CategoryCard
-              key={cat.id}
-              category={cat}
-              catIdx={catIdx}
-              playedCells={playedCells}
-              onCellClick={handleCellClick}
-              teamColor="#7B2FBE"
-            />
-          ))}
-        </div>
+      <div className="flex-1 p-3 md:p-5 flex items-center justify-center">
+        <div className="w-full max-w-4xl">
+          {/* Team 1 Categories - Top Row */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-4">
+            {gameData.team1Categories.map((cat, catIdx) => (
+              <CategoryCard
+                key={cat.id}
+                category={cat}
+                catIdx={catIdx}
+                playedCells={playedCells}
+                onCellClick={handleCellClick}
+                teamColor="#7B2FBE"
+              />
+            ))}
+          </div>
 
-        {/* Team 2 Categories - Bottom Row */}
-        <div className="grid grid-cols-3 gap-3 md:gap-4">
-          {gameData.team2Categories.map((cat, catIdx) => (
-            <CategoryCard
-              key={cat.id}
-              category={cat}
-              catIdx={catIdx + 3}
-              playedCells={playedCells}
-              onCellClick={handleCellClick}
-              teamColor="#9333ea"
-            />
-          ))}
+          {/* Team 2 Categories - Bottom Row */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            {gameData.team2Categories.map((cat, catIdx) => (
+              <CategoryCard
+                key={cat.id}
+                category={cat}
+                catIdx={catIdx + 3}
+                playedCells={playedCells}
+                onCellClick={handleCellClick}
+                teamColor="#9333ea"
+              />
+            ))}
+          </div>
         </div>
       </div>
 
