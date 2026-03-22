@@ -3,8 +3,6 @@ import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { HelpTools } from "@/components/sections/HelpTools";
 import { Faq } from "@/components/sections/Faq";
-import { Footer } from "@/components/layout/Footer";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden" dir="rtl">
@@ -15,7 +13,6 @@ export default function Home() {
         <HelpTools />
         <Faq />
       </main>
-      <Footer />
     </div>
   );
 }
