@@ -23,7 +23,9 @@ export function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "glass-panel shadow-lg py-3" : "bg-transparent py-5"
+        isScrolled
+          ? "glass-panel shadow-[0_8px_32px_rgba(138,43,226,0.2)] py-3"
+          : "bg-transparent py-5"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,7 +61,7 @@ export function Navbar() {
               <span>تسجيل الدخول</span>
             </button>
             
-            <button className="bg-gradient-to-r from-primary to-[#ff9d42] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_15px_rgba(255,136,26,0.5)] hover:shadow-[0_0_25px_rgba(255,136,26,0.7)] hover:-translate-y-0.5 transition-all">
+            <button className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.7)] hover:shadow-[0_0_28px_rgba(123,47,190,0.95)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all">
               إنشاء لعبة
             </button>
           </div>
@@ -96,7 +98,7 @@ export function Navbar() {
               ))}
               
               <div className="flex flex-col gap-4 pt-4">
-                <button className="bg-primary text-white font-bold py-3 px-6 rounded-xl w-full text-center">
+                <button className="bg-[#7B2FBE] text-white font-bold py-3 px-6 rounded-xl w-full text-center shadow-[0_0_18px_rgba(123,47,190,0.6)]">
                   إنشاء لعبة
                 </button>
                 <button className="flex items-center justify-center gap-2 text-white/80 py-3 mt-2 font-medium">

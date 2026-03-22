@@ -44,9 +44,9 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-6 mb-16 w-full max-w-lg justify-center"
         >
-          <button className="group relative w-full sm:w-auto bg-gradient-to-r from-primary to-[#ff9d42] text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_20px_rgba(255,136,26,0.4)] hover:shadow-[0_0_30px_rgba(255,136,26,0.6)] hover:-translate-y-1 transition-all overflow-hidden">
+          <button className="group relative w-full sm:w-auto bg-[#7B2FBE] text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_28px_rgba(123,47,190,0.7)] hover:shadow-[0_0_45px_rgba(123,47,190,0.95)] hover:bg-[#8B35D6] hover:-translate-y-1 transition-all overflow-hidden">
             <span className="relative z-10">إنشاء لعبة</span>
-            <div className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
+            <div className="absolute inset-0 bg-white/15 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
           </button>
         </motion.div>
 
