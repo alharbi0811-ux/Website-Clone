@@ -232,7 +232,7 @@ export default function ScorePage() {
         </div>
       </div>
       {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between border-t border-white/10 pt-[22px] pb-[22px]">
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 flex items-center justify-between border-t border-white/10 pt-[24px] pb-[24px]">
         <div className="flex items-center gap-3 flex-1">
           <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black text-sm min-w-[100px] text-center border border-white/20">
             {gameData.team1Name}
