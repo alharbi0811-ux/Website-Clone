@@ -280,7 +280,7 @@ export default function ScorePage() {
               <Plus size={14} />
             </button>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black min-w-[100px] border border-white/20 border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] pt-[10px] pb-[10px] pl-[30px] pr-[30px] text-[15px] text-justify">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl font-black min-w-[100px] border border-white/20 border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] pt-[10px] pb-[10px] pl-[30px] pr-[30px] text-[15px] text-center">
             {gameData.team2Name}
           </div>
         </div>
