@@ -163,48 +163,48 @@ export default function ScorePage() {
   return (
     <div className="min-h-screen bg-[#e8e0f0] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
+      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-8 py-6 flex items-center justify-between shadow-lg">
+        <div className="flex items-center gap-4">
           <img
             src={`${CDN}/logos/logo.webp`}
             alt="ركز"
-            className="h-10 brightness-0 invert"
+            className="h-16 brightness-0 invert"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10 pl-[25px] pr-[25px]" />
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-16 pl-[25px] pr-[25px]" />
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
+        <div className="flex items-center gap-6">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-bold text-lg">
             دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
           </div>
-          <div className="text-white/80 font-medium text-sm hidden md:block ml-[1250px]">
+          <div className="text-white/80 font-medium text-xl hidden md:block ml-[1250px]">
             {gameData.gameName}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <button
             onClick={handleEndGame}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
           >
-            <Eye size={14} />
+            <Eye size={20} />
             <span className="hidden sm:inline">انتهاء اللعبة</span>
           </button>
           <button
             onClick={handleResetBoard}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={20} />
             <span className="hidden sm:inline">إعادة</span>
           </button>
           <button
             onClick={handleExit}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors"
           >
-            <LogOut size={14} />
+            <LogOut size={20} />
             <span className="hidden sm:inline">الخروج</span>
           </button>
         </div>
