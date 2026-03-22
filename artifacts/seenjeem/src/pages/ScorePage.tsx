@@ -180,7 +180,7 @@ export default function ScorePage() {
           <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
             دور فريق: {currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
           </div>
-          <div className="text-white/80 font-medium text-sm hidden md:block">
+          <div className="text-white/80 font-medium text-sm hidden md:block ml-[1250px]">
             {gameData.gameName}
           </div>
         </div>
@@ -209,7 +209,6 @@ export default function ScorePage() {
           </button>
         </div>
       </div>
-
       {/* Game Board */}
       <div className="flex-1 p-8 flex items-center justify-center">
         <div className="w-full">
@@ -242,7 +241,6 @@ export default function ScorePage() {
           </div>
         </div>
       </div>
-
       {/* Bottom Bar */}
       <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.15)]">
         {/* Team 1 Score */}
@@ -302,7 +300,6 @@ export default function ScorePage() {
           </div>
         </div>
       </div>
-
       {/* End Game Modal */}
       <AnimatePresence>
         {(showEndModal || allPlayed) && (
