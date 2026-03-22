@@ -91,6 +91,20 @@ Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used b
 
 Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
 
+### `artifacts/seenjeem` (`@workspace/seenjeem`)
+
+Arabic trivia game "ركز" (Rakez) — a React + Vite web app cloned from seenjeemkw.com.
+
+- **Theme**: Light mode, purple (#7B2FBE) / white glassmorphism, RTL Arabic
+- **Routing**: wouter — `/` (Home), `/start-game` (StartGame), `/score-page` (ScorePage)
+- **Pages**:
+  - `Home.tsx` — Landing page with Navbar, Hero, HelpTools
+  - `StartGame.tsx` — Category selection (8 sections, 6 max picks: 3/team), saves to localStorage and navigates to `/score-page`
+  - `ScorePage.tsx` — Game board with 2×3 grid of category cards, score tracking with +/- buttons, team turns, end-game modal
+- **CDN**: `https://d442zbpa1tgal.cloudfront.net` for category images
+- **Data flow**: StartGame saves `rakez-game-data` to localStorage → ScorePage reads it
+- **Sections**: أجدد الفئات, الكويت, عام, إسلامي, دول, حروف, ولا كلمة, التفكير
+
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.

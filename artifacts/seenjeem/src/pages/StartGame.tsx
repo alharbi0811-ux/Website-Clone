@@ -196,7 +196,6 @@ export default function StartGame() {
             className="flex justify-center max-w-lg mx-auto mb-10"
           >
             <button
-              onClick={() => setGameType("game")}
               className="flex flex-col items-center justify-center gap-3 py-6 px-8 rounded-2xl border-2 bg-[#7B2FBE] border-[#7B2FBE] text-white shadow-[0_0_24px_rgba(123,47,190,0.5)] transition-all font-bold text-lg hover:bg-[#8B35D6]"
             >
               <Gamepad2 size={32} />
@@ -426,7 +425,22 @@ export default function StartGame() {
                 transition={{ delay: 0.5 }}
                 className="flex justify-center"
               >
-                <button className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1">
+                <button
+                  onClick={() => {
+                    const allCats = SECTIONS.flatMap(s => s.categories);
+                    const t1Cats = team1.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
+                    const t2Cats = team2.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
+                    localStorage.setItem("rakez-game-data", JSON.stringify({
+                      team1Name: "الفريق الأول",
+                      team2Name: "الفريق الثاني",
+                      gameName: "ركز",
+                      team1Categories: t1Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
+                      team2Categories: t2Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
+                    }));
+                    navigate("/score-page");
+                  }}
+                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1"
+                >
                   ابدأ اللعبة 🎮
                 </button>
               </motion.div>
