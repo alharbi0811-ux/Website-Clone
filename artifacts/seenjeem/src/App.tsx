@@ -147,7 +147,6 @@ function AppContent() {
                 transformOrigin: "top left",
                 overflowY: "auto",
                 overflowX: "hidden",
-                background: "#fff",
               }}
             >
               <Router />
