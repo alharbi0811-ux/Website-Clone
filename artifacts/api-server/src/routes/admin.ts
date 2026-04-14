@@ -172,6 +172,7 @@ router.get("/admin/users", async (_req, res) => {
         username: usersTable.username,
         displayName: usersTable.displayName,
         isAdmin: usersTable.isAdmin,
+        role: usersTable.role,
         createdAt: usersTable.createdAt,
       })
       .from(usersTable)
@@ -182,17 +183,43 @@ router.get("/admin/users", async (_req, res) => {
   }
 });
 
-router.patch("/admin/users/:id/toggle-admin", async (req: AuthRequest, res) => {
+const ROLES = ["superadmin", "admin", "moderator", "player"] as const;
+type Role = typeof ROLES[number];
+const ROLE_IS_ADMIN: Record<Role, boolean> = {
+  superadmin: true,
+  admin: true,
+  moderator: false,
+  player: false,
+};
+
+router.patch("/admin/users/:id/role", async (req: AuthRequest, res) => {
   const id = Number(req.params.id);
-  if (id === req.userId) return res.status(400).json({ error: "لا يمكنك تعديل صلاحياتك" });
+  const { role } = req.body as { role: Role };
+
+  if (!ROLES.includes(role)) {
+    return res.status(400).json({ error: "رتبة غير صحيحة" });
+  }
+
+  const [callerUser] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!)).limit(1);
+  if (!callerUser || callerUser.role !== "superadmin") {
+    const targetIsSuperadmin = await db.select({ role: usersTable.role }).from(usersTable).where(eq(usersTable.id, id)).limit(1);
+    if (targetIsSuperadmin[0]?.role === "superadmin") {
+      return res.status(403).json({ error: "لا يمكن تعديل رتبة المدير الأول" });
+    }
+  }
+
+  if (id === req.userId && role !== "superadmin") {
+    return res.status(400).json({ error: "لا يمكنك تخفيض رتبتك" });
+  }
+
   try {
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
-    if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+    const isAdmin = ROLE_IS_ADMIN[role];
     const [updated] = await db
       .update(usersTable)
-      .set({ isAdmin: !user.isAdmin })
+      .set({ role, isAdmin })
       .where(eq(usersTable.id, id))
-      .returning({ id: usersTable.id, isAdmin: usersTable.isAdmin });
+      .returning({ id: usersTable.id, role: usersTable.role, isAdmin: usersTable.isAdmin });
+    if (!updated) return res.status(404).json({ error: "المستخدم غير موجود" });
     res.json(updated);
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });

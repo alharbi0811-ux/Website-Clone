@@ -31,10 +31,10 @@ router.post("/auth/register", async (req, res) => {
     const [user] = await db
       .insert(usersTable)
       .values({ username, passwordHash, displayName: username })
-      .returning({ id: usersTable.id, username: usersTable.username, isAdmin: usersTable.isAdmin, displayName: usersTable.displayName });
+      .returning({ id: usersTable.id, username: usersTable.username, isAdmin: usersTable.isAdmin, displayName: usersTable.displayName, role: usersTable.role });
 
     const token = generateToken(user.id, user.isAdmin);
-    return res.status(201).json({ token, user: { id: user.id, username: user.username, displayName: user.displayName, isAdmin: user.isAdmin } });
+    return res.status(201).json({ token, user: { id: user.id, username: user.username, displayName: user.displayName, isAdmin: user.isAdmin, role: user.role } });
   } catch (err) {
     return res.status(500).json({ error: "خطأ في الخادم" });
   }
@@ -65,7 +65,7 @@ router.post("/auth/login", async (req, res) => {
     }
 
     const token = generateToken(user.id, user.isAdmin);
-    return res.json({ token, user: { id: user.id, username: user.username, displayName: user.displayName, isAdmin: user.isAdmin } });
+    return res.json({ token, user: { id: user.id, username: user.username, displayName: user.displayName, isAdmin: user.isAdmin, role: user.role } });
   } catch (err) {
     return res.status(500).json({ error: "خطأ في الخادم" });
   }
@@ -74,7 +74,7 @@ router.post("/auth/login", async (req, res) => {
 router.get("/auth/me", requireAuth, async (req: AuthRequest, res) => {
   try {
     const [user] = await db
-      .select({ id: usersTable.id, username: usersTable.username, displayName: usersTable.displayName, isAdmin: usersTable.isAdmin })
+      .select({ id: usersTable.id, username: usersTable.username, displayName: usersTable.displayName, isAdmin: usersTable.isAdmin, role: usersTable.role })
       .from(usersTable)
       .where(eq(usersTable.id, req.userId!))
       .limit(1);

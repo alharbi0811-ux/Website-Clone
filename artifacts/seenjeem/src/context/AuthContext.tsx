@@ -5,12 +5,13 @@ interface AuthUser {
   username: string;
   displayName: string | null;
   isAdmin: boolean;
+  role: string;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<{ isAdmin: boolean }>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  async function login(username: string, password: string) {
+  async function login(username: string, password: string): Promise<{ isAdmin: boolean }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -61,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("rakez-auth-token", data.token);
     setToken(data.token);
     setUser(data.user);
+    return { isAdmin: data.user.isAdmin };
   }
 
   async function register(username: string, password: string) {

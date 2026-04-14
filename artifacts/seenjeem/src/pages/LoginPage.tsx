@@ -18,11 +18,12 @@ export default function LoginPage() {
     setLoading(true);
     try {
       if (mode === "login") {
-        await login(username, password);
+        const result = await login(username, password);
+        navigate(result.isAdmin ? "/admin" : "/");
       } else {
         await register(username, password);
+        navigate("/");
       }
-      navigate("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "حدث خطأ");
     } finally {
