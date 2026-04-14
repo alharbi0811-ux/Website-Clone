@@ -11,7 +11,9 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
 - **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
+- **Database**: Neon PostgreSQL (external) + Drizzle ORM
+- **Auth**: JWT (jsonwebtoken) + bcryptjs password hashing
+- **Session**: 7-day JWT stored in localStorage (`rakez-auth-token`)
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)

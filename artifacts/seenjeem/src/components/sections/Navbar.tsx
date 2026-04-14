@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [, navigate] = useLocation();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +34,6 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
-          {/* Logo + Navigation grouped together */}
           <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0 z-10">
               <img
@@ -58,10 +59,29 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="text-foreground hover:text-primary flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-foreground/5 transition-colors">
-              <User size={20} />
-              <span>تسجيل الدخول</span>
-            </button>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5">
+                  <User size={18} />
+                  <span>{user.displayName || user.username}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-1.5 text-foreground/60 hover:text-red-500 font-medium px-3 py-2 rounded-full hover:bg-red-50 transition-colors"
+                  title="تسجيل الخروج"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="text-foreground hover:text-primary flex items-center gap-2 font-medium px-4 py-2 rounded-full hover:bg-foreground/5 transition-colors"
+              >
+                <User size={20} />
+                <span>تسجيل الدخول</span>
+              </button>
+            )}
             <button
               onClick={() => navigate("/start-game")}
               className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all"
@@ -107,10 +127,29 @@ export function Navbar() {
                 >
                   إنشاء لعبة
                 </button>
-                <button className="flex items-center justify-center gap-2 text-foreground/70 py-3 mt-2 font-medium">
-                  <User size={20} />
-                  <span>تسجيل الدخول / حساب جديد</span>
-                </button>
+                {user ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-foreground/70 py-2 font-medium justify-center">
+                      <User size={18} />
+                      <span>{user.displayName || user.username}</span>
+                    </div>
+                    <button
+                      onClick={() => { logout(); setMobileMenuOpen(false); }}
+                      className="flex items-center justify-center gap-2 text-red-500 py-2 font-medium"
+                    >
+                      <LogOut size={18} />
+                      <span>تسجيل الخروج</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => { navigate("/login"); setMobileMenuOpen(false); }}
+                    className="flex items-center justify-center gap-2 text-foreground/70 py-3 mt-2 font-medium"
+                  >
+                    <User size={20} />
+                    <span>تسجيل الدخول / حساب جديد</span>
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>
