@@ -271,7 +271,7 @@ export default function QuestionPage() {
               {/* Button — bottom left (RTL: last = left) */}
               <button
                 onClick={() => setShowAnswer(true)}
-                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-base py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5"
+                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
               >
                 اختر الإجابة
               </button>
