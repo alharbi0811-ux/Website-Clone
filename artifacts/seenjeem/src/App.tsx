@@ -4,7 +4,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider, useViewport } from "@/context/ViewportContext";
-import { useEffect } from "react";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -81,19 +80,37 @@ function AppContent() {
   const { viewMode } = useViewport();
   const isMobile = viewMode === "mobile";
 
-  useEffect(() => {
-    if (isMobile) {
-      document.body.style.maxWidth = `${IPHONE_W}px`;
-      document.body.style.margin = "0 auto";
-    } else {
-      document.body.style.maxWidth = "";
-      document.body.style.margin = "";
-    }
-    return () => {
-      document.body.style.maxWidth = "";
-      document.body.style.margin = "";
-    };
-  }, [isMobile]);
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "#000",
+          zIndex: 9998,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          id="app-root"
+          dir="rtl"
+          className="light"
+          style={{
+            width: `${IPHONE_W}px`,
+            height: "390px",
+            overflowY: "auto",
+            overflowX: "hidden",
+            position: "relative",
+            background: "#fff",
+          }}
+        >
+          <Router />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="app-root" dir="rtl" className="light w-full min-h-screen">
