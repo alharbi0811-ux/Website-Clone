@@ -25,7 +25,7 @@ import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
 const IPHONE_W = 2556;
-const IPHONE_H = 1179;
+const IPHONE_H = 1600;
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
