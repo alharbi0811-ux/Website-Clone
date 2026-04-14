@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider, useViewport } from "@/context/ViewportContext";
+import { useEffect } from "react";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -23,9 +24,7 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
-
 const IPHONE_W = 844;
-const IPHONE_H = 390;
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -79,36 +78,22 @@ function Router() {
 }
 
 function AppContent() {
-  const { viewMode, scale } = useViewport();
+  const { viewMode } = useViewport();
   const isMobile = viewMode === "mobile";
 
-  if (isMobile) {
-    const offsetX = (window.innerWidth - IPHONE_W * scale) / 2;
-    const offsetY = (window.innerHeight - IPHONE_H * scale) / 2;
-    return (
-      <>
-        <div style={{ background: "#000", position: "fixed", inset: 0, zIndex: 0 }} />
-        <div
-          id="app-root"
-          dir="rtl"
-          className="light"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: `${IPHONE_W}px`,
-            height: `${IPHONE_H}px`,
-            overflow: "hidden",
-            transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
-            transformOrigin: "top left",
-            zIndex: 1,
-          }}
-        >
-          <Router />
-        </div>
-      </>
-    );
-  }
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.maxWidth = `${IPHONE_W}px`;
+      document.body.style.margin = "0 auto";
+    } else {
+      document.body.style.maxWidth = "";
+      document.body.style.margin = "";
+    }
+    return () => {
+      document.body.style.maxWidth = "";
+      document.body.style.margin = "";
+    };
+  }, [isMobile]);
 
   return (
     <div id="app-root" dir="rtl" className="light w-full min-h-screen">
