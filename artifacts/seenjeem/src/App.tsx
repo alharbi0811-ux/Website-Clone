@@ -26,6 +26,9 @@ import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 const queryClient = new QueryClient();
 const IPHONE_W = 5000;
 const IPHONE_H = 2800;
+const CONTENT_W = 1280;
+const CONTENT_H = Math.round(IPHONE_H * CONTENT_W / IPHONE_W);
+const CONTENT_SCALE = IPHONE_W / CONTENT_W;
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -112,6 +115,7 @@ function AppContent() {
           justifyContent: "center",
         }}
       >
+        {/* الصندوق المرئي بالحجم المصغّر */}
         <div
           style={{
             width: `${visW}px`,
@@ -121,21 +125,33 @@ function AppContent() {
             flexShrink: 0,
           }}
         >
+          {/* يصغّر الكانفاس ليناسب الشاشة */}
           <div
-            id="app-root"
-            dir="rtl"
-            className="light"
             style={{
               width: `${IPHONE_W}px`,
               height: `${IPHONE_H}px`,
               transform: `scale(${scale})`,
               transformOrigin: "top left",
-              overflowY: "auto",
-              overflowX: "hidden",
-              background: "#fff",
+              overflow: "hidden",
             }}
           >
-            <Router />
+            {/* المحتوى يُرسم بحجم طبيعي ثم يُكبَّر ليملأ الكانفاس */}
+            <div
+              id="app-root"
+              dir="rtl"
+              className="light"
+              style={{
+                width: `${CONTENT_W}px`,
+                height: `${CONTENT_H}px`,
+                transform: `scale(${CONTENT_SCALE})`,
+                transformOrigin: "top left",
+                overflowY: "auto",
+                overflowX: "hidden",
+                background: "#fff",
+              }}
+            >
+              <Router />
+            </div>
           </div>
         </div>
       </div>
