@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider, useViewport } from "@/context/ViewportContext";
+import { useState, useEffect } from "react";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -23,7 +24,8 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
-const IPHONE_W = 844;
+const IPHONE_W = 2556;
+const IPHONE_H = 1179;
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -79,14 +81,31 @@ function Router() {
 function AppContent() {
   const { viewMode } = useViewport();
   const isMobile = viewMode === "mobile";
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const update = () => {
+      const s = Math.min(
+        window.innerWidth / IPHONE_W,
+        window.innerHeight / IPHONE_H
+      );
+      setScale(s);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [isMobile]);
 
   if (isMobile) {
+    const visW = IPHONE_W * scale;
+    const visH = IPHONE_H * scale;
     return (
       <div
         style={{
           position: "fixed",
           inset: 0,
-          background: "#000",
+          background: "#111",
           zIndex: 9998,
           display: "flex",
           alignItems: "center",
@@ -94,19 +113,30 @@ function AppContent() {
         }}
       >
         <div
-          id="app-root"
-          dir="rtl"
-          className="light"
           style={{
-            width: `${IPHONE_W}px`,
-            height: "700px",
-            overflowY: "auto",
-            overflowX: "hidden",
+            width: `${visW}px`,
+            height: `${visH}px`,
+            overflow: "hidden",
             position: "relative",
-            background: "#fff",
+            flexShrink: 0,
           }}
         >
-          <Router />
+          <div
+            id="app-root"
+            dir="rtl"
+            className="light"
+            style={{
+              width: `${IPHONE_W}px`,
+              height: `${IPHONE_H}px`,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+              overflowY: "auto",
+              overflowX: "hidden",
+              background: "#fff",
+            }}
+          >
+            <Router />
+          </div>
         </div>
       </div>
     );
