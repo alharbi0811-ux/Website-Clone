@@ -469,61 +469,6 @@ export default function StartGame() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setShowSplitTeams(!showSplitTeams)}
-                className="w-full bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] text-white font-black text-lg py-4 rounded-xl flex items-center justify-between px-6 mb-8"
-              >
-                <motion.span
-                  animate={{ rotate: showSplitTeams ? 180 : 0 }}
-                  className="text-2xl"
-                >
-                  ∧
-                </motion.span>
-                <span>قسملي الفرق</span>
-              </button>
-
-              <AnimatePresence>
-                {showSplitTeams && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden mb-8"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-50 rounded-2xl">
-                      <div>
-                        <h4 className="text-lg font-black text-[#7B2FBE] mb-3 text-center">فئات الفريق الأول</h4>
-                        <div className="space-y-2">
-                          {team1.map((id, idx) => {
-                            const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
-                            return (
-                              <div key={id} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20">
-                                <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-xs">{idx + 1}</div>
-                                <span className="text-foreground font-semibold">{cat?.name}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-black text-[#7B2FBE] mb-3 text-center">فئات الفريق الثاني</h4>
-                        <div className="space-y-2">
-                          {team2.map((id, idx) => {
-                            const cat = SECTIONS.flatMap(s => s.categories).find(c => c.id === id);
-                            return (
-                              <div key={id} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-[#7B2FBE]/20">
-                                <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white flex items-center justify-center font-bold text-xs">{idx + 1}</div>
-                                <span className="text-foreground font-semibold">{cat?.name}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
