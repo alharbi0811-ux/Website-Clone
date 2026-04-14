@@ -49,7 +49,7 @@ export function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-foreground hover:text-primary font-medium text-lg transition-colors relative group"
+                  className="text-foreground hover:text-primary font-medium transition-colors relative group text-[26px] text-center"
                 >
                   {link.name}
                   <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
@@ -108,7 +108,6 @@ export function Navbar() {
           </button>
         </div>
       </div>
-
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
