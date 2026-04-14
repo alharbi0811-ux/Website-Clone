@@ -251,7 +251,7 @@ export default function QuestionPage() {
             </div>
 
             {/* Question content — top aligned */}
-            <div className="px-8 pt-14 pb-4">
+            <div className="px-8 pt-20 pb-4">
               <p className="text-gray-900 text-center font-extrabold text-[30px]">
                 {questionData.question}
               </p>
