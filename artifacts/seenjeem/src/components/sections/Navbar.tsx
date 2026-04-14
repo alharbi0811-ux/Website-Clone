@@ -66,7 +66,7 @@ export function Navbar() {
                   <Link href="/admin">
                     <a className="flex items-center gap-1.5 text-[#7B2FBE] font-semibold text-sm px-3 py-2 rounded-full bg-violet-50 hover:bg-violet-100 transition-colors">
                       <LayoutDashboard size={15} />
-                      <span>الإدارة</span>
+                      <span className="text-[20px]">الإدارة</span>
                     </a>
                   </Link>
                 )}

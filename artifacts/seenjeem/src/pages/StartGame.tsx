@@ -216,14 +216,8 @@ export default function StartGame() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex justify-center max-w-lg mx-auto mb-10"
+            className="hidden"
           >
-            <button
-              className="flex flex-col items-center justify-center gap-3 py-6 px-8 rounded-2xl border-2 bg-[#7B2FBE] border-[#7B2FBE] text-white shadow-[0_0_24px_rgba(123,47,190,0.5)] transition-all font-bold text-lg hover:bg-[#8B35D6]"
-            >
-              <Gamepad2 size={32} />
-              إنشاء لعبة
-            </button>
           </motion.div>
 
           {/* Selection Status */}
