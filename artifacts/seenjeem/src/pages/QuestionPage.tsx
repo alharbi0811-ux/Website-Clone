@@ -285,45 +285,46 @@ export default function QuestionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col p-6"
+            className="fixed inset-0 bg-white z-50 flex flex-col"
             dir="rtl"
           >
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <button
-                onClick={() => setShowAnswer(false)}
-                className="flex items-center gap-1.5 bg-[#7B2FBE]/15 hover:bg-[#7B2FBE]/25 text-[#7B2FBE] px-4 py-2 rounded-lg text-sm font-bold transition-colors"
-              >
-                <ArrowRight size={16} />
-                العودة
-              </button>
+            {/* Navbar — same style as main page */}
+            <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg shrink-0">
+              <div className="flex items-center gap-3">
+                <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" style={{ filter: "drop-shadow(0 0 8px rgba(180,100,255,0.7))" }} />
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
+                  الإجابة
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAnswer(false)}
+                  className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+                >
+                  <ArrowRight size={14} />
+                  <span>العودة</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center gap-8">
-              <h1 className="text-4xl font-black text-[#7B2FBE] text-center">
-                {questionData.categoryName}
-              </h1>
-
-              <div className="text-center max-w-2xl">
-                <p className="text-gray-600 text-lg mb-6">
-                  {questionData.question}
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-l from-[#7B2FBE] to-[#9333ea] text-white rounded-3xl p-12 text-center max-w-2xl shadow-2xl">
-                <p className="text-5xl font-black mb-4">الإجابة:</p>
-                <p className="text-4xl font-black leading-relaxed">
+            {/* Body — answer box centered */}
+            <div className="flex-1 flex items-center justify-center p-10">
+              <div className="w-full max-w-3xl border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col items-center justify-center p-14 gap-8 shadow-[0_8px_40px_rgba(123,47,190,0.15)] min-h-[55vh]">
+                <p className="text-5xl font-black text-gray-900 text-center leading-relaxed">
                   {questionData.answer}
                 </p>
-              </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowTeamSelection(true)}
-                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-4 px-12 rounded-full shadow-lg transition-colors mt-8"
-              >
-                التالي
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setShowTeamSelection(true)}
+                  className="mt-4 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-12 rounded-full shadow-lg transition-colors"
+                >
+                  التالي
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}
