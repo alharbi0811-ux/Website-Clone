@@ -20,7 +20,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-          className="mb-8"
+          className="mb-4 flex flex-col items-center"
         >
           <img
             src="/logo-white.png"
@@ -28,17 +28,16 @@ export function Hero() {
             className="w-48 md:w-72 lg:w-96"
             style={{ mixBlendMode: "screen" }}
           />
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-white/80 text-lg md:text-xl lg:text-2xl font-semibold tracking-wide mt-2"
+            dir="rtl"
+          >
+            الجواب عليك، و السؤال علينا
+          </motion.p>
         </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6"
-          style={{ lineHeight: 1.2 }}
-        >
-          الجواب عليك، و السؤال علينا
-        </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
