@@ -6,9 +6,9 @@ import { useAdminFetch } from "@/hooks/useAdminFetch";
 interface Category { id: number; nameAr: string; }
 
 const difficulties = [
-  { value: "easy", label: "سهل", color: "#34d399", bg: "rgba(16,185,129,0.15)", border: "rgba(16,185,129,0.35)" },
-  { value: "medium", label: "متوسط", color: "#fbbf24", bg: "rgba(251,191,36,0.15)", border: "rgba(251,191,36,0.35)" },
-  { value: "hard", label: "صعب", color: "#f87171", bg: "rgba(248,113,113,0.15)", border: "rgba(248,113,113,0.35)" },
+  { value: "easy",   label: "سهل",   points: 200, color: "#34d399", bg: "rgba(16,185,129,0.15)",  border: "rgba(16,185,129,0.35)" },
+  { value: "medium", label: "متوسط", points: 400, color: "#fbbf24", bg: "rgba(251,191,36,0.15)",  border: "rgba(251,191,36,0.35)" },
+  { value: "hard",   label: "صعب",   points: 600, color: "#f87171", bg: "rgba(248,113,113,0.15)", border: "rgba(248,113,113,0.35)" },
 ];
 
 const inputStyle: React.CSSProperties = {
@@ -32,12 +32,6 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.04em",
 };
 
-function useFocusStyle(
-  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void,
-  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-) {
-  return { onFocus, onBlur };
-}
 
 export default function AdminQuestionForm() {
   const [location, navigate] = useLocation();
@@ -60,8 +54,7 @@ export default function AdminQuestionForm() {
     optionA: "", optionB: "", optionC: "", optionD: "",
     correctOption: "" as "" | "a" | "b" | "c" | "d",
     difficulty: "medium",
-    points: "100",
-    timeSeconds: "30",
+    points: "400",
     isActive: true,
   });
 
@@ -89,7 +82,6 @@ export default function AdminQuestionForm() {
               correctOption: q.correctOption || "",
               difficulty: q.difficulty,
               points: String(q.points),
-              timeSeconds: String(q.timeSeconds),
               isActive: q.isActive,
             });
           }
@@ -112,7 +104,7 @@ export default function AdminQuestionForm() {
         answer: form.answer,
         difficulty: form.difficulty,
         points: Number(form.points),
-        timeSeconds: Number(form.timeSeconds),
+        timeSeconds: 30,
         isActive: form.isActive,
       };
       if (form.optionA) payload.optionA = form.optionA;
@@ -255,35 +247,33 @@ export default function AdminQuestionForm() {
             )}
           </div>
 
-          {/* Difficulty / Points / Time */}
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label style={labelStyle}>الصعوبة</label>
-              <div className="flex flex-col gap-1.5">
-                {difficulties.map((d) => (
+          {/* Difficulty + Points (linked) */}
+          <div>
+            <label style={labelStyle}>الصعوبة والنقاط</label>
+            <div className="grid grid-cols-3 gap-3">
+              {difficulties.map((d) => {
+                const active = form.difficulty === d.value;
+                return (
                   <button
                     key={d.value}
                     type="button"
-                    onClick={() => setForm((p) => ({ ...p, difficulty: d.value }))}
-                    className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-right transition-all"
+                    onClick={() => setForm((p) => ({ ...p, difficulty: d.value, points: String(d.points) }))}
+                    className="flex flex-col items-center gap-1 py-3 rounded-lg transition-all"
                     style={
-                      form.difficulty === d.value
-                        ? { background: d.bg, color: d.color, border: `1px solid ${d.border}` }
-                        : { background: "rgba(255,255,255,0.03)", color: "#444466", border: "1px solid rgba(255,255,255,0.05)" }
+                      active
+                        ? { background: d.bg, border: `1px solid ${d.border}`, boxShadow: `0 0 12px ${d.bg}` }
+                        : { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }
                     }
                   >
-                    {d.label}
+                    <span className="text-lg font-black font-mono" style={{ color: active ? d.color : "#333355" }}>
+                      {d.points}
+                    </span>
+                    <span className="text-[10px] font-mono" style={{ color: active ? d.color : "#444466" }}>
+                      {d.label}
+                    </span>
                   </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label style={labelStyle}>النقاط</label>
-              <input type="number" value={form.points} onChange={set("points")} min={1} style={inputStyle} {...focusHandlers} />
-            </div>
-            <div>
-              <label style={labelStyle}>الوقت (ثانية)</label>
-              <input type="number" value={form.timeSeconds} onChange={set("timeSeconds")} min={5} max={120} style={inputStyle} {...focusHandlers} />
+                );
+              })}
             </div>
           </div>
 
