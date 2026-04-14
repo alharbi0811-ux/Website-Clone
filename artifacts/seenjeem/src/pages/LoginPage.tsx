@@ -46,7 +46,7 @@ export default function LoginPage() {
       >
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
           <div className="flex flex-col items-center mb-8">
-            <img src="/logo-white.png" alt="ركز" className="w-32 mb-3" style={{ mixBlendMode: "screen" }} />
+            <img src="/logo-white.png" alt="ركز" className="w-32 mb-3" style={{ mixBlendMode: "screen", filter: "drop-shadow(0 0 14px rgba(180, 100, 255, 0.9)) drop-shadow(0 0 35px rgba(123, 47, 190, 0.5))" }} />
             <p className="text-white/70 text-sm">الجواب عليك، و السؤال علينا</p>
           </div>
 

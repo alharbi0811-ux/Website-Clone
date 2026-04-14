@@ -25,7 +25,10 @@ export function Hero() {
             src="/logo-white.png"
             alt="ركز"
             className="w-48 md:w-72 lg:w-96"
-            style={{ mixBlendMode: "screen" }}
+            style={{
+              mixBlendMode: "screen",
+              filter: "drop-shadow(0 0 18px rgba(180, 100, 255, 0.85)) drop-shadow(0 0 40px rgba(123, 47, 190, 0.55))",
+            }}
           />
           <motion.p
             initial={{ opacity: 0, y: 8 }}

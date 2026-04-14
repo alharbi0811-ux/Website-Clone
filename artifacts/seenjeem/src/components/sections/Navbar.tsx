@@ -40,6 +40,7 @@ export function Navbar() {
                 src="/logo-rakez.png"
                 alt="ركز"
                 className="h-20 md:h-24 w-auto hover:scale-105 transition-transform"
+                style={{ filter: "drop-shadow(0 0 10px rgba(123, 47, 190, 0.5)) drop-shadow(0 0 22px rgba(123, 47, 190, 0.25))" }}
               />
             </Link>
 
