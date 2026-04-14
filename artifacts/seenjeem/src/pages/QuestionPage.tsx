@@ -27,6 +27,7 @@ type QuestionData = {
   categoryName: string;
   points: number;
   catIdx: number;
+  side: "l" | "r";
   currentTeam: 1 | 2;
   question: string;
   answer: string;
@@ -350,7 +351,7 @@ export default function QuestionPage() {
                   onClick={() => {
                     const points = questionData.points;
                     localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + points, team2Score }));
-                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, correct: true, team: 1 }));
+                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 1 }));
                     navigate("/score-page");
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
@@ -364,7 +365,7 @@ export default function QuestionPage() {
                   onClick={() => {
                     const points = questionData.points;
                     localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + points }));
-                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, correct: true, team: 2 }));
+                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 2 }));
                     navigate("/score-page");
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
@@ -377,7 +378,7 @@ export default function QuestionPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, correct: false, team: 0 }));
+                  localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: 0 }));
                   navigate("/score-page");
                 }}
                 className="bg-gray-400 hover:bg-gray-500 text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"

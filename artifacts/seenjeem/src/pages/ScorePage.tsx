@@ -71,9 +71,9 @@ export default function ScorePage() {
 
     const answered = localStorage.getItem("rakez-answered-cell");
     if (answered) {
-      const { catIdx, points, correct, team } = JSON.parse(answered);
+      const { catIdx, points, side, correct, team } = JSON.parse(answered);
       localStorage.removeItem("rakez-answered-cell");
-      const key = `${catIdx}-${points}`;
+      const key = `${catIdx}-${points}-${side ?? "l"}`;
       setPlayedCells((prev) => {
         const next = new Set(prev);
         next.add(key);
@@ -104,7 +104,7 @@ export default function ScorePage() {
   if (!gameData) return null;
 
   const allCategories = [...gameData.team1Categories, ...gameData.team2Categories];
-  const totalCells = allCategories.length * POINTS.length;
+  const totalCells = allCategories.length * POINTS.length * 2;
   const allPlayed = playedCells.size >= totalCells;
 
   const SAMPLE_QUESTIONS = [
@@ -113,8 +113,8 @@ export default function ScorePage() {
     "ما هي عاصمة اليابان؟",
   ];
 
-  const handleCellClick = (catIdx: number, points: number) => {
-    const key = `${catIdx}-${points}`;
+  const handleCellClick = (catIdx: number, points: number, side: "l" | "r") => {
+    const key = `${catIdx}-${points}-${side}`;
     if (playedCells.has(key)) return;
 
     const category = allCategories[catIdx];
@@ -125,6 +125,7 @@ export default function ScorePage() {
       categoryName: category.name,
       points,
       catIdx,
+      side,
       currentTeam,
       question: SAMPLE_QUESTIONS[qIdx] || "سؤال تجريبي",
       answer: "الإجابة التجريبية",
@@ -359,30 +360,33 @@ function CategoryCard({
   category: CategoryData;
   catIdx: number;
   playedCells: Set<string>;
-  onCellClick: (catIdx: number, points: number) => void;
+  onCellClick: (catIdx: number, points: number, side: "l" | "r") => void;
   teamColor: string;
 }) {
+  const btnClass = (played: boolean) => `
+    w-full flex-1 rounded-xl font-black text-2xl transition-all
+    ${played
+      ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
+      : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
+    }
+  `;
+
   return (
     <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 min-h-0">
       <div className="flex flex-1 min-h-0">
+
+        {/* Left column */}
         <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
-            const key = `${catIdx}-${points}`;
-            const played = playedCells.has(key);
+            const played = playedCells.has(`${catIdx}-${points}-l`);
             return (
               <motion.button
                 key={`l-${points}`}
                 whileHover={!played ? { scale: 1.05 } : {}}
                 whileTap={!played ? { scale: 0.95 } : {}}
-                onClick={() => onCellClick(catIdx, points)}
+                onClick={() => onCellClick(catIdx, points, "l")}
                 disabled={played}
-                className={`
-                  w-full flex-1 rounded-xl font-black text-2xl transition-all
-                  ${played
-                    ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
-                    : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
-                  }
-                `}
+                className={btnClass(played)}
               >
                 {points}
               </motion.button>
@@ -390,6 +394,7 @@ function CategoryCard({
           })}
         </div>
 
+        {/* Category image */}
         <div className="w-[40%] min-w-[120px] relative self-stretch flex items-center justify-center overflow-hidden">
           <img
             src={category.img}
@@ -398,24 +403,18 @@ function CategoryCard({
           />
         </div>
 
+        {/* Right column */}
         <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
-            const key = `${catIdx}-${points}`;
-            const played = playedCells.has(key);
+            const played = playedCells.has(`${catIdx}-${points}-r`);
             return (
               <motion.button
                 key={`r-${points}`}
                 whileHover={!played ? { scale: 1.05 } : {}}
                 whileTap={!played ? { scale: 0.95 } : {}}
-                onClick={() => onCellClick(catIdx, points)}
+                onClick={() => onCellClick(catIdx, points, "r")}
                 disabled={played}
-                className={`
-                  w-full flex-1 rounded-xl font-black text-2xl transition-all
-                  ${played
-                    ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
-                    : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
-                  }
-                `}
+                className={btnClass(played)}
               >
                 {points}
               </motion.button>
