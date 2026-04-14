@@ -264,7 +264,7 @@ export default function QuestionPage() {
             <div className="flex items-end justify-between px-8 pb-8">
               {/* Category badge — bottom right (RTL: first = right) */}
               <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
-                <span className="text-sm font-black text-[#7B2FBE] tracking-wide">
+                <span className="font-black text-[#7B2FBE] tracking-wide text-[20px] text-center">
                   {questionData.categoryName}
                 </span>
               </div>
