@@ -53,6 +53,7 @@ const categorySchema = z.object({
   section: z.string().optional(),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
+  flagUrl: z.string().optional(),
   isActive: z.boolean().optional().default(true),
 });
 

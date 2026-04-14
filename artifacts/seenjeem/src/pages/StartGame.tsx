@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/sections/Navbar";
 import { Check, Gamepad2, Info, X } from "lucide-react";
@@ -6,8 +6,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 
 const API_BASE = "/api";
-
-const CDN = "https://d442zbpa1tgal.cloudfront.net";
 
 type Category = {
   id: string;
@@ -22,139 +20,6 @@ type Section = {
   categories: Category[];
 };
 
-const SECTIONS: Section[] = [
-  {
-    name: "أجدد الفئات",
-    categories: [
-      { id: "new-gulf-outfit", name: "طقم فنان خليجي", img: `${CDN}/1772110864905-588292764.jpg` },
-      { id: "new-faisal", name: "فيصل بوغازي", img: `${CDN}/1773064818148-154584863.jpg` },
-      { id: "new-live1", name: "الغميضة", img: `${CDN}/1772459128688-499091855.jpg` },
-      { id: "new-live2", name: "شارع الأعشى", img: `${CDN}/1772459069961-721054682.jpg` },
-      { id: "new-muzaffar", name: "مسرح المظفر", img: `${CDN}/1773857820860-639734911.jpg` },
-      { id: "new-manae", name: "مسرح المانع", img: `${CDN}/1773857753928-637269502.jpg` },
-    ],
-  },
-  {
-    name: "الكويت",
-    flag: `${CDN}/flags/kuwait.png`,
-    categories: [
-      { id: "kw", name: "الكويت", img: `${CDN}/1769955614865-48498592.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-parliament", name: "مجلس الأمة", img: `${CDN}/1714490868454-914972575.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-restaurants", name: "شارع المطاعم", img: `${CDN}/1722983854149-260057650.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-ads", name: "دعايات", img: `${CDN}/1739270060080-288600531.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-old", name: "جيل الطيبين", img: `${CDN}/1756575104773-387256081.png`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-location", name: "لوكيشن", img: `${CDN}/1765874335281-496463000.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-malls", name: "مجمعات الكويت", img: `${CDN}/1739335430643-464471679.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-cafe", name: "قهاوي", img: `${CDN}/1767613947069-838912003.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-traffic", name: "مرور الكويت", img: `${CDN}/1744055130505-535557156.jpg`, flag: `${CDN}/flags/kuwait.png` },
-      { id: "kw-oil", name: "نفط الكويت", img: `${CDN}/1734967569913-926736893.jpg`, flag: `${CDN}/flags/kuwait.png` },
-    ],
-  },
-  {
-    name: "عام",
-    categories: [
-      { id: "gen-lang", name: "لغة وأدب", img: `${CDN}/1714490801753-92992552.jpg` },
-      { id: "gen-poetry", name: "عالم الشعر", img: `${CDN}/1738076222656-24201363.jpg` },
-      { id: "gen-history", name: "تاريخ", img: `${CDN}/1732722554184-592567878.jpg` },
-      { id: "gen-info", name: "معلومات عامة", img: `${CDN}/1714490927962-855974365.jpg` },
-      { id: "gen-tech", name: "تكنولوجيا", img: `${CDN}/1755459861188-495099916.jpg` },
-      { id: "gen-animals", name: "عالم الحيوان", img: `${CDN}/1764093254679-304463454.jpg` },
-      { id: "gen-logos", name: "شعارات", img: `${CDN}/1714490898211-217129236.jpg` },
-      { id: "gen-global-logos", name: "شعارات عالمية", img: `${CDN}/1742549852188-992634557.jpg` },
-      { id: "gen-products", name: "منتجات", img: `${CDN}/1714490909938-715756503.jpg` },
-      { id: "gen-fridges", name: "برادات", img: `${CDN}/1761744080374-488242381.jpg` },
-      { id: "gen-global-perfume", name: "عطور عالمية", img: `${CDN}/1730264280284-540083233.jpg` },
-      { id: "gen-arab-perfume", name: "عطور عربية", img: `${CDN}/1730300632401-389262153.jpg` },
-      { id: "gen-medicine", name: "طب عام", img: `${CDN}/1751455054389-639034112.jpg` },
-      { id: "gen-dentist", name: "طب الأسنان", img: `${CDN}/1750684630717-880873314.jpg` },
-      { id: "gen-celebrity-voice", name: "صوت المشهور", img: `${CDN}/1726407003679-293178624.jpg` },
-      { id: "gen-influencer", name: "مين المؤثر", img: `${CDN}/1743129834094-775188715.jpg` },
-      { id: "gen-celeb", name: "منو المشهور", img: `${CDN}/1714490378267-914373042.jpg` },
-      { id: "gen-cars", name: "سيارات", img: `${CDN}/1714490889843-486344234.jpg` },
-      { id: "gen-ai", name: "Ai", img: `${CDN}/1745426626316-573405766.jpg` },
-      { id: "gen-memes", name: "ميمز", img: `${CDN}/1761550412694-487896749.jpg` },
-      { id: "gen-sea", name: "أهل البحر", img: `${CDN}/1722435481839-15933924.jpg` },
-      { id: "gen-land", name: "أهل البر", img: `${CDN}/1727597919229-423909262.jpg` },
-      { id: "gen-watches", name: "عالم الساعات", img: `${CDN}/1728282309112-255164521.jpg` },
-      { id: "gen-masbaha", name: "مسابيح", img: `${CDN}/1730098837241-909061261.jpg` },
-      { id: "gen-young-celebs", name: "مشاهير صغار", img: `${CDN}/1728894055592-705280977.jpg` },
-      { id: "gen-ramadan-food", name: "سفرة رمضان", img: `${CDN}/1771770008527-709681698.jpg` },
-      { id: "gen-falcons", name: "Falcons", img: `${CDN}/1741245413047-631315591.jpg` },
-    ],
-  },
-  {
-    name: "إسلامي",
-    categories: [
-      { id: "isl", name: "إسلامي", img: `${CDN}/1714587052246-942365572.jpg` },
-      { id: "isl-quran", name: "القرآن", img: `${CDN}/1714490763615-804290584.jpg` },
-      { id: "isl-sira", name: "السيرة النبوية", img: `${CDN}/1745761792642-238244994.jpg` },
-      { id: "isl-prophets", name: "قصص الأنبياء", img: `${CDN}/1745756957420-785833694.jpg` },
-      { id: "isl-sahaba", name: "الصحابة", img: `${CDN}/1773064749476-916155318.jpg` },
-      { id: "isl-meanings", name: "معاني القرآن", img: `${CDN}/1773339115646-402328276.jpg` },
-      { id: "isl-juz-amma", name: "جزء عم", img: `${CDN}/1761550612337-650723201.jpg` },
-      { id: "isl-juz-tabarak", name: "جزء تبارك", img: `${CDN}/1761550626433-874087255.jpg` },
-      { id: "isl-reader", name: "من القارئ", img: `${CDN}/1742176948768-787080369.jpg` },
-      { id: "isl-nasheeds", name: "أناشيد", img: `${CDN}/1741633698076-825972243.jpg` },
-      { id: "isl-hadith", name: "أحاديث", img: `${CDN}/1741180480937-623190732.jpg` },
-    ],
-  },
-  {
-    name: "دول",
-    categories: [
-      { id: "geo", name: "جغرافيا", img: `${CDN}/1714490823112-594631607.jpg` },
-      { id: "geo-capitals", name: "دول و عواصم", img: `${CDN}/1714490389783-90315349.jpg` },
-      { id: "geo-tourism", name: "سياحة وسفر", img: `${CDN}/1751823486828-666948533.jpg` },
-      { id: "geo-aviation", name: "عالم الطيران", img: `${CDN}/1737401411021-607955302.jpg` },
-      { id: "geo-currencies", name: "عملات", img: `${CDN}/1753725581646-683343990.jpg` },
-      { id: "geo-britain", name: "دفعة بريطانيا", img: `${CDN}/1758283744357-618177912.png` },
-      { id: "geo-which", name: "ما هي الدولة", img: `${CDN}/1763215353499-90714495.jpg` },
-      { id: "geo-leaders", name: "رؤساء الدول", img: `${CDN}/1747833902627-605228857.jpg` },
-      { id: "geo-flags", name: "أعلام", img: `${CDN}/1722983894998-509200770.jpg` },
-      { id: "geo-old-flags", name: "أعلام قديمة", img: `${CDN}/1759149433197-606488893.jpg` },
-      { id: "geo-capitals2", name: "عواصم", img: `${CDN}/1735135560932-219437472.jpg` },
-      { id: "geo-maps", name: "خرايط", img: `${CDN}/1735135576406-177842775.jpg` },
-      { id: "geo-ww", name: "الحرب العالمية", img: `${CDN}/1768222795615-493918481.jpg` },
-      { id: "geo-anthem", name: "النشيد الوطني", img: `${CDN}/1767614045560-840191955.jpg` },
-      { id: "geo-langs", name: "لغات ولهجات", img: `${CDN}/1752498388016-570045889.jpg` },
-    ],
-  },
-  {
-    name: "حروف",
-    categories: [
-      { id: "hruf-moving", name: "حروف متحركة", img: `${CDN}/1771091376268-243364857.jpg` },
-      { id: "hruf", name: "حروف", img: `${CDN}/1748246029846-706132118.png` },
-      { id: "hruf-isl", name: "حروف إسلامي", img: `${CDN}/1770136313789-732561747.png` },
-      { id: "hruf-ghanawi", name: "حروف غناوي", img: `${CDN}/1770136408983-879349423.png` },
-      { id: "hruf-football", name: "حروف كروية", img: `${CDN}/1770136192977-789761540.jpg` },
-      { id: "hruf-anime", name: "حروف أنمي", img: `${CDN}/1771283051278-419027110.jpg` },
-    ],
-  },
-  {
-    name: "ولا كلمة",
-    categories: [
-      { id: "wkl", name: "ولا كلمة", img: `${CDN}/1758730614435-177662848.jpg` },
-      { id: "wkl-gen", name: "ولا كلمة عامة", img: `${CDN}/1758730605907-282527981.jpg` },
-      { id: "wkl-proverbs", name: "ولا كلمة أمثال", img: `${CDN}/1771282358866-323638439.jpg` },
-      { id: "wkl-football", name: "ولا كلمة كروية", img: `${CDN}/1743279432236-578046154.jpg` },
-      { id: "wkl-foreign-art", name: "ولا كلمة فن أجنبي", img: `${CDN}/1758083049744-88645125.jpg` },
-      { id: "wkl-wrestling", name: "ولا كلمة مصارعة", img: `${CDN}/1758002643221-783499255.jpg` },
-      { id: "wkl-anime", name: "ولا كلمة أنمي", img: `${CDN}/1758083565554-400511051.jpg` },
-    ],
-  },
-  {
-    name: "التفكير",
-    categories: [
-      { id: "amthal", name: "أمثال و ألغاز", img: `${CDN}/1714490940317-508575914.jpg` },
-      { id: "amthal-riddle", name: "لغز ومثل", img: `${CDN}/1740578260875-602703145.jpg` },
-      { id: "amthal-puzzles", name: "ألغاز", img: `${CDN}/1742998174143-415830477.jpg` },
-      { id: "amthal-focus", name: "ركز شوي", img: `${CDN}/1718204665916-744508258.jpg` },
-      { id: "amthal-guess", name: "خمن الصورة", img: `${CDN}/1743570879626-653531544.jpg` },
-      { id: "amthal-reversed", name: "كلمات معكوسة", img: `${CDN}/1732211373480-958818078.jpg` },
-      { id: "amthal-color", name: "لون الصورة", img: `${CDN}/1760953350974-354375971.jpg` },
-      { id: "amthal-draw", name: "رسم", img: `${CDN}/1767614066641-156094918.jpg` },
-    ],
-  },
-];
 
 export default function StartGame() {
   const [, navigate] = useLocation();
@@ -167,6 +32,15 @@ export default function StartGame() {
   const [team1Tools, setTeam1Tools] = useState<string[]>([]);
   const [team2Tools, setTeam2Tools] = useState<string[]>([]);
   const [showSplitTeams, setShowSplitTeams] = useState(false);
+  const [sections, setSections] = useState<Section[]>([]);
+  const [loadingSections, setLoadingSections] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/categories`)
+      .then((r) => r.json())
+      .then((data) => { setSections(data); setLoadingSections(false); })
+      .catch(() => setLoadingSections(false));
+  }, []);
 
   const HELP_TOOLS = [
     { id: "double", name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg", color: "#7B2FBE" },
@@ -270,7 +144,12 @@ export default function StartGame() {
 
           {/* Sections with categories */}
           <div className="space-y-12">
-            {SECTIONS.map((section, sIdx) => (
+            {loadingSections ? (
+              <div className="flex items-center justify-center py-24">
+                <div className="w-10 h-10 border-4 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" />
+              </div>
+            ) : null}
+            {!loadingSections && sections.map((section, sIdx) => (
               <motion.div
                 key={section.name}
                 initial={{ opacity: 0, y: 20 }}
