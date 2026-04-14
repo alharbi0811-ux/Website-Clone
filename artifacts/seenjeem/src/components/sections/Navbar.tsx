@@ -21,50 +21,32 @@ export function Navbar() {
     const IPHONE_W = 844;
     const IPHONE_H = 390;
 
-    const applyScale = () => {
-      const root = document.getElementById("app-root");
-      if (!root) return;
-
-      const scale = Math.min(
-        window.innerWidth / IPHONE_W,
-        window.innerHeight / IPHONE_H
-      );
-
-      const offsetX = (window.innerWidth - IPHONE_W * scale) / 2;
-      const offsetY = (window.innerHeight - IPHONE_H * scale) / 2;
-
-      root.style.width = `${IPHONE_W}px`;
-      root.style.minHeight = `${IPHONE_H}px`;
-      root.style.maxHeight = `${IPHONE_H}px`;
-      root.style.overflow = "hidden";
-      root.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-      root.style.transformOrigin = "top left";
+    const apply = () => {
+      const scaleX = window.innerWidth / IPHONE_W;
+      const scaleY = window.innerHeight / IPHONE_H;
+      const scale = Math.min(scaleX, scaleY);
+      document.body.style.width = `${IPHONE_W}px`;
+      document.body.style.height = `${IPHONE_H}px`;
       document.body.style.overflow = "hidden";
-      document.body.style.background = "#000";
+      (document.body.style as any).zoom = String(scale);
     };
 
-    const resetScale = () => {
-      const root = document.getElementById("app-root");
-      if (!root) return;
-      root.style.width = "";
-      root.style.minHeight = "";
-      root.style.maxHeight = "";
-      root.style.overflow = "";
-      root.style.transform = "";
-      root.style.transformOrigin = "";
+    const reset = () => {
+      document.body.style.width = "";
+      document.body.style.height = "";
       document.body.style.overflow = "";
-      document.body.style.background = "";
+      (document.body.style as any).zoom = "";
     };
 
     if (viewMode === "mobile") {
-      applyScale();
-      window.addEventListener("resize", applyScale);
+      apply();
+      window.addEventListener("resize", apply);
       return () => {
-        window.removeEventListener("resize", applyScale);
-        resetScale();
+        window.removeEventListener("resize", apply);
+        reset();
       };
     } else {
-      resetScale();
+      reset();
     }
   }, [viewMode]);
 
