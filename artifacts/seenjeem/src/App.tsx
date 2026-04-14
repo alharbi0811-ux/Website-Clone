@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider, useViewport } from "@/context/ViewportContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -24,11 +24,6 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
-const IPHONE_W = 2796;
-const IPHONE_H = 950;
-const CONTENT_W = 900;
-const CONTENT_H = Math.round(IPHONE_H * CONTENT_W / IPHONE_W);
-const CONTENT_SCALE = IPHONE_W / CONTENT_W;
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -81,81 +76,16 @@ function Router() {
   );
 }
 
+const MOBILE_ZOOM = 0.6;
+
 function AppContent() {
   const { viewMode } = useViewport();
   const isMobile = viewMode === "mobile";
-  const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    if (!isMobile) return;
-    const update = () => {
-      const s = Math.min(
-        window.innerWidth / IPHONE_W,
-        window.innerHeight / IPHONE_H
-      );
-      setScale(s);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    document.documentElement.style.zoom = isMobile ? String(MOBILE_ZOOM) : "";
+    return () => { document.documentElement.style.zoom = ""; };
   }, [isMobile]);
-
-  if (isMobile) {
-    const visW = IPHONE_W * scale;
-    const visH = IPHONE_H * scale;
-    return (
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "#111",
-          zIndex: 9998,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* الصندوق المرئي بالحجم المصغّر */}
-        <div
-          style={{
-            width: `${visW}px`,
-            height: `${visH}px`,
-            overflow: "hidden",
-            position: "relative",
-            flexShrink: 0,
-          }}
-        >
-          {/* يصغّر الكانفاس ليناسب الشاشة */}
-          <div
-            style={{
-              width: `${IPHONE_W}px`,
-              height: `${IPHONE_H}px`,
-              transform: `scale(${scale})`,
-              transformOrigin: "top left",
-              overflow: "hidden",
-            }}
-          >
-            {/* المحتوى يُرسم بحجم طبيعي ثم يُكبَّر ليملأ الكانفاس */}
-            <div
-              id="app-root"
-              dir="rtl"
-              className="light"
-              style={{
-                width: `${CONTENT_W}px`,
-                height: `${CONTENT_H}px`,
-                transform: `scale(${CONTENT_SCALE})`,
-                transformOrigin: "top left",
-                overflowY: "auto",
-                overflowX: "hidden",
-              }}
-            >
-              <Router />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div id="app-root" dir="rtl" className="light w-full min-h-screen">
