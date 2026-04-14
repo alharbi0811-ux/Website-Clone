@@ -183,21 +183,21 @@ export default function ScorePage() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleEndGame}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors w-32"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
             >
               <Eye size={14} />
               <span>انتهاء اللعبة</span>
             </button>
             <button
               onClick={handleResetBoard}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors w-32"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
             >
               <RotateCcw size={14} />
               <span>إعادة</span>
             </button>
             <button
               onClick={handleExit}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-full text-xs font-bold transition-colors w-32"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
             >
               <LogOut size={14} />
               <span>الخروج</span>
