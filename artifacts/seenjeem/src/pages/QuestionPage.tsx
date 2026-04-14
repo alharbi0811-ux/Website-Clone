@@ -177,27 +177,27 @@ export default function QuestionPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleBackToBoard}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
           >
             <Eye size={14} />
-            <span className="hidden sm:inline">انتهاء اللعبة</span>
+            <span>انتهاء اللعبة</span>
           </button>
           <button
             onClick={handleBackToBoard}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
           >
             <ArrowRight size={14} />
-            <span className="hidden sm:inline">الرجوع للوحة</span>
+            <span>الرجوع للوحة</span>
           </button>
           <button
             onClick={() => {
               localStorage.removeItem("rakez-game-data");
               navigate("/start-game");
             }}
-            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
           >
             <LogOut size={14} />
-            <span className="hidden sm:inline">الخروج</span>
+            <span>الخروج</span>
           </button>
         </div>
       </div>
