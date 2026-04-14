@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { ViewportProvider, useViewport } from "@/context/ViewportContext";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -23,6 +24,9 @@ import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
 
+const IPHONE_W = 844;
+const IPHONE_H = 390;
+
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   if (isLoading) return null;
@@ -34,7 +38,6 @@ function AdminGuard({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
-      {/* Public */}
       <Route path="/" component={Home} />
       <Route path="/login" component={LoginPage} />
       <Route path="/start-game" component={StartGame} />
@@ -42,7 +45,6 @@ function Router() {
       <Route path="/question" component={QuestionPage} />
       <Route path="/history" component={HistoryPage} />
 
-      {/* Admin */}
       <Route path="/admin">
         <AdminGuard><AdminDashboard /></AdminGuard>
       </Route>
@@ -76,17 +78,49 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const { viewMode, scale } = useViewport();
+  const isMobile = viewMode === "mobile";
+
+  const offsetX = isMobile ? (window.innerWidth - IPHONE_W * scale) / 2 : 0;
+  const offsetY = isMobile ? (window.innerHeight - IPHONE_H * scale) / 2 : 0;
+
+  return (
+    <div
+      id="app-root"
+      dir="rtl"
+      className="light"
+      style={
+        isMobile
+          ? {
+              width: `${IPHONE_W}px`,
+              height: `${IPHONE_H}px`,
+              overflow: "hidden",
+              transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
+              transformOrigin: "top left",
+              position: "fixed",
+              top: 0,
+              left: 0,
+            }
+          : { width: "100%", minHeight: "100vh" }
+      }
+    >
+      <Router />
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <div id="app-root" dir="rtl" className="light w-full min-h-screen">
-              <Router />
-            </div>
-          </WouterRouter>
-          <Toaster />
+          <ViewportProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppContent />
+            </WouterRouter>
+            <Toaster />
+          </ViewportProvider>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

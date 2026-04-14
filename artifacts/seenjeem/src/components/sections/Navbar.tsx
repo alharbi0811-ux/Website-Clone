@@ -3,52 +3,16 @@ import { Link, useLocation } from "wouter";
 import { Menu, X, User, LogOut, LayoutDashboard, Monitor, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { useViewport } from "@/context/ViewportContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<"desktop" | "mobile">(() => {
-    return (localStorage.getItem("rakez-view-mode") as "desktop" | "mobile") || "desktop";
-  });
+  const { viewMode, setViewMode } = useViewport();
   const accountRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
-
-  useEffect(() => {
-    localStorage.setItem("rakez-view-mode", viewMode);
-
-    const IPHONE_W = 844;
-    const IPHONE_H = 390;
-
-    const apply = () => {
-      const scaleX = window.innerWidth / IPHONE_W;
-      const scaleY = window.innerHeight / IPHONE_H;
-      const scale = Math.min(scaleX, scaleY);
-      document.body.style.width = `${IPHONE_W}px`;
-      document.body.style.height = `${IPHONE_H}px`;
-      document.body.style.overflow = "hidden";
-      (document.body.style as any).zoom = String(scale);
-    };
-
-    const reset = () => {
-      document.body.style.width = "";
-      document.body.style.height = "";
-      document.body.style.overflow = "";
-      (document.body.style as any).zoom = "";
-    };
-
-    if (viewMode === "mobile") {
-      apply();
-      window.addEventListener("resize", apply);
-      return () => {
-        window.removeEventListener("resize", apply);
-        reset();
-      };
-    } else {
-      reset();
-    }
-  }, [viewMode]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
