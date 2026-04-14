@@ -311,9 +311,9 @@ export default function QuestionPage() {
             </div>
 
             {/* Body — answer box centered */}
-            <div className="flex-1 flex items-center justify-center p-6">
-              <div className="w-full max-w-6xl border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col items-center justify-center p-20 gap-10 shadow-[0_8px_40px_rgba(123,47,190,0.15)] min-h-[75vh]">
-                <p className="text-7xl text-gray-900 text-center leading-relaxed">
+            <div className="flex-1 flex items-center justify-center p-3">
+              <div className="w-full h-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col items-center justify-center p-16 gap-10 shadow-[0_8px_40px_rgba(123,47,190,0.15)]">
+                <p className="text-[120px] text-gray-900 text-center leading-tight">
                   {questionData.answer}
                 </p>
 
