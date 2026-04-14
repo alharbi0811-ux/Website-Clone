@@ -177,16 +177,16 @@ export default function QuestionPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleBackToBoard}
-            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
           >
-            <Eye size={14} />
+            <Eye size={15} />
             <span>انتهاء اللعبة</span>
           </button>
           <button
             onClick={handleBackToBoard}
-            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
           >
-            <ArrowRight size={14} />
+            <ArrowRight size={15} />
             <span>الرجوع للوحة</span>
           </button>
           <button
@@ -194,7 +194,7 @@ export default function QuestionPage() {
               localStorage.removeItem("rakez-game-data");
               navigate("/start-game");
             }}
-            className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
           >
             <LogOut size={14} />
             <span>الخروج</span>

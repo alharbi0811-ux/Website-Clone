@@ -183,21 +183,21 @@ export default function ScorePage() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleEndGame}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+              className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
             >
-              <Eye size={14} />
+              <Eye size={15} />
               <span>انتهاء اللعبة</span>
             </button>
             <button
               onClick={handleResetBoard}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+              className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={15} />
               <span>إعادة</span>
             </button>
             <button
               onClick={handleExit}
-              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-xs font-bold transition-all border-2 border-white/25 hover:border-white/50 w-32"
+              className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
             >
               <LogOut size={14} />
               <span>الخروج</span>
