@@ -25,7 +25,7 @@ import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 
 const queryClient = new QueryClient();
 const IPHONE_W = 2796;
-const IPHONE_H = 1290;
+const IPHONE_H = 950;
 const CONTENT_W = 900;
 const CONTENT_H = Math.round(IPHONE_H * CONTENT_W / IPHONE_W);
 const CONTENT_SCALE = IPHONE_W / CONTENT_W;
