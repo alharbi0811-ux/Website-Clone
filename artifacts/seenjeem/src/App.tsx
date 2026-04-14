@@ -99,7 +99,7 @@ function AppContent() {
           className="light"
           style={{
             width: `${IPHONE_W}px`,
-            height: "390px",
+            height: "700px",
             overflowY: "auto",
             overflowX: "hidden",
             position: "relative",

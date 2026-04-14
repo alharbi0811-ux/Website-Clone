@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useViewport } from "@/context/ViewportContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
@@ -44,6 +45,7 @@ const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
 
 export default function QuestionPage() {
   const [, navigate] = useLocation();
+  const { viewMode } = useViewport();
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -159,7 +161,7 @@ export default function QuestionPage() {
   const team2Tools = gameData.team2Tools || ["double", "call", "pit", "rest"];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col" dir="rtl">
+    <div className={`${viewMode === "mobile" ? "min-h-full" : "min-h-screen"} bg-white flex flex-col`} dir="rtl">
       <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-3">
           <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />

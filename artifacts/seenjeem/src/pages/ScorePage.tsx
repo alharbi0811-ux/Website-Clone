@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { ArrowRight, LogOut, Gamepad2, Eye, Minus, Plus, RotateCcw, Trophy } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useViewport } from "@/context/ViewportContext";
 
 const API_BASE = "/api";
 
@@ -27,6 +28,7 @@ const POINTS = [200, 400, 600];
 export default function ScorePage() {
   const [, navigate] = useLocation();
   const { token } = useAuth();
+  const { viewMode } = useViewport();
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<1 | 2>(1);
   const [team1Score, setTeam1Score] = useState(0);
@@ -277,7 +279,7 @@ export default function ScorePage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
+    <div className={`${viewMode === "mobile" ? "h-full" : "h-screen"} overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col`} dir="rtl">
       {/* Top Bar */}
       <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10 pt-[24px] pb-[24px]">
         <div className="flex items-center justify-between relative">
