@@ -332,7 +332,7 @@ export default function QuestionPage() {
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={() => setShowTeamSelection(true)}
-                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white text-lg py-3 px-14 rounded-full shadow-lg transition-colors"
+                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white py-3 px-14 rounded-full shadow-lg transition-colors text-[25px]"
                   >
                     التالي
                   </motion.button>
