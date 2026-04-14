@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/sections/Navbar";
 import { Check, Gamepad2, Info, X } from "lucide-react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/context/AuthContext";
+
+const API_BASE = "/api";
 
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
 
@@ -155,6 +158,7 @@ const SECTIONS: Section[] = [
 
 export default function StartGame() {
   const [, navigate] = useLocation();
+  const { user, token } = useAuth();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [infoCard, setInfoCard] = useState<Category | null>(null);
   const [gameName, setGameName] = useState("");
@@ -476,11 +480,11 @@ export default function StartGame() {
                 className="flex justify-center"
               >
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     const allCats = SECTIONS.flatMap(s => s.categories);
                     const t1Cats = team1.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
                     const t2Cats = team2.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
-                    localStorage.setItem("rakez-game-data", JSON.stringify({
+                    const gData = {
                       team1Name: team1Name || "الفريق الأول",
                       team2Name: team2Name || "الفريق الثاني",
                       gameName: gameName || "ركز",
@@ -488,7 +492,26 @@ export default function StartGame() {
                       team2Categories: t2Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
                       team1Tools,
                       team2Tools,
-                    }));
+                    };
+                    localStorage.setItem("rakez-game-data", JSON.stringify(gData));
+                    localStorage.removeItem("rakez-played-cells");
+                    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: 0, team2Score: 0 }));
+                    localStorage.setItem("rakez-current-team", JSON.stringify(1));
+                    localStorage.removeItem("rakez-session-id");
+
+                    if (user && token) {
+                      try {
+                        const res = await fetch(`${API_BASE}/history`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                          body: JSON.stringify({ gameName: gData.gameName, gameData: gData }),
+                        });
+                        if (res.ok) {
+                          const session = await res.json();
+                          localStorage.setItem("rakez-session-id", String(session.id));
+                        }
+                      } catch {}
+                    }
                     navigate("/score-page");
                   }}
                   className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1"

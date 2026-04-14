@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, History } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 
@@ -32,7 +32,7 @@ export function Navbar() {
 
   const navLinks = [
     { name: "الرئيسية", href: "/" },
-    { name: "ألعابي", href: "#" },
+    { name: "ألعابي", href: "/history" },
   ];
 
   return (
@@ -58,14 +58,14 @@ export function Navbar() {
 
             <nav className="hidden md:flex items-center gap-12">
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.name}
-                  href={link.href}
+                  onClick={() => navigate(link.href)}
                   className="text-foreground hover:text-primary font-medium transition-colors relative group text-center text-[25px]"
                 >
                   {link.name}
                   <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </a>
+                </button>
               ))}
             </nav>
           </div>
@@ -149,14 +149,13 @@ export function Navbar() {
           >
             <div className="flex flex-col px-6 py-8 space-y-6">
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.name}
-                  href={link.href}
-                  className="text-foreground text-xl font-bold border-b border-border pb-4"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => { navigate(link.href); setMobileMenuOpen(false); }}
+                  className="text-foreground text-xl font-bold border-b border-border pb-4 text-right"
                 >
                   {link.name}
-                </a>
+                </button>
               ))}
               <div className="flex flex-col gap-4 pt-4">
                 <button

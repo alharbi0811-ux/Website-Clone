@@ -10,6 +10,7 @@ import StartGame from "@/pages/StartGame";
 import ScorePage from "@/pages/ScorePage";
 import QuestionPage from "@/pages/QuestionPage";
 import LoginPage from "@/pages/LoginPage";
+import HistoryPage from "@/pages/HistoryPage";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/start-game" component={StartGame} />
       <Route path="/score-page" component={ScorePage} />
       <Route path="/question" component={QuestionPage} />
+      <Route path="/history" component={HistoryPage} />
 
       {/* Admin */}
       <Route path="/admin">

@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { ArrowRight, LogOut, Gamepad2, Eye, Minus, Plus, RotateCcw, Trophy } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+
+const API_BASE = "/api";
 
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
 
@@ -23,12 +26,14 @@ const POINTS = [200, 400, 600];
 
 export default function ScorePage() {
   const [, navigate] = useLocation();
+  const { token } = useAuth();
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<1 | 2>(1);
   const [team1Score, setTeam1Score] = useState(0);
   const [team2Score, setTeam2Score] = useState(0);
   const [playedCells, setPlayedCells] = useState<Set<string>>(new Set());
   const [showEndModal, setShowEndModal] = useState(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("rakez-game-data");
@@ -101,6 +106,27 @@ export default function ScorePage() {
     localStorage.setItem("rakez-current-team", JSON.stringify(currentTeam));
   }, [currentTeam]);
 
+  useEffect(() => {
+    const sessionId = localStorage.getItem("rakez-session-id");
+    if (!sessionId || !token) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      fetch(`${API_BASE}/history/${sessionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          boardState: {
+            playedCells: [...playedCells],
+            team1Score,
+            team2Score,
+            currentTeam,
+          },
+        }),
+      }).catch(() => {});
+    }, 1500);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+  }, [playedCells, team1Score, team2Score, currentTeam, token]);
+
   if (!gameData) return null;
 
   const allCategories = [...gameData.team1Categories, ...gameData.team2Categories];
@@ -140,12 +166,21 @@ export default function ScorePage() {
   };
 
   const handleExit = () => {
+    const sessionId = localStorage.getItem("rakez-session-id");
+    if (sessionId && token) {
+      fetch(`${API_BASE}/history/${sessionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status: "completed" }),
+      }).catch(() => {});
+    }
     localStorage.removeItem("rakez-game-data");
     localStorage.removeItem("rakez-scores");
     localStorage.removeItem("rakez-played-cells");
     localStorage.removeItem("rakez-current-team");
     localStorage.removeItem("rakez-used-tools");
     localStorage.removeItem("rakez-current-question");
+    localStorage.removeItem("rakez-session-id");
     navigate("/start-game");
   };
 
