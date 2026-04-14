@@ -34,7 +34,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="md:text-xl lg:text-2xl tracking-wide mt-2 text-[#ffffff] font-black text-[38px]"
+            className="tracking-wide mt-2 text-[#ffffff] font-black text-[38px]"
             dir="rtl"
           >فكر بسرعة… جاوب بدقة</motion.p>
         </motion.div>
