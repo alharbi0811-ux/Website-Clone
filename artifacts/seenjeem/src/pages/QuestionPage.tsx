@@ -290,7 +290,7 @@ export default function QuestionPage() {
             dir="rtl"
           >
             {/* Navbar — same style as main page */}
-            <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg shrink-0">
+            <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-5 flex items-center justify-between shadow-lg shrink-0">
               <div className="flex items-center gap-3">
                 <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" style={{ filter: "drop-shadow(0 0 8px rgba(180,100,255,0.7))" }} />
               </div>
@@ -311,7 +311,7 @@ export default function QuestionPage() {
               <div className="w-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col shadow-[0_8px_40px_rgba(123,47,190,0.15)] overflow-hidden">
 
                 {/* Answer text — top */}
-                <div className="flex-1 flex flex-col items-center justify-center px-16 pt-12 pb-4 gap-8">
+                <div className="flex-1 flex flex-col items-center justify-start px-16 pt-16 pb-4 gap-8">
                   <p className="text-[100px] text-gray-900 text-center leading-tight w-full">
                     {questionData.answer}
                   </p>
