@@ -18,16 +18,12 @@ interface Question {
   isActive: boolean;
 }
 
-const difficultyLabel: Record<string, string> = {
-  easy: "سهل",
-  medium: "متوسط",
-  hard: "صعب",
+const diffStyle: Record<string, { color: string; bg: string; border: string }> = {
+  easy:   { color: "#34d399", bg: "rgba(16,185,129,0.12)",  border: "rgba(16,185,129,0.25)" },
+  medium: { color: "#fbbf24", bg: "rgba(251,191,36,0.12)",  border: "rgba(251,191,36,0.25)" },
+  hard:   { color: "#f87171", bg: "rgba(248,113,113,0.12)", border: "rgba(248,113,113,0.25)" },
 };
-const difficultyColor: Record<string, string> = {
-  easy: "bg-emerald-50 text-emerald-600",
-  medium: "bg-yellow-50 text-yellow-600",
-  hard: "bg-red-50 text-red-600",
-};
+const diffLabel: Record<string, string> = { easy: "سهل", medium: "متوسط", hard: "صعب" };
 
 export default function AdminCategoryQuestions() {
   const [, navigate] = useLocation();
@@ -71,94 +67,155 @@ export default function AdminCategoryQuestions() {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-8">
-        <button onClick={() => navigate("/admin/categories")} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">
-          <ArrowRight size={18} />
+      <div className="flex items-center gap-3 mb-7">
+        <button
+          onClick={() => navigate("/admin/categories")}
+          className="p-2 rounded-lg transition-all"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }}
+        >
+          <ArrowRight size={16} />
         </button>
         <div className="flex-1">
-          <h2 className="text-2xl font-black text-gray-900">أسئلة: {catName}</h2>
-          <p className="text-gray-500 mt-0.5 text-sm">{questions.length} سؤال</p>
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-xs font-mono" style={{ color: "#7B2FBE" }}>~/admin/categories $</span>
+            <span className="text-xs font-mono" style={{ color: "#444466" }}>questions --cat</span>
+          </div>
+          <h2 className="text-xl font-black text-white">
+            أسئلة: <span style={{ color: "#c084fc" }}>{catName}</span>
+          </h2>
+          <p className="text-xs font-mono mt-0.5" style={{ color: "#555577" }}>{questions.length} سؤال</p>
         </div>
         <Link href={`/admin/questions/new?categoryId=${categoryId}`}>
-          <a className="flex items-center gap-2 bg-[#7B2FBE] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#6a25a8] transition-all shadow-[0_4px_14px_rgba(123,47,190,0.3)]">
-            <Plus size={16} />
+          <a
+            className="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-all"
+            style={{
+              background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)",
+              boxShadow: "0 0 14px rgba(123,47,190,0.4)",
+              border: "1px solid rgba(123,47,190,0.5)",
+            }}
+          >
+            <Plus size={15} />
             سؤال جديد
           </a>
         </Link>
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => <div key={i} className="bg-white rounded-2xl h-20 animate-pulse border border-gray-100" />)}
+        <div className="space-y-2">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: "#12121f" }} />
+          ))}
         </div>
       ) : questions.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-          <HelpCircle size={40} className="text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">لا توجد أسئلة في هذه الفئة</p>
+        <div
+          className="rounded-xl p-14 text-center"
+          style={{ background: "#12121f", border: "1px solid rgba(255,255,255,0.05)" }}
+        >
+          <HelpCircle size={36} className="mx-auto mb-3" style={{ color: "#333355" }} />
+          <p className="text-sm font-mono mb-4" style={{ color: "#555577" }}>لا توجد أسئلة في هذه الفئة بعد</p>
           <Link href={`/admin/questions/new?categoryId=${categoryId}`}>
-            <a className="mt-4 inline-block bg-[#7B2FBE] text-white text-sm font-semibold px-4 py-2 rounded-xl">
+            <a
+              className="inline-block text-white text-sm font-semibold px-4 py-2 rounded-lg"
+              style={{ background: "rgba(123,47,190,0.3)", border: "1px solid rgba(123,47,190,0.4)" }}
+            >
               أضف أول سؤال
             </a>
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{ background: "#12121f", border: "1px solid rgba(255,255,255,0.06)" }}
+        >
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3">#</th>
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3">السؤال</th>
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3 hidden sm:table-cell">الإجابة</th>
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3 hidden md:table-cell">الصعوبة</th>
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3 hidden md:table-cell">النقاط</th>
-                <th className="text-right text-xs font-semibold text-gray-500 px-5 py-3 hidden md:table-cell">الوقت</th>
-                <th className="px-5 py-3" />
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.02)" }}>
+                {["#", "السؤال / الإجابة", "الصعوبة", "النقاط", "الوقت", ""].map((h, i) => (
+                  <th
+                    key={i}
+                    className={`text-right px-5 py-2.5 ${i >= 2 && i < 5 ? "hidden md:table-cell" : ""}`}
+                  >
+                    <span className="text-[10px] font-mono" style={{ color: "#333355" }}>{h}</span>
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
-              {questions.map((q, idx) => (
-                <tr key={q.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-4 text-sm text-gray-400 font-mono">{idx + 1}</td>
-                  <td className="px-5 py-4 max-w-xs">
-                    <p className="text-sm font-medium text-gray-900 line-clamp-2">{q.questionText}</p>
-                    {q.optionA && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {[q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean).map((opt, i) => (
-                          <span key={i} className={`text-xs px-1.5 py-0.5 rounded ${["a","b","c","d"][i] === q.correctOption ? "bg-emerald-100 text-emerald-700 font-semibold" : "bg-gray-100 text-gray-500"}`}>
-                            {opt}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-5 py-4 hidden sm:table-cell">
-                    <span className="text-sm text-gray-600 line-clamp-1">{q.answer}</span>
-                  </td>
-                  <td className="px-5 py-4 hidden md:table-cell">
-                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${difficultyColor[q.difficulty] || "bg-gray-100 text-gray-500"}`}>
-                      {difficultyLabel[q.difficulty] || q.difficulty}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 hidden md:table-cell text-sm text-gray-600">{q.points}</td>
-                  <td className="px-5 py-4 hidden md:table-cell text-sm text-gray-600">{q.timeSeconds}ث</td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-1.5">
-                      <Link href={`/admin/questions/${q.id}/edit`}>
-                        <a className="p-1.5 text-gray-400 hover:text-[#7B2FBE] hover:bg-violet-50 rounded-lg transition-colors">
-                          <Pencil size={14} />
-                        </a>
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(q.id)}
-                        disabled={deletingId === q.id}
-                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+            <tbody>
+              {questions.map((q, idx) => {
+                const ds = diffStyle[q.difficulty] || { color: "#8888aa", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.08)" };
+                return (
+                  <tr
+                    key={q.id}
+                    style={{ borderBottom: idx < questions.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                  >
+                    <td className="px-5 py-4">
+                      <span className="text-xs font-mono" style={{ color: "#333355" }}>
+                        {(idx + 1).toString().padStart(2, "0")}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 max-w-xs">
+                      <p className="text-sm font-medium text-white line-clamp-2">{q.questionText}</p>
+                      {q.optionA ? (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {[q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean).map((opt, i) => {
+                            const letter = ["a", "b", "c", "d"][i];
+                            const isCorrect = letter === q.correctOption;
+                            return (
+                              <span
+                                key={i}
+                                className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                                style={
+                                  isCorrect
+                                    ? { background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.25)" }
+                                    : { background: "rgba(255,255,255,0.04)", color: "#444466", border: "1px solid rgba(255,255,255,0.06)" }
+                                }
+                              >
+                                {opt}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-xs font-mono mt-0.5 line-clamp-1" style={{ color: "#555577" }}>▶ {q.answer}</p>
+                      )}
+                    </td>
+                    <td className="px-5 py-4 hidden md:table-cell">
+                      <span
+                        className="text-[10px] font-mono px-2 py-0.5 rounded"
+                        style={{ background: ds.bg, color: ds.color, border: `1px solid ${ds.border}` }}
                       >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {diffLabel[q.difficulty] || q.difficulty}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 hidden md:table-cell">
+                      <span className="text-sm font-mono font-bold" style={{ color: "#7B2FBE" }}>{q.points}</span>
+                    </td>
+                    <td className="px-5 py-4 hidden md:table-cell">
+                      <span className="text-xs font-mono" style={{ color: "#555577" }}>{q.timeSeconds}ث</span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-1">
+                        <Link href={`/admin/questions/${q.id}/edit`}>
+                          <a
+                            className="p-1.5 rounded-lg transition-all"
+                            style={{ color: "#444466", border: "1px solid transparent" }}
+                          >
+                            <Pencil size={13} />
+                          </a>
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(q.id)}
+                          disabled={deletingId === q.id}
+                          className="p-1.5 rounded-lg transition-all disabled:opacity-40"
+                          style={{ color: "#444466", border: "1px solid transparent" }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
