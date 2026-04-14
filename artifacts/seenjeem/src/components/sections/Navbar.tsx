@@ -72,7 +72,7 @@ export function Navbar() {
                 )}
                 <div className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5">
                   <User size={18} />
-                  <span>{user.displayName || user.username}</span>
+                  <span className="text-[20px]">{user.displayName || user.username}</span>
                 </div>
                 <button
                   onClick={logout}
