@@ -53,6 +53,7 @@ export default function QuestionPage() {
   const [team1Score, setTeam1Score] = useState(0);
   const [team2Score, setTeam2Score] = useState(0);
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -258,6 +259,18 @@ export default function QuestionPage() {
               </p>
             </div>
 
+            {/* Question image — centered, clickable */}
+            {questionData.image && (
+              <div className="flex justify-center px-8 pb-4">
+                <img
+                  src={questionData.image}
+                  alt="صورة السؤال"
+                  onClick={() => setLightboxImage(questionData.image!)}
+                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+                />
+              </div>
+            )}
+
             {/* Spacer */}
             <div className="flex-1" />
 
@@ -323,7 +336,8 @@ export default function QuestionPage() {
                     <img
                       src={questionData.image}
                       alt="صورة الإجابة"
-                      className="max-h-52 max-w-xs object-contain rounded-2xl"
+                      onClick={() => setLightboxImage(questionData.image!)}
+                      className="max-h-52 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
                     />
                   </div>
                 ) : (
@@ -402,6 +416,29 @@ export default function QuestionPage() {
                 لا أحد
               </motion.button>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Lightbox overlay */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxImage(null)}
+            className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center cursor-zoom-out p-8"
+          >
+            <motion.img
+              initial={{ scale: 0.85 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.85 }}
+              src={lightboxImage}
+              alt="صورة مكبّرة"
+              className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
           </motion.div>
         )}
       </AnimatePresence>
