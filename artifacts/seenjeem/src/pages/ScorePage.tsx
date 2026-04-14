@@ -33,6 +33,7 @@ export default function ScorePage() {
   const [team2Score, setTeam2Score] = useState(0);
   const [playedCells, setPlayedCells] = useState<Set<string>>(new Set());
   const [showEndModal, setShowEndModal] = useState(false);
+  const [loadingCell, setLoadingCell] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -133,32 +134,56 @@ export default function ScorePage() {
   const totalCells = allCategories.length * POINTS.length * 2;
   const allPlayed = playedCells.size >= totalCells;
 
-  const SAMPLE_QUESTIONS = [
-    "ما هو أكبر كوكب في المجموعة الشمسية؟",
-    "في أي عام استقلت الكويت؟",
-    "ما هي عاصمة اليابان؟",
-  ];
+  const DIFF_MAP: Record<number, string> = { 200: "easy", 400: "medium", 600: "hard" };
 
-  const handleCellClick = (catIdx: number, points: number, side: "l" | "r") => {
+  const handleCellClick = async (catIdx: number, points: number, side: "l" | "r") => {
     const key = `${catIdx}-${points}-${side}`;
-    if (playedCells.has(key)) return;
+    if (playedCells.has(key) || loadingCell) return;
 
     const category = allCategories[catIdx];
-    const qIdx = POINTS.indexOf(points);
+    setLoadingCell(key);
 
-    localStorage.setItem("rakez-current-question", JSON.stringify({
-      categoryId: category.id,
-      categoryName: category.name,
-      points,
-      catIdx,
-      side,
-      currentTeam,
-      question: SAMPLE_QUESTIONS[qIdx] || "سؤال تجريبي",
-      answer: "الإجابة التجريبية",
-      image: category.img,
-    }));
+    try {
+      const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
+      const diff = DIFF_MAP[points] || "medium";
+      const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
+      const url = `${API_BASE}/questions/game?categoryId=${category.id}&difficulty=${diff}${excludeParam}`;
+      const res = await fetch(url);
 
-    navigate("/question");
+      let questionPayload: { question: string; answer: string; image: string; questionId?: number };
+
+      if (res.ok) {
+        const data = await res.json();
+        const newUsed = [...usedIds, data.id];
+        localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
+        questionPayload = {
+          questionId: data.id,
+          question: data.question,
+          answer: data.answer,
+          image: data.image || category.img,
+        };
+      } else {
+        questionPayload = {
+          question: "لا توجد أسئلة لهذه الفئة في قاعدة البيانات. يرجى إضافة أسئلة من لوحة التحكم.",
+          answer: "—",
+          image: category.img,
+        };
+      }
+
+      localStorage.setItem("rakez-current-question", JSON.stringify({
+        categoryId: category.id,
+        categoryName: category.name,
+        points,
+        catIdx,
+        side,
+        currentTeam,
+        ...questionPayload,
+      }));
+
+      navigate("/question");
+    } finally {
+      setLoadingCell(null);
+    }
   };
 
   const handleEndGame = () => {
@@ -181,6 +206,7 @@ export default function ScorePage() {
     localStorage.removeItem("rakez-used-tools");
     localStorage.removeItem("rakez-current-question");
     localStorage.removeItem("rakez-session-id");
+    localStorage.removeItem("rakez-used-question-ids");
     navigate("/start-game");
   };
 
@@ -251,6 +277,7 @@ export default function ScorePage() {
               playedCells={playedCells}
               onCellClick={handleCellClick}
               teamColor="#7B2FBE"
+              loadingCell={loadingCell}
             />
           ))}
         </div>
@@ -263,6 +290,7 @@ export default function ScorePage() {
               playedCells={playedCells}
               onCellClick={handleCellClick}
               teamColor="#9333ea"
+              loadingCell={loadingCell}
             />
           ))}
         </div>
@@ -391,18 +419,22 @@ function CategoryCard({
   playedCells,
   onCellClick,
   teamColor,
+  loadingCell,
 }: {
   category: CategoryData;
   catIdx: number;
   playedCells: Set<string>;
   onCellClick: (catIdx: number, points: number, side: "l" | "r") => void;
   teamColor: string;
+  loadingCell?: string | null;
 }) {
-  const btnClass = (played: boolean) => `
-    w-full flex-1 rounded-xl font-black text-2xl transition-all
+  const btnClass = (played: boolean, isLoading: boolean) => `
+    w-full flex-1 rounded-xl font-black text-2xl transition-all relative
     ${played
       ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
-      : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
+      : isLoading
+        ? "bg-[#7B2FBE] text-white cursor-wait"
+        : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"
     }
   `;
 
@@ -414,16 +446,19 @@ function CategoryCard({
         <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
             const played = playedCells.has(`${catIdx}-${points}-l`);
+            const isLoading = loadingCell === `${catIdx}-${points}-l`;
             return (
               <motion.button
                 key={`l-${points}`}
-                whileHover={!played ? { scale: 1.05 } : {}}
-                whileTap={!played ? { scale: 0.95 } : {}}
+                whileHover={!played && !isLoading ? { scale: 1.05 } : {}}
+                whileTap={!played && !isLoading ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points, "l")}
-                disabled={played}
-                className={btnClass(played)}
+                disabled={played || !!loadingCell}
+                className={btnClass(played, isLoading)}
               >
-                {points}
+                {isLoading ? (
+                  <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" />
+                ) : points}
               </motion.button>
             );
           })}
@@ -442,16 +477,19 @@ function CategoryCard({
         <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
             const played = playedCells.has(`${catIdx}-${points}-r`);
+            const isLoading = loadingCell === `${catIdx}-${points}-r`;
             return (
               <motion.button
                 key={`r-${points}`}
-                whileHover={!played ? { scale: 1.05 } : {}}
-                whileTap={!played ? { scale: 0.95 } : {}}
+                whileHover={!played && !isLoading ? { scale: 1.05 } : {}}
+                whileTap={!played && !isLoading ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points, "r")}
-                disabled={played}
-                className={btnClass(played)}
+                disabled={played || !!loadingCell}
+                className={btnClass(played, isLoading)}
               >
-                {points}
+                {isLoading ? (
+                  <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" />
+                ) : points}
               </motion.button>
             );
           })}
