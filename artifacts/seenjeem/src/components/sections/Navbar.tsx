@@ -17,10 +17,37 @@ export function Navbar() {
 
   useEffect(() => {
     localStorage.setItem("rakez-view-mode", viewMode);
-    if (viewMode === "mobile") {
+
+    const IPHONE_W = 844;
+    const IPHONE_H = 390;
+
+    const applyScale = () => {
+      const scale = Math.min(
+        window.innerWidth / IPHONE_W,
+        window.innerHeight / IPHONE_H
+      );
+      (document.documentElement.style as any).zoom = String(scale);
+      document.documentElement.style.width = `${IPHONE_W}px`;
+      document.documentElement.style.height = `${IPHONE_H}px`;
       document.documentElement.classList.add("viewport-mobile");
-    } else {
+    };
+
+    const resetScale = () => {
+      (document.documentElement.style as any).zoom = "";
+      document.documentElement.style.width = "";
+      document.documentElement.style.height = "";
       document.documentElement.classList.remove("viewport-mobile");
+    };
+
+    if (viewMode === "mobile") {
+      applyScale();
+      window.addEventListener("resize", applyScale);
+      return () => {
+        window.removeEventListener("resize", applyScale);
+        resetScale();
+      };
+    } else {
+      resetScale();
     }
   }, [viewMode]);
 

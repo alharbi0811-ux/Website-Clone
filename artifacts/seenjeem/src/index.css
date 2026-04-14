@@ -167,31 +167,7 @@
   background-clip: text;
 }
 
-/* ===== Viewport mode: iPhone landscape simulation ===== */
+/* ===== Viewport mode: iPhone landscape ===== */
 html.viewport-mobile {
-  background: #111827;
   overflow: hidden;
-  height: 100%;
-}
-
-html.viewport-mobile body {
-  width: 844px;
-  max-width: 844px;
-  height: 390px;
-  margin: calc(50vh - 195px) auto;
-  overflow: hidden;
-  border-radius: 36px;
-  border: 10px solid #2a2a2a;
-  box-shadow:
-    0 0 0 2px #555,
-    0 30px 80px rgba(0, 0, 0, 0.8),
-    inset 0 0 0 1px rgba(255,255,255,0.06);
-  /* transform creates new containing block so fixed children stay inside */
-  transform: scale(1);
-}
-
-html.viewport-mobile header {
-  width: 844px !important;
-  left: 0 !important;
-  right: 0 !important;
 }
