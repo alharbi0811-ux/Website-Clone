@@ -251,19 +251,24 @@ export default function QuestionPage() {
               </div>
             </div>
 
-            {/* Question content */}
-            <div className="flex-1 flex items-center justify-center px-8 pt-10 pb-4">
+            {/* Question content — top aligned */}
+            <div className="px-8 pt-8 pb-4">
               <p className="text-2xl font-black text-gray-900 text-center leading-relaxed">
                 {questionData.question}
               </p>
             </div>
 
-            {/* Bottom row: button (left) | category name (right) */}
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Bottom row: category badge (right) | button (left) */}
             <div className="flex items-end justify-between px-8 pb-8">
-              {/* Category name — bottom right (RTL: first = right) */}
-              <span className="text-sm font-bold text-[#7B2FBE]/70 tracking-wide">
-                {questionData.categoryName}
-              </span>
+              {/* Category badge — bottom right (RTL: first = right) */}
+              <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
+                <span className="text-sm font-black text-[#7B2FBE] tracking-wide">
+                  {questionData.categoryName}
+                </span>
+              </div>
               {/* Button — bottom left (RTL: last = left) */}
               <button
                 onClick={() => setShowAnswer(true)}
