@@ -294,11 +294,7 @@ export default function QuestionPage() {
               <div className="flex items-center gap-3">
                 <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" style={{ filter: "drop-shadow(0 0 8px rgba(180,100,255,0.7))" }} />
               </div>
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
-                  الإجابة
-                </div>
-              </div>
+              <div></div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowAnswer(false)}
