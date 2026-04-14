@@ -199,7 +199,6 @@ export default function QuestionPage() {
           </button>
         </div>
       </div>
-
       <div className="flex-1 flex">
         <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 flex flex-col gap-6">
           <TeamSidebar
@@ -253,7 +252,7 @@ export default function QuestionPage() {
 
             {/* Question content — top aligned */}
             <div className="px-8 pt-8 pb-4">
-              <p className="text-2xl font-black text-gray-900 text-center leading-relaxed">
+              <p className="text-gray-900 text-center font-extrabold text-[30px]">
                 {questionData.question}
               </p>
             </div>
@@ -280,7 +279,6 @@ export default function QuestionPage() {
           </div>
         </div>
       </div>
-
       <AnimatePresence>
         {showAnswer && !showTeamSelection && (
           <motion.div
@@ -330,7 +328,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {showTeamSelection && (
           <motion.div
