@@ -223,69 +223,51 @@ export default function QuestionPage() {
           />
         </div>
 
-        <div className="flex-1 flex flex-col p-6">
+        <div className="flex-1 flex flex-col p-6 pt-10">
 
-          {/* ── Timer above the question box ── */}
-          <div className="flex items-center justify-center mb-3">
-            <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2.5 flex items-center gap-4 shadow-[0_4px_20px_rgba(123,47,190,0.45)]">
-              <button
-                onClick={toggleTimer}
-                className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
-                title={isTimerRunning ? "إيقاف مؤقت" : "استمرار"}
-              >
-                {isTimerRunning ? <Pause size={16} /> : <Play size={16} />}
-              </button>
+          {/* ── Question box with embedded timer ── */}
+          <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
 
-              <span className="text-white font-black text-3xl tracking-widest font-mono min-w-[90px] text-center select-none">
-                {formatTime(timer)}
-              </span>
-
-              <button
-                onClick={resetTimer}
-                className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
-                title="إعادة تشغيل"
-              >
-                <RotateCw size={16} />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 border-4 border-[#7B2FBE] rounded-3xl p-8 flex flex-col bg-white">
-            {/* Title */}
-            <div className="text-center mb-4">
-              <h2 className="text-3xl font-black text-[#7B2FBE] mb-2">
-                {questionData.categoryName}
-              </h2>
-              <p className="text-sm text-gray-500 font-medium">
-                السؤال رقم {questionData.points}
-              </p>
+            {/* Timer: straddles the top border — visually part of the box */}
+            <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
+              <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
+                <button
+                  onClick={resetTimer}
+                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                  title="إعادة تشغيل"
+                >
+                  <RotateCw size={14} />
+                </button>
+                <span className="text-white font-black text-2xl tracking-widest font-mono min-w-[80px] text-center select-none">
+                  {formatTime(timer)}
+                </span>
+                <button
+                  onClick={toggleTimer}
+                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                  title={isTimerRunning ? "إيقاف مؤقت" : "استمرار"}
+                >
+                  {isTimerRunning ? <Pause size={14} /> : <Play size={14} />}
+                </button>
+              </div>
             </div>
 
-            {/* Question */}
-            <div className="text-center mb-8">
-              <p className="text-xl font-bold text-foreground leading-relaxed">
+            {/* Question content */}
+            <div className="flex-1 flex items-center justify-center px-8 pt-10 pb-4">
+              <p className="text-2xl font-black text-gray-900 text-center leading-relaxed">
                 {questionData.question}
               </p>
             </div>
 
-            {/* Image/Content Area */}
-            <div className="flex-1 flex items-center justify-center mb-8 overflow-hidden">
-              {questionData.image ? (
-                <img
-                  src={questionData.image}
-                  alt="صورة السؤال"
-                  className="max-w-full max-h-[350px] object-contain"
-                />
-              ) : (
-                <div className="text-8xl text-gray-300">؟</div>
-              )}
-            </div>
-
-            {/* Bottom Buttons */}
-            <div className="flex items-center justify-center">
+            {/* Bottom row: button (left) | category name (right) */}
+            <div className="flex items-end justify-between px-8 pb-8">
+              {/* Category name — bottom right (RTL: first = right) */}
+              <span className="text-sm font-bold text-[#7B2FBE]/70 tracking-wide">
+                {questionData.categoryName}
+              </span>
+              {/* Button — bottom left (RTL: last = left) */}
               <button
                 onClick={() => setShowAnswer(true)}
-                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
+                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-base py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5"
               >
                 اختر الإجابة
               </button>
