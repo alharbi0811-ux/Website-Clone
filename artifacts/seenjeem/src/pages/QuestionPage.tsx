@@ -200,7 +200,7 @@ export default function QuestionPage() {
         </div>
       </div>
       <div className="flex-1 flex">
-        <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-10 flex flex-col gap-6">
+        <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-20 flex flex-col gap-6">
           <TeamSidebar
             teamName={gameData.team1Name}
             score={team1Score}
