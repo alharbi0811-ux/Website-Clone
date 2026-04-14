@@ -323,7 +323,7 @@ export default function QuestionPage() {
                     <img
                       src={questionData.image}
                       alt="صورة الإجابة"
-                      className="max-h-full max-w-full object-contain rounded-2xl"
+                      className="max-h-52 max-w-xs object-contain rounded-2xl"
                     />
                   </div>
                 ) : (
