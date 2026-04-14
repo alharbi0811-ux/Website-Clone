@@ -234,20 +234,20 @@ export default function QuestionPage() {
               <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
                 <button
                   onClick={resetTimer}
-                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
                   title="إعادة تشغيل"
                 >
-                  <RotateCw size={14} />
+                  <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
                 </button>
-                <span className="text-white font-black text-2xl tracking-widest font-mono min-w-[80px] text-center select-none">
+                <span className="text-white text-2xl tracking-widest min-w-[80px] text-center select-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                   {formatTime(timer)}
                 </span>
                 <button
                   onClick={toggleTimer}
-                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
                   title={isTimerRunning ? "إيقاف مؤقت" : "استمرار"}
                 >
-                  {isTimerRunning ? <Pause size={14} /> : <Play size={14} />}
+                  {isTimerRunning ? <Pause size={18} color="#ffffff" strokeWidth={2.5} /> : <Play size={18} color="#ffffff" strokeWidth={2.5} />}
                 </button>
               </div>
             </div>
