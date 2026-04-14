@@ -183,24 +183,24 @@ export default function ScorePage() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handleEndGame}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl transition-all border border-white/15 text-[15px] font-black text-justify rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] pt-[10px] pb-[10px] pl-[7px] pr-[7px]"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
             >
               <Eye size={14} />
-              انتهاء اللعبة
+              <span>انتهاء اللعبة</span>
             </button>
             <button
               onClick={handleResetBoard}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 rounded-xl transition-all border border-white/15 pt-[10px] pb-[10px] text-[15px] font-black text-justify rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] pl-[10px] pr-[10px]"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
             >
               <RotateCcw size={14} />
-              إعادة
+              <span>إعادة</span>
             </button>
             <button
               onClick={handleExit}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-2 rounded-xl transition-all border border-white/15 text-[#ffffff] border-t-[#ffffff26] border-r-[#ffffff26] border-b-[#ffffff26] border-l-[#ffffff26] border-t-[2px] border-r-[2px] border-b-[2px] border-l-[2px] rounded-tl-[100px] rounded-tr-[100px] rounded-br-[100px] rounded-bl-[100px] pt-[10px] pb-[15px] pl-[10px] pr-[15px] text-[15px] font-black text-justify"
+              className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors w-32"
             >
               <LogOut size={14} />
-              الخروج
+              <span>الخروج</span>
             </button>
           </div>
         </div>
