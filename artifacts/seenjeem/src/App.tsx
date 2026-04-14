@@ -82,29 +82,36 @@ function AppContent() {
   const { viewMode, scale } = useViewport();
   const isMobile = viewMode === "mobile";
 
-  const offsetX = isMobile ? (window.innerWidth - IPHONE_W * scale) / 2 : 0;
-  const offsetY = isMobile ? (window.innerHeight - IPHONE_H * scale) / 2 : 0;
+  if (isMobile) {
+    const offsetX = (window.innerWidth - IPHONE_W * scale) / 2;
+    const offsetY = (window.innerHeight - IPHONE_H * scale) / 2;
+    return (
+      <>
+        <div style={{ background: "#000", position: "fixed", inset: 0, zIndex: 0 }} />
+        <div
+          id="app-root"
+          dir="rtl"
+          className="light"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: `${IPHONE_W}px`,
+            height: `${IPHONE_H}px`,
+            overflow: "hidden",
+            transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
+            transformOrigin: "top left",
+            zIndex: 1,
+          }}
+        >
+          <Router />
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div
-      id="app-root"
-      dir="rtl"
-      className="light"
-      style={
-        isMobile
-          ? {
-              width: `${IPHONE_W}px`,
-              height: `${IPHONE_H}px`,
-              overflow: "hidden",
-              transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
-              transformOrigin: "top left",
-              position: "fixed",
-              top: 0,
-              left: 0,
-            }
-          : { width: "100%", minHeight: "100vh" }
-      }
-    >
+    <div id="app-root" dir="rtl" className="light w-full min-h-screen">
       <Router />
     </div>
   );

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type ViewMode = "desktop" | "mobile";
 
@@ -18,13 +18,10 @@ const IPHONE_W = 844;
 const IPHONE_H = 390;
 
 export function ViewportProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewModeState] = useState<ViewMode>(() => {
-    return (localStorage.getItem("rakez-view-mode") as ViewMode) || "desktop";
-  });
+  const [viewMode, setViewModeState] = useState<ViewMode>("desktop");
   const [scale, setScale] = useState(1);
 
   const setViewMode = (mode: ViewMode) => {
-    localStorage.setItem("rakez-view-mode", mode);
     setViewModeState(mode);
   };
 
@@ -33,12 +30,9 @@ export function ViewportProvider({ children }: { children: ReactNode }) {
       setScale(1);
       return;
     }
-
     const calcScale = () => {
-      const s = Math.min(window.innerWidth / IPHONE_W, window.innerHeight / IPHONE_H);
-      setScale(s);
+      setScale(Math.min(window.innerWidth / IPHONE_W, window.innerHeight / IPHONE_H));
     };
-
     calcScale();
     window.addEventListener("resize", calcScale);
     return () => window.removeEventListener("resize", calcScale);
