@@ -47,7 +47,7 @@ export default function QuestionPage() {
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showTeamSelection, setShowTeamSelection] = useState(false);
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
   const [team1Score, setTeam1Score] = useState(0);
   const [team2Score, setTeam2Score] = useState(0);
@@ -98,26 +98,21 @@ export default function QuestionPage() {
   }, []);
 
   useEffect(() => {
-    if (isTimerRunning && timer > 0) {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (isTimerRunning) {
       timerRef.current = setInterval(() => {
-        setTimer((t) => {
-          if (t <= 1) {
-            setIsTimerRunning(false);
-            return 0;
-          }
-          return t - 1;
-        });
+        setTimer((t) => t + 1);
       }, 1000);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isTimerRunning, timer]);
+  }, [isTimerRunning]);
 
   const toggleTimer = () => setIsTimerRunning(!isTimerRunning);
 
   const resetTimer = () => {
-    setTimer(30);
+    setTimer(0);
     setIsTimerRunning(true);
   };
 
@@ -205,24 +200,6 @@ export default function QuestionPage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-l from-[#9333ea] to-[#7B2FBE] px-6 py-3 flex items-center justify-center gap-6 shadow-md">
-        <button
-          onClick={toggleTimer}
-          className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors"
-        >
-          {isTimerRunning ? <Pause size={18} /> : <Play size={18} />}
-        </button>
-        <div className="text-white font-black text-3xl tracking-wider min-w-[100px] text-center font-mono">
-          {formatTime(timer)}
-        </div>
-        <button
-          onClick={resetTimer}
-          className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors"
-        >
-          <RotateCw size={18} />
-        </button>
-      </div>
-
       <div className="flex-1 flex">
         <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 flex flex-col gap-6">
           <TeamSidebar
@@ -247,6 +224,32 @@ export default function QuestionPage() {
         </div>
 
         <div className="flex-1 flex flex-col p-6">
+
+          {/* ── Timer above the question box ── */}
+          <div className="flex items-center justify-center mb-3">
+            <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2.5 flex items-center gap-4 shadow-[0_4px_20px_rgba(123,47,190,0.45)]">
+              <button
+                onClick={toggleTimer}
+                className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                title={isTimerRunning ? "إيقاف مؤقت" : "استمرار"}
+              >
+                {isTimerRunning ? <Pause size={16} /> : <Play size={16} />}
+              </button>
+
+              <span className="text-white font-black text-3xl tracking-widest font-mono min-w-[90px] text-center select-none">
+                {formatTime(timer)}
+              </span>
+
+              <button
+                onClick={resetTimer}
+                className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-colors"
+                title="إعادة تشغيل"
+              >
+                <RotateCw size={16} />
+              </button>
+            </div>
+          </div>
+
           <div className="flex-1 border-4 border-[#7B2FBE] rounded-3xl p-8 flex flex-col bg-white">
             {/* Title */}
             <div className="text-center mb-4">
@@ -279,14 +282,7 @@ export default function QuestionPage() {
             </div>
 
             {/* Bottom Buttons */}
-            <div className="flex items-center justify-between">
-              <button
-                onClick={toggleTimer}
-                className="flex items-center gap-2 bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 text-[#7B2FBE] font-black py-3 px-6 rounded-full transition-colors text-sm"
-              >
-                <span>{formatTime(timer)}</span>
-              </button>
-
+            <div className="flex items-center justify-center">
               <button
                 onClick={() => setShowAnswer(true)}
                 className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
