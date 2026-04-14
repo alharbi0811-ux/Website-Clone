@@ -311,20 +311,24 @@ export default function QuestionPage() {
               <div className="w-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col shadow-[0_8px_40px_rgba(123,47,190,0.15)] overflow-hidden">
 
                 {/* Answer text — top */}
-                <div className="flex-1 flex flex-col items-center justify-start px-16 pt-16 pb-4 gap-8">
+                <div className="px-16 pt-16 pb-4">
                   <p className="text-[100px] text-gray-900 text-center leading-tight w-full">
                     {questionData.answer}
                   </p>
+                </div>
 
-                  {/* Answer image — if present */}
-                  {questionData.image && (
+                {/* Image — centered in remaining space */}
+                {questionData.image ? (
+                  <div className="flex-1 flex items-center justify-center px-16 py-4">
                     <img
                       src={questionData.image}
                       alt="صورة الإجابة"
-                      className="max-h-64 max-w-full object-contain rounded-2xl"
+                      className="max-h-full max-w-full object-contain rounded-2xl"
                     />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex-1" />
+                )}
 
                 {/* Button — bottom center */}
                 <div className="flex justify-center pb-10">
