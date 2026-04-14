@@ -374,47 +374,49 @@ export default function QuestionPage() {
                 أي فريق جاوب صح ؟
               </h1>
 
-              <div className="flex gap-6">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    const points = questionData.points;
-                    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + points, team2Score }));
-                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 1 }));
-                    navigate("/score-page");
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
-                >
-                  {gameData?.team1Name}
-                </motion.button>
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      const points = questionData.points;
+                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + points, team2Score }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 1 }));
+                      navigate("/score-page");
+                    }}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
+                  >
+                    {gameData?.team1Name}
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      const points = questionData.points;
+                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + points }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 2 }));
+                      navigate("/score-page");
+                    }}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
+                  >
+                    {gameData?.team2Name}
+                  </motion.button>
+                </div>
 
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
-                    const points = questionData.points;
-                    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + points }));
-                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 2 }));
+                    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: 0 }));
                     navigate("/score-page");
                   }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
+                  className="w-full bg-gray-400 hover:bg-gray-500 text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
                 >
-                  {gameData?.team2Name}
+                  لا أحد
                 </motion.button>
               </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: 0 }));
-                  navigate("/score-page");
-                }}
-                className="bg-gray-400 hover:bg-gray-500 text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
-              >
-                لا أحد
-              </motion.button>
             </div>
           </motion.div>
         )}
