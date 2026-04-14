@@ -13,7 +13,6 @@ export function Hero() {
           className="w-full h-full object-cover object-top"
         />
       </div>
-
       <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center mt-12 md:mt-24">
 
         <motion.div
@@ -32,11 +31,9 @@ export function Hero() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-white/80 text-lg md:text-xl lg:text-2xl font-semibold tracking-wide mt-2"
+            className="md:text-xl lg:text-2xl tracking-wide mt-2 text-[38px] text-[#ffffff] font-black"
             dir="rtl"
-          >
-            الجواب عليك، و السؤال علينا
-          </motion.p>
+          >فكر بسرعة… جاوب بدقة</motion.p>
         </motion.div>
 
         <motion.p
