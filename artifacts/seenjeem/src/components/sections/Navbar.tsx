@@ -22,21 +22,38 @@ export function Navbar() {
     const IPHONE_H = 390;
 
     const applyScale = () => {
+      const root = document.getElementById("app-root");
+      if (!root) return;
+
       const scale = Math.min(
         window.innerWidth / IPHONE_W,
         window.innerHeight / IPHONE_H
       );
-      (document.documentElement.style as any).zoom = String(scale);
-      document.documentElement.style.width = `${IPHONE_W}px`;
-      document.documentElement.style.height = `${IPHONE_H}px`;
-      document.documentElement.classList.add("viewport-mobile");
+
+      const offsetX = (window.innerWidth - IPHONE_W * scale) / 2;
+      const offsetY = (window.innerHeight - IPHONE_H * scale) / 2;
+
+      root.style.width = `${IPHONE_W}px`;
+      root.style.minHeight = `${IPHONE_H}px`;
+      root.style.maxHeight = `${IPHONE_H}px`;
+      root.style.overflow = "hidden";
+      root.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+      root.style.transformOrigin = "top left";
+      document.body.style.overflow = "hidden";
+      document.body.style.background = "#000";
     };
 
     const resetScale = () => {
-      (document.documentElement.style as any).zoom = "";
-      document.documentElement.style.width = "";
-      document.documentElement.style.height = "";
-      document.documentElement.classList.remove("viewport-mobile");
+      const root = document.getElementById("app-root");
+      if (!root) return;
+      root.style.width = "";
+      root.style.minHeight = "";
+      root.style.maxHeight = "";
+      root.style.overflow = "";
+      root.style.transform = "";
+      root.style.transformOrigin = "";
+      document.body.style.overflow = "";
+      document.body.style.background = "";
     };
 
     if (viewMode === "mobile") {

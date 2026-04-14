@@ -167,7 +167,3 @@
   background-clip: text;
 }
 
-/* ===== Viewport mode: iPhone landscape ===== */
-html.viewport-mobile {
-  overflow: hidden;
-}
