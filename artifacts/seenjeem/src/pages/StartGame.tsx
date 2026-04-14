@@ -360,7 +360,7 @@ export default function StartGame() {
               >
                 <button
                   onClick={async () => {
-                    const allCats = SECTIONS.flatMap(s => s.categories);
+                    const allCats = sections.flatMap(s => s.categories);
                     const t1Cats = team1.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
                     const t2Cats = team2.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
                     const gData = {
