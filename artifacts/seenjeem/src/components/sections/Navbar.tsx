@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,8 +7,20 @@ import { useAuth } from "@/context/AuthContext";
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,17 +82,35 @@ export function Navbar() {
                     </a>
                   </Link>
                 )}
-                <div className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5">
-                  <User size={18} />
-                  <span className="text-[20px]">{user.displayName || user.username}</span>
+                {/* Account button + dropdown */}
+                <div className="relative" ref={accountRef}>
+                  <button
+                    onClick={() => setAccountMenuOpen((o) => !o)}
+                    className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
+                  >
+                    <User size={18} />
+                    <span className="text-[20px]">{user.displayName || user.username}</span>
+                  </button>
+                  <AnimatePresence>
+                    {accountMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.96 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 mt-2 w-44 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                      >
+                        <button
+                          onClick={() => { logout(); setAccountMenuOpen(false); }}
+                          className="flex items-center gap-2 w-full px-4 py-3 text-red-500 hover:bg-red-50 transition-colors text-sm"
+                        >
+                          <LogOut size={16} />
+                          تسجيل الخروج
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <button
-                  onClick={logout}
-                  className="flex items-center gap-1.5 text-foreground/60 hover:text-red-500 font-medium px-3 py-2 rounded-full hover:bg-red-50 transition-colors"
-                  title="تسجيل الخروج"
-                >
-                  <LogOut size={18} />
-                </button>
               </div>
             ) : (
               <button
