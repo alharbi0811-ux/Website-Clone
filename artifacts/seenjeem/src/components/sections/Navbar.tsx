@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, LogOut, LayoutDashboard, History } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Monitor, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 
@@ -8,9 +8,21 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"desktop" | "mobile">(() => {
+    return (localStorage.getItem("rakez-view-mode") as "desktop" | "mobile") || "desktop";
+  });
   const accountRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    localStorage.setItem("rakez-view-mode", viewMode);
+    if (viewMode === "mobile") {
+      document.documentElement.classList.add("viewport-mobile");
+    } else {
+      document.documentElement.classList.remove("viewport-mobile");
+    }
+  }, [viewMode]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -127,6 +139,32 @@ export function Navbar() {
             >
               إنشاء لعبة
             </button>
+
+            {/* Viewport size toggle */}
+            <div className="flex items-center bg-gray-100 rounded-full p-1 gap-0.5">
+              <button
+                onClick={() => setViewMode("desktop")}
+                title="حجم كمبيوتر"
+                className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
+                  viewMode === "desktop"
+                    ? "bg-[#7B2FBE] text-white shadow-[0_0_10px_rgba(123,47,190,0.4)]"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                <Monitor size={17} />
+              </button>
+              <button
+                onClick={() => setViewMode("mobile")}
+                title="حجم آيفون"
+                className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
+                  viewMode === "mobile"
+                    ? "bg-[#7B2FBE] text-white shadow-[0_0_10px_rgba(123,47,190,0.4)]"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                <Smartphone size={17} />
+              </button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

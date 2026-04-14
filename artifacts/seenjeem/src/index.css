@@ -166,3 +166,19 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ===== Viewport mode: iPhone simulation ===== */
+html.viewport-mobile body {
+  max-width: 390px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.25);
+}
+
+html.viewport-mobile header {
+  max-width: 390px;
+  margin: 0 auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
