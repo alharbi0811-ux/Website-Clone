@@ -306,21 +306,37 @@ export default function QuestionPage() {
               </div>
             </div>
 
-            {/* Body — answer box centered */}
-            <div className="flex-1 flex items-center justify-center p-3">
-              <div className="w-full h-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col items-center justify-center p-16 gap-10 shadow-[0_8px_40px_rgba(123,47,190,0.15)]">
-                <p className="text-[120px] text-gray-900 text-center leading-tight">
-                  {questionData.answer}
-                </p>
+            {/* Body — answer box */}
+            <div className="flex-1 flex items-stretch justify-center p-3">
+              <div className="w-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col shadow-[0_8px_40px_rgba(123,47,190,0.15)] overflow-hidden">
 
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => setShowTeamSelection(true)}
-                  className="mt-4 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-lg py-3 px-12 rounded-full shadow-lg transition-colors"
-                >
-                  التالي
-                </motion.button>
+                {/* Answer text — top */}
+                <div className="flex-1 flex flex-col items-center justify-center px-16 pt-12 pb-4 gap-8">
+                  <p className="text-[100px] text-gray-900 text-center leading-tight w-full">
+                    {questionData.answer}
+                  </p>
+
+                  {/* Answer image — if present */}
+                  {questionData.image && (
+                    <img
+                      src={questionData.image}
+                      alt="صورة الإجابة"
+                      className="max-h-64 max-w-full object-contain rounded-2xl"
+                    />
+                  )}
+                </div>
+
+                {/* Button — bottom center */}
+                <div className="flex justify-center pb-10">
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setShowTeamSelection(true)}
+                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white text-lg py-3 px-14 rounded-full shadow-lg transition-colors"
+                  >
+                    التالي
+                  </motion.button>
+                </div>
               </div>
             </div>
           </motion.div>
