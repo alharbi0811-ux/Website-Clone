@@ -412,7 +412,7 @@ export default function QuestionPage() {
                     localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: 0 }));
                     navigate("/score-page");
                   }}
-                  className="w-full bg-gray-400 hover:bg-gray-500 text-white font-black text-lg py-3 px-10 rounded-full shadow-lg transition-colors"
+                  className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 px-10 rounded-full shadow-lg transition-colors font-extrabold text-[25px]"
                 >
                   لا أحد
                 </motion.button>
@@ -421,7 +421,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Lightbox overlay */}
       <AnimatePresence>
         {lightboxImage && (
