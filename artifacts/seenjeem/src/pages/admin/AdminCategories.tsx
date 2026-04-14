@@ -7,6 +7,7 @@ interface Category {
   id: number;
   name: string;
   nameAr: string;
+  section: string | null;
   description: string | null;
   imageUrl: string | null;
   isActive: boolean;
@@ -100,10 +101,15 @@ export default function AdminCategories() {
                 {cat.description && (
                   <p className="text-xs text-gray-500 mt-1 line-clamp-2">{cat.description}</p>
                 )}
-                <div className="flex items-center gap-1 mt-2">
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                   <span className="text-xs bg-violet-50 text-[#7B2FBE] font-semibold px-2 py-0.5 rounded-full">
                     {cat.questionCount} سؤال
                   </span>
+                  {cat.section && (
+                    <span className="text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded-full border border-amber-100">
+                      {cat.section}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-50">

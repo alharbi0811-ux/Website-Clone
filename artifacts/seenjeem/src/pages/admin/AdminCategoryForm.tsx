@@ -14,9 +14,21 @@ export default function AdminCategoryForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const SECTIONS = [
+    "أجدد الفئات",
+    "الكويت",
+    "عام",
+    "إسلامي",
+    "دول",
+    "حروف",
+    "ولا كلمة",
+    "التفكير",
+  ];
+
   const [form, setForm] = useState({
     name: "",
     nameAr: "",
+    section: "",
     description: "",
     imageUrl: "",
     isActive: true,
@@ -32,6 +44,7 @@ export default function AdminCategoryForm() {
             setForm({
               name: cat.name,
               nameAr: cat.nameAr,
+              section: cat.section || "",
               description: cat.description || "",
               imageUrl: cat.imageUrl || "",
               isActive: cat.isActive,
@@ -51,6 +64,7 @@ export default function AdminCategoryForm() {
       const payload = {
         name: form.name || form.nameAr,
         nameAr: form.nameAr,
+        section: form.section || undefined,
         description: form.description || undefined,
         imageUrl: form.imageUrl || undefined,
         isActive: form.isActive,
@@ -109,6 +123,22 @@ export default function AdminCategoryForm() {
               placeholder="مثال: الكويت، علوم، تاريخ..."
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#7B2FBE] focus:ring-2 focus:ring-[#7B2FBE]/10 transition-all"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">المجال *</label>
+            <select
+              value={form.section}
+              onChange={(e) => setForm({ ...form, section: e.target.value })}
+              required
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#7B2FBE] focus:ring-2 focus:ring-[#7B2FBE]/10 transition-all bg-white"
+              dir="rtl"
+            >
+              <option value="">-- اختر المجال --</option>
+              {SECTIONS.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
           </div>
 
           <div>

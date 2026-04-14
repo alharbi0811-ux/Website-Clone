@@ -50,6 +50,7 @@ router.get("/admin/categories", async (_req, res) => {
 const categorySchema = z.object({
   name: z.string().min(1),
   nameAr: z.string().min(1),
+  section: z.string().optional(),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
   isActive: z.boolean().optional().default(true),
