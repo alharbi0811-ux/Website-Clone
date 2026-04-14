@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 
@@ -61,6 +61,14 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
+                {user.isAdmin && (
+                  <Link href="/admin">
+                    <a className="flex items-center gap-1.5 text-[#7B2FBE] font-semibold text-sm px-3 py-2 rounded-full bg-violet-50 hover:bg-violet-100 transition-colors">
+                      <LayoutDashboard size={15} />
+                      <span>الإدارة</span>
+                    </a>
+                  </Link>
+                )}
                 <div className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5">
                   <User size={18} />
                   <span>{user.displayName || user.username}</span>

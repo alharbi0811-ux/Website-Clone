@@ -18,6 +18,19 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Admin Dashboard
+
+- **URL**: `/admin` (accessible only to users with `is_admin = true`)
+- **Admin credentials**: username=`admin`, password=`admin123`
+- **Features**:
+  - Dashboard overview (stats cards: categories, questions, users)
+  - Categories CRUD (with image URL preview)
+  - Questions CRUD (with 4 options A-D + correct answer + difficulty/time/points)
+  - All Questions view with category filter
+  - Users list with admin toggle
+- **Protected by**: `AdminGuard` component in React + `requireAdmin` middleware in API
+- **Admin API routes** (`/api/admin/*`): stats, categories CRUD, questions CRUD, users list + toggle-admin
+
 ## Structure
 
 ```text
