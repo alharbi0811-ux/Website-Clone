@@ -27,7 +27,7 @@ export function Hero() {
             className="w-48 md:w-72 lg:w-96"
             style={{
               mixBlendMode: "screen",
-              filter: "drop-shadow(0 0 18px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 80px rgba(180, 100, 255, 0.6))",
+              filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 22px rgba(255, 255, 255, 0.25))",
             }}
           />
           <motion.p
