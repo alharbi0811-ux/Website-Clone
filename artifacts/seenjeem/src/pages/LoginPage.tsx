@@ -9,7 +9,6 @@ export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,7 +20,7 @@ export default function LoginPage() {
       if (mode === "login") {
         await login(username, password);
       } else {
-        await register(username, password, displayName || undefined);
+        await register(username, password);
       }
       navigate("/");
     } catch (err: unknown) {
@@ -66,19 +65,6 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {mode === "register" && (
-              <div>
-                <label className="block text-white/80 text-sm mb-1.5">الاسم الظاهر (اختياري)</label>
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="مثال: أبو محمد"
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7B2FBE] focus:ring-1 focus:ring-[#7B2FBE] transition-all"
-                />
-              </div>
-            )}
-
             <div>
               <label className="block text-white/80 text-sm mb-1.5">اسم المستخدم</label>
               <input
@@ -98,7 +84,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === "register" ? "6 أحرف على الأقل" : "أدخل كلمة المرور"}
+                placeholder="أدخل كلمة المرور"
                 required
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#7B2FBE] focus:ring-1 focus:ring-[#7B2FBE] transition-all"

@@ -19,9 +19,8 @@ export const insertUserSchema = createInsertSchema(usersTable).omit({
 });
 
 export const registerSchema = z.object({
-  username: z.string().min(3).max(30),
-  password: z.string().min(6),
-  displayName: z.string().optional(),
+  username: z.string().min(1).max(30),
+  password: z.string().min(1),
 });
 
 export const loginSchema = z.object({

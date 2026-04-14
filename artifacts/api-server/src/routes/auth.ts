@@ -13,7 +13,7 @@ router.post("/auth/register", async (req, res) => {
     return res.status(400).json({ error: "بيانات غير صحيحة", details: parsed.error.issues });
   }
 
-  const { username, password, displayName } = parsed.data;
+  const { username, password } = parsed.data;
 
   try {
     const existing = await db
@@ -30,7 +30,7 @@ router.post("/auth/register", async (req, res) => {
 
     const [user] = await db
       .insert(usersTable)
-      .values({ username, passwordHash, displayName: displayName ?? username })
+      .values({ username, passwordHash, displayName: username })
       .returning({ id: usersTable.id, username: usersTable.username, isAdmin: usersTable.isAdmin, displayName: usersTable.displayName });
 
     const token = generateToken(user.id, user.isAdmin);
