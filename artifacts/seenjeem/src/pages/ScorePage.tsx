@@ -34,6 +34,7 @@ export default function ScorePage() {
   const [playedCells, setPlayedCells] = useState<Set<string>>(new Set());
   const [showEndModal, setShowEndModal] = useState(false);
   const [loadingCell, setLoadingCell] = useState<string | null>(null);
+  const [questionCache, setQuestionCache] = useState<Record<string, any>>({});
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -128,47 +129,70 @@ export default function ScorePage() {
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [playedCells, team1Score, team2Score, currentTeam, token]);
 
+  const DIFF_MAP: Record<number, string> = { 200: "easy", 400: "medium", 600: "hard" };
+
+  useEffect(() => {
+    if (!gameData) return;
+    const cats = [...gameData.team1Categories, ...gameData.team2Categories];
+    const diffs = ["easy", "medium", "hard"];
+    const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
+    const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
+
+    cats.forEach((cat) => {
+      diffs.forEach((diff) => {
+        const cacheKey = `${cat.id}-${diff}`;
+        setQuestionCache((prev) => {
+          if (prev[cacheKey]) return prev;
+          fetch(`${API_BASE}/questions/game?categoryId=${cat.id}&difficulty=${diff}${excludeParam}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+              if (data) setQuestionCache((p) => ({ ...p, [cacheKey]: data }));
+            })
+            .catch(() => {});
+          return prev;
+        });
+      });
+    });
+  }, [gameData]);
+
   if (!gameData) return null;
 
   const allCategories = [...gameData.team1Categories, ...gameData.team2Categories];
   const totalCells = allCategories.length * POINTS.length * 2;
   const allPlayed = playedCells.size >= totalCells;
 
-  const DIFF_MAP: Record<number, string> = { 200: "easy", 400: "medium", 600: "hard" };
+  const prefetchQuestion = (categoryId: string, diff: string, excludeIds: number[]) => {
+    const cacheKey = `${categoryId}-${diff}`;
+    const excludeParam = excludeIds.length ? `&excludeIds=${excludeIds.join(",")}` : "";
+    fetch(`${API_BASE}/questions/game?categoryId=${categoryId}&difficulty=${diff}${excludeParam}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setQuestionCache((p) => ({ ...p, [cacheKey]: data }));
+      })
+      .catch(() => {});
+  };
 
-  const handleCellClick = async (catIdx: number, points: number, side: "l" | "r") => {
+  const handleCellClick = (catIdx: number, points: number, side: "l" | "r") => {
     const key = `${catIdx}-${points}-${side}`;
     if (playedCells.has(key) || loadingCell) return;
 
     const category = allCategories[catIdx];
-    setLoadingCell(key);
+    const diff = DIFF_MAP[points] || "medium";
+    const cacheKey = `${category.id}-${diff}`;
+    const cached = questionCache[cacheKey];
 
-    try {
+    if (cached) {
       const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
-      const diff = DIFF_MAP[points] || "medium";
-      const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
-      const url = `${API_BASE}/questions/game?categoryId=${category.id}&difficulty=${diff}${excludeParam}`;
-      const res = await fetch(url);
+      const newUsed = [...usedIds, cached.id];
+      localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
 
-      let questionPayload: { question: string; answer: string; image: string; questionId?: number };
+      setQuestionCache((prev) => {
+        const next = { ...prev };
+        delete next[cacheKey];
+        return next;
+      });
 
-      if (res.ok) {
-        const data = await res.json();
-        const newUsed = [...usedIds, data.id];
-        localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
-        questionPayload = {
-          questionId: data.id,
-          question: data.question,
-          answer: data.answer,
-          image: data.image || category.img,
-        };
-      } else {
-        questionPayload = {
-          question: "لا توجد أسئلة لهذه الفئة في قاعدة البيانات. يرجى إضافة أسئلة من لوحة التحكم.",
-          answer: "—",
-          image: category.img,
-        };
-      }
+      prefetchQuestion(category.id, diff, newUsed);
 
       localStorage.setItem("rakez-current-question", JSON.stringify({
         categoryId: category.id,
@@ -177,12 +201,42 @@ export default function ScorePage() {
         catIdx,
         side,
         currentTeam,
-        ...questionPayload,
+        questionId: cached.id,
+        question: cached.question,
+        answer: cached.answer,
+        image: cached.image || category.img,
       }));
 
       navigate("/question");
-    } finally {
-      setLoadingCell(null);
+    } else {
+      setLoadingCell(key);
+      const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
+      const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
+      fetch(`${API_BASE}/questions/game?categoryId=${category.id}&difficulty=${diff}${excludeParam}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          const q = data || { question: "لا توجد أسئلة لهذه الفئة. يرجى إضافة أسئلة من لوحة التحكم.", answer: "—", image: category.img };
+          if (data?.id) {
+            const latest: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
+            const newUsed = [...latest, data.id];
+            localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
+            prefetchQuestion(category.id, diff, newUsed);
+          }
+          localStorage.setItem("rakez-current-question", JSON.stringify({
+            categoryId: category.id,
+            categoryName: category.name,
+            points,
+            catIdx,
+            side,
+            currentTeam,
+            question: q.question,
+            answer: q.answer,
+            image: q.image || category.img,
+          }));
+          navigate("/question");
+        })
+        .catch(() => setLoadingCell(null))
+        .finally(() => setLoadingCell(null));
     }
   };
 
