@@ -375,18 +375,18 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
                           : "bg-gray-50 border-gray-200 cursor-not-allowed opacity-50"
                     }`}
                   >
-                    {used ? (
-                      <span className="text-gray-300 text-lg">✓</span>
-                    ) : !isAvailableThisTurn ? (
-                      <span className="text-gray-300 text-sm">🔒</span>
-                    ) : (
-                      <img
-                        src={tool.icon}
-                        alt={tool.name}
-                        className="w-7 h-7 object-contain"
-                        style={{ filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }}
-                      />
-                    )}
+                    <img
+                      src={tool.icon}
+                      alt={tool.name}
+                      className="w-7 h-7 object-contain"
+                      style={
+                        used
+                          ? { filter: "grayscale(100%) opacity(0.25)" }
+                          : isAvailableThisTurn
+                            ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
+                            : { filter: "grayscale(100%) opacity(0.35)" }
+                      }
+                    />
                   </motion.button>
                   <span className={`text-[10px] font-bold text-center leading-tight max-w-[52px] ${
                     used ? "text-gray-300" : isAvailableThisTurn ? "text-[#7B2FBE]" : "text-gray-300"
