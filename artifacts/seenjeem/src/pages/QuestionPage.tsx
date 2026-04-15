@@ -313,17 +313,12 @@ export default function QuestionPage() {
       <AnimatePresence>
         {flashTool && (() => {
           const isBlue = flashTool.color === "blue";
-          const isWhite = flashTool.color === "white";
           const overlayColor = isBlue
             ? ["rgba(59,130,246,0.35)", "rgba(59,130,246,0.05)", "rgba(59,130,246,0.35)", "rgba(59,130,246,0)"]
-            : isWhite
-              ? ["rgba(255,255,255,0.45)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.45)", "rgba(255,255,255,0)"]
-              : ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"];
+            : ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"];
           const cardClass = isBlue
             ? "relative bg-blue-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-blue-300"
-            : isWhite
-              ? "relative bg-white text-[#7B2FBE] px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-[#7B2FBE]/40"
-              : "relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300";
+            : "relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300";
           return (
             <motion.div
               key={flashTool.key}
