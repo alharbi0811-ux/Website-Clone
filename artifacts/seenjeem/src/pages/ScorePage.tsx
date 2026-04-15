@@ -343,12 +343,12 @@ export default function ScorePage() {
             style={{ mixBlendMode: "screen" }}
             animate={{
               filter: [
-                "drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 28px rgba(255,255,255,0.55)) drop-shadow(0 0 55px rgba(255,255,255,0.3)) drop-shadow(0 0 90px rgba(255,255,255,0.12))",
-                "drop-shadow(0 0 14px rgba(255,255,255,1)) drop-shadow(0 0 36px rgba(255,255,255,0.7)) drop-shadow(0 0 70px rgba(255,255,255,0.4)) drop-shadow(0 0 110px rgba(255,255,255,0.18))",
-                "drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 28px rgba(255,255,255,0.55)) drop-shadow(0 0 55px rgba(255,255,255,0.3)) drop-shadow(0 0 90px rgba(255,255,255,0.12))",
+                "drop-shadow(0 0 6px rgba(255,255,255,0.5)) drop-shadow(0 0 16px rgba(255,255,255,0.25)) drop-shadow(0 0 35px rgba(255,255,255,0.1))",
+                "drop-shadow(0 0 18px rgba(255,255,255,1)) drop-shadow(0 0 45px rgba(255,255,255,0.8)) drop-shadow(0 0 90px rgba(255,255,255,0.5)) drop-shadow(0 0 140px rgba(255,255,255,0.25))",
+                "drop-shadow(0 0 6px rgba(255,255,255,0.5)) drop-shadow(0 0 16px rgba(255,255,255,0.25)) drop-shadow(0 0 35px rgba(255,255,255,0.1))",
               ],
             }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
