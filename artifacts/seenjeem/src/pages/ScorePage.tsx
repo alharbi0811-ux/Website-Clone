@@ -101,6 +101,13 @@ export default function ScorePage() {
   useEffect(() => { localStorage.setItem("rakez-current-team", JSON.stringify(currentTeam)); }, [currentTeam]);
 
   useEffect(() => {
+    if (totalCells > 0 && allPlayed) {
+      const t = setTimeout(() => navigate("/win-page"), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [allPlayed, totalCells]);
+
+  useEffect(() => {
     const sessionId = localStorage.getItem("rakez-session-id");
     if (!sessionId || !token) return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
