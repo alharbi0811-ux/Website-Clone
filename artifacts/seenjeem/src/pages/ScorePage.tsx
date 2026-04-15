@@ -289,7 +289,7 @@ export default function ScorePage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 border-t border-white/10 py-4 flex items-center justify-between gap-4">
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 border-t border-white/10 py-4 flex items-center justify-between gap-4 relative">
         {/* Team 1 */}
         <div className="flex items-center gap-2 flex-1">
           <div className="h-10 flex items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
@@ -334,8 +334,8 @@ export default function ScorePage() {
           </button>
         </div>
 
-        {/* Center */}
-        <div className="shrink-0 flex items-center justify-center">
+        {/* Center — absolutely centered */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
           <img
             src={`${import.meta.env.BASE_URL}logo-diwan.png`}
             alt="ديوان الدارع"
