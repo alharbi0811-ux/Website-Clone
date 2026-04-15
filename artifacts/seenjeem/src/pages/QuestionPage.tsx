@@ -351,7 +351,7 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
       {tools.length > 0 && (
         <>
           <p className="text-xs font-bold text-foreground/60">وسائل المساعدة</p>
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-row gap-3 justify-center flex-wrap">
             {tools.map((toolId) => {
               const tool = HELP_TOOLS_MAP[toolId];
               if (!tool) return null;
@@ -360,38 +360,40 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
               const isClickable = isAvailableThisTurn && !used;
 
               return (
-                <motion.button
-                  key={toolId}
-                  whileHover={isClickable ? { scale: 1.03 } : {}}
-                  whileTap={isClickable ? { scale: 0.97 } : {}}
-                  onClick={() => isClickable && onUseTool(toolId)}
-                  disabled={!isClickable}
-                  className={`w-full py-2 px-3 rounded-2xl font-black text-sm flex items-center gap-2 transition-all border-2 relative ${
-                    used
-                      ? "bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed"
-                      : isAvailableThisTurn
-                        ? "bg-[#7B2FBE]/10 text-[#7B2FBE] border-[#7B2FBE]/50 hover:bg-[#7B2FBE] hover:text-white hover:border-[#7B2FBE] cursor-pointer shadow-sm"
-                        : "bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed opacity-60"
-                  }`}
-                >
-                  <img
-                    src={tool.icon}
-                    alt={tool.name}
-                    className="w-5 h-5 object-contain shrink-0"
-                    style={
-                      used || !isAvailableThisTurn
-                        ? { filter: "grayscale(100%) opacity(0.3)" }
-                        : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
-                    }
-                  />
-                  <span className="flex-1 text-right">{tool.name}</span>
-                  {used && (
-                    <span className="text-[10px] font-bold text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full">مستخدمة</span>
-                  )}
-                  {!used && !isAvailableThisTurn && (
-                    <span className="text-[10px] font-bold text-gray-400">🔒</span>
-                  )}
-                </motion.button>
+                <div key={toolId} className="flex flex-col items-center gap-1">
+                  <motion.button
+                    whileHover={isClickable ? { scale: 1.1 } : {}}
+                    whileTap={isClickable ? { scale: 0.92 } : {}}
+                    onClick={() => isClickable && onUseTool(toolId)}
+                    disabled={!isClickable}
+                    title={tool.name}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
+                      used
+                        ? "bg-gray-100 border-gray-200 cursor-not-allowed"
+                        : isAvailableThisTurn
+                          ? "bg-[#7B2FBE]/10 border-[#7B2FBE]/60 hover:bg-[#7B2FBE] cursor-pointer shadow-md hover:shadow-[#7B2FBE]/30 hover:shadow-lg"
+                          : "bg-gray-50 border-gray-200 cursor-not-allowed opacity-50"
+                    }`}
+                  >
+                    {used ? (
+                      <span className="text-gray-300 text-lg">✓</span>
+                    ) : !isAvailableThisTurn ? (
+                      <span className="text-gray-300 text-sm">🔒</span>
+                    ) : (
+                      <img
+                        src={tool.icon}
+                        alt={tool.name}
+                        className="w-7 h-7 object-contain"
+                        style={{ filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }}
+                      />
+                    )}
+                  </motion.button>
+                  <span className={`text-[10px] font-bold text-center leading-tight max-w-[52px] ${
+                    used ? "text-gray-300" : isAvailableThisTurn ? "text-[#7B2FBE]" : "text-gray-300"
+                  }`}>
+                    {tool.name}
+                  </span>
+                </div>
               );
             })}
           </div>
