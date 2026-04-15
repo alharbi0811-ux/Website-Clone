@@ -343,12 +343,12 @@ export default function ScorePage() {
             style={{ mixBlendMode: "screen" }}
             animate={{
               filter: [
-                "drop-shadow(0 0 4px rgba(255,255,255,0.3)) drop-shadow(0 0 10px rgba(255,255,255,0.1))",
-                "drop-shadow(0 0 25px rgba(255,255,255,1)) drop-shadow(0 0 60px rgba(255,255,255,0.9)) drop-shadow(0 0 110px rgba(255,255,255,0.65)) drop-shadow(0 0 180px rgba(255,255,255,0.35))",
-                "drop-shadow(0 0 4px rgba(255,255,255,0.3)) drop-shadow(0 0 10px rgba(255,255,255,0.1))",
+                "drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
+                "drop-shadow(0 0 14px rgba(255,255,255,0.9)) drop-shadow(0 0 35px rgba(255,255,255,0.55)) drop-shadow(0 0 60px rgba(255,255,255,0.2))",
+                "drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
               ],
             }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
