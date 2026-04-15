@@ -340,7 +340,7 @@ export default function ScorePage() {
             src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
             className="h-48 w-auto object-contain"
-            style={{ mixBlendMode: "screen", filter: "drop-shadow(0 0 6px rgba(255,255,255,0.5)) drop-shadow(0 0 12px rgba(255,255,255,0.2))" }}
+            style={{ mixBlendMode: "screen", filter: "drop-shadow(0 0 8px rgba(255,255,255,0.7)) drop-shadow(0 0 20px rgba(255,255,255,0.4)) drop-shadow(0 0 35px rgba(255,255,255,0.15))" }}
           />
         </div>
 
