@@ -40,6 +40,8 @@ export default function QuestionPage() {
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [flashTool, setFlashTool] = useState<{ name: string; key: number; color: "blue" | "white" } | null>(null);
+  const [activeTurnTeam, setActiveTurnTeam] = useState<1 | 2 | null>(null);
+  const [turnFlash, setTurnFlash] = useState<{ teamName: string; key: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -52,8 +54,14 @@ export default function QuestionPage() {
     });
 
     const qStored = localStorage.getItem("rakez-current-question");
-    if (qStored) setQuestionData(JSON.parse(qStored));
-    else setQuestionData({ categoryId: "sample", categoryName: "معلومات عامة", points: 200, catIdx: 0, currentTeam: 1, side: "l", question: "ما هو أكبر كوكب في المجموعة الشمسية؟", answer: "المشتري", image: "" });
+    if (qStored) {
+      const q = JSON.parse(qStored);
+      setQuestionData(q);
+      setActiveTurnTeam(q.currentTeam as 1 | 2);
+    } else {
+      setQuestionData({ categoryId: "sample", categoryName: "معلومات عامة", points: 200, catIdx: 0, currentTeam: 1, side: "l", question: "ما هو أكبر كوكب في المجموعة الشمسية؟", answer: "المشتري", image: "" });
+      setActiveTurnTeam(1);
+    }
 
     const scores = localStorage.getItem("rakez-scores");
     if (scores) { const p = JSON.parse(scores); setTeam1Score(p.team1Score || 0); setTeam2Score(p.team2Score || 0); }
@@ -67,6 +75,16 @@ export default function QuestionPage() {
     if (isTimerRunning) timerRef.current = setInterval(() => setTimer((t) => t + 1), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isTimerRunning]);
+
+  // تبديل الدور بعد 90 ثانية
+  useEffect(() => {
+    if (timer === 90 && questionData && gameData) {
+      const other = questionData.currentTeam === 1 ? 2 : 1;
+      const otherName = questionData.currentTeam === 1 ? gameData.team2Name : gameData.team1Name;
+      setActiveTurnTeam(other);
+      setTurnFlash({ teamName: otherName, key: Date.now() });
+    }
+  }, [timer]);
 
   const toggleTimer = () => setIsTimerRunning(!isTimerRunning);
   const resetTimer = () => { setTimer(0); setIsTimerRunning(true); };
@@ -151,6 +169,7 @@ export default function QuestionPage() {
             usedTools={usedTools.team1}
             onUseTool={(toolId) => handleUseTool(1, toolId)}
             isCurrentTeam={ct === 1}
+            isActiveTurn={activeTurnTeam === 1}
           />
           <div className="border-t-2 border-gray-200" />
           {/* Team 2 */}
@@ -161,6 +180,7 @@ export default function QuestionPage() {
             usedTools={usedTools.team2}
             onUseTool={(toolId) => handleUseTool(2, toolId)}
             isCurrentTeam={ct === 2}
+            isActiveTurn={activeTurnTeam === 2}
           />
         </div>
 
@@ -304,6 +324,35 @@ export default function QuestionPage() {
         )}
       </AnimatePresence>
 
+      {/* Turn switch flash */}
+      <AnimatePresence>
+        {turnFlash && (
+          <motion.div
+            key={turnFlash.key}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 1, 1, 0] }}
+            transition={{ duration: 1.8, times: [0, 0.1, 0.4, 0.7, 1] }}
+            onAnimationComplete={() => setTurnFlash(null)}
+            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
+          >
+            <motion.div
+              animate={{ backgroundColor: ["rgba(59,130,246,0.3)", "rgba(59,130,246,0.05)", "rgba(59,130,246,0.3)", "rgba(59,130,246,0)"] }}
+              transition={{ duration: 1.8 }}
+              className="absolute inset-0"
+            />
+            <motion.div
+              initial={{ scale: 0.7 }}
+              animate={{ scale: [0.7, 1.05, 1] }}
+              transition={{ duration: 0.3 }}
+              className="relative bg-blue-500 text-white px-10 py-6 rounded-3xl font-black text-3xl shadow-2xl border-4 border-blue-300 text-center"
+            >
+              <div className="text-lg font-bold opacity-80 mb-1">انتهى الوقت!</div>
+              <div>دور {turnFlash.teamName} ✨</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Tool flash animation */}
       <AnimatePresence>
         {flashTool && (() => {
@@ -344,11 +393,10 @@ export default function QuestionPage() {
   );
 }
 
-function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentTeam }: {
+function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentTeam, isActiveTurn }: {
   teamName: string; score: number; tools: string[]; usedTools: string[];
-  onUseTool: (toolId: string) => void; isCurrentTeam: boolean;
+  onUseTool: (toolId: string) => void; isCurrentTeam: boolean; isActiveTurn: boolean;
 }) {
-  // الوسيلة المتاحة حسب الدور: الفريق الحالي = جاوب جوابين، الآخر = استريح
   const activeToolId = isCurrentTeam ? "double" : "rest";
 
   return (
@@ -357,6 +405,29 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
         {teamName}
       </div>
       <div className="text-4xl font-black text-foreground">{score}</div>
+
+      {/* مؤشر دورك */}
+      <AnimatePresence>
+        {isActiveTurn && (
+          <motion.div
+            key="turn-indicator"
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{
+              scale: 1, opacity: 1,
+              boxShadow: [
+                "0 0 10px 2px rgba(59,130,246,0.7)",
+                "0 0 22px 6px rgba(59,130,246,1)",
+                "0 0 10px 2px rgba(59,130,246,0.7)",
+              ]
+            }}
+            exit={{ scale: 0.7, opacity: 0 }}
+            transition={{ scale: { duration: 0.3 }, boxShadow: { duration: 1.4, repeat: Infinity } }}
+            className="w-full bg-blue-500 rounded-2xl py-2.5 text-white font-black text-center text-base border-2 border-blue-300"
+          >
+            دورك ✨
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {tools.length > 0 && (
         <>
