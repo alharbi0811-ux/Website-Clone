@@ -302,9 +302,9 @@ export default function ScorePage() {
                     }`}
                   >
                     <img src={tool.icon} alt={tool.name} className="w-7 h-7 object-contain"
-                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.25)" }} />
+                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "brightness(0) invert(1) opacity(0.4)" }} />
                   </motion.button>
-                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/30"}`}>
+                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/40"}`}>
                     {tool.name}
                   </span>
                 </div>
@@ -370,9 +370,9 @@ export default function ScorePage() {
                     }`}
                   >
                     <img src={tool.icon} alt={tool.name} className="w-7 h-7 object-contain"
-                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.25)" }} />
+                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "brightness(0) invert(1) opacity(0.4)" }} />
                   </motion.button>
-                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/30"}`}>
+                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/40"}`}>
                     {tool.name}
                   </span>
                 </div>
