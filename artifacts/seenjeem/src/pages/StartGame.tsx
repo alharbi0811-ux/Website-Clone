@@ -374,6 +374,8 @@ export default function StartGame() {
                     };
                     localStorage.setItem("rakez-game-data", JSON.stringify(gData));
                     localStorage.removeItem("rakez-played-cells");
+                    localStorage.removeItem("rakez-used-tools");
+                    localStorage.removeItem("rakez-used-question-ids");
                     localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: 0, team2Score: 0 }));
                     localStorage.setItem("rakez-current-team", JSON.stringify(1));
                     localStorage.removeItem("rakez-session-id");
