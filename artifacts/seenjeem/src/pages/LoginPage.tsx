@@ -37,7 +37,6 @@ export default function LoginPage() {
         <img src="/hero-bg.png" alt="" className="w-full h-full object-cover object-top" />
         <div className="absolute inset-0 bg-black/40" />
       </div>
-
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -58,7 +57,7 @@ export default function LoginPage() {
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
               style={{ mixBlendMode: "screen" }}
             />
-            <p className="text-white/70 text-sm">الجواب عليك، و السؤال علينا</p>
+            <p className="text-[26px] text-center font-extrabold text-[#ffffff]">فكر  بسرعه ...  جاوب بدقة</p>
           </div>
 
           <div className="flex rounded-xl overflow-hidden border border-white/20 mb-6">
