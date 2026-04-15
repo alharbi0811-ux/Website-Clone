@@ -103,7 +103,7 @@ export default function WinPage() {
           transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
         >
           <h1 className="text-5xl font-black text-white drop-shadow-lg">
-            {isTie ? "مبروك للجميع 🎉" : "مبروك الفوز 🏆"}
+            {isTie ? "مبروك للجميع" : "مبروك الفوز"}
           </h1>
         </motion.div>
 
@@ -111,9 +111,22 @@ export default function WinPage() {
         {!isTie && (
           <motion.div
             initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, type: "spring", bounce: 0.4 }}
-            className="bg-yellow-400 text-black font-black text-4xl px-10 py-4 rounded-3xl shadow-2xl border-4 border-yellow-200"
+            animate={{
+              y: 0,
+              opacity: 1,
+              boxShadow: [
+                "0 0 20px 6px rgba(251,191,36,0.7)",
+                "0 0 50px 18px rgba(251,191,36,1)",
+                "0 0 20px 6px rgba(251,191,36,0.7)",
+              ],
+            }}
+            transition={{
+              y: { delay: 0.3, type: "spring", bounce: 0.4 },
+              opacity: { delay: 0.3, duration: 0.4 },
+              boxShadow: { delay: 0.7, duration: 1.8, repeat: Infinity },
+            }}
+            className="bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 text-black font-black text-4xl px-10 py-4 rounded-3xl border-4 border-yellow-200"
+            style={{ textShadow: "0 1px 0 rgba(0,0,0,0.25)" }}
           >
             {winner}
           </motion.div>
@@ -166,7 +179,7 @@ export default function WinPage() {
           onClick={handlePlayAgain}
           className="bg-white text-[#7B2FBE] font-black text-xl px-12 py-4 rounded-full shadow-2xl border-4 border-white/80 hover:bg-white/90 transition-colors"
         >
-          العب مرة ثانية 🔄
+          العب مرة ثانية
         </motion.button>
       </div>
     </div>
