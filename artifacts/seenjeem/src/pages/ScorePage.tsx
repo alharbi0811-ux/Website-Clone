@@ -278,34 +278,33 @@ export default function ScorePage() {
             {gameData.team1Name}
           </div>
           {/* Tool icons for team 1 */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {(gameData.team1Tools || ["double", "pit", "rest"]).map((toolId) => {
               const tool = HELP_TOOLS_MAP[toolId];
               if (!tool) return null;
               const used = usedTools.team1.includes(toolId);
               const isPitTool = toolId === "pit";
               const isActive = isPitTool && currentTeam === 1 && !used;
-              const isClickable = isActive;
               return (
-                <div key={toolId} className="flex flex-col items-center gap-0.5">
+                <div key={toolId} className="flex flex-col items-center gap-1">
                   <motion.button
-                    whileHover={isClickable ? { scale: 1.12 } : {}}
-                    whileTap={isClickable ? { scale: 0.9 } : {}}
-                    onClick={() => isClickable && handlePitToggle()}
-                    disabled={!isClickable}
+                    whileHover={isActive ? { scale: 1.12 } : {}}
+                    whileTap={isActive ? { scale: 0.9 } : {}}
+                    onClick={() => isActive && handlePitToggle()}
+                    disabled={!isActive}
                     title={tool.name}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all border-2 ${
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
                       isActive && pitActive
-                        ? "bg-yellow-400 border-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.9)] cursor-pointer"
+                        ? "bg-yellow-400 border-yellow-200 shadow-[0_0_14px_rgba(250,204,21,1)] cursor-pointer"
                         : isActive
-                          ? "bg-white/20 border-white/40 hover:bg-white/35 cursor-pointer"
-                          : "bg-white/5 border-white/10 cursor-not-allowed"
+                          ? "bg-white/30 border-white/60 hover:bg-white/45 cursor-pointer shadow-md"
+                          : "bg-white/10 border-white/20 cursor-not-allowed"
                     }`}
                   >
-                    <img src={tool.icon} alt={tool.name} className="w-5 h-5 object-contain"
-                      style={isActive && !used ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.3)" }} />
+                    <img src={tool.icon} alt={tool.name} className="w-7 h-7 object-contain"
+                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.25)" }} />
                   </motion.button>
-                  <span className={`text-[8px] font-bold leading-none ${isActive ? "text-white/80" : "text-white/30"}`}>
+                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/30"}`}>
                     {tool.name}
                   </span>
                 </div>
@@ -347,34 +346,33 @@ export default function ScorePage() {
             </button>
           </div>
           {/* Tool icons for team 2 */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {(gameData.team2Tools || ["double", "pit", "rest"]).map((toolId) => {
               const tool = HELP_TOOLS_MAP[toolId];
               if (!tool) return null;
               const used = usedTools.team2.includes(toolId);
               const isPitTool = toolId === "pit";
               const isActive = isPitTool && currentTeam === 2 && !used;
-              const isClickable = isActive;
               return (
-                <div key={toolId} className="flex flex-col items-center gap-0.5">
+                <div key={toolId} className="flex flex-col items-center gap-1">
                   <motion.button
-                    whileHover={isClickable ? { scale: 1.12 } : {}}
-                    whileTap={isClickable ? { scale: 0.9 } : {}}
-                    onClick={() => isClickable && handlePitToggle()}
-                    disabled={!isClickable}
+                    whileHover={isActive ? { scale: 1.12 } : {}}
+                    whileTap={isActive ? { scale: 0.9 } : {}}
+                    onClick={() => isActive && handlePitToggle()}
+                    disabled={!isActive}
                     title={tool.name}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all border-2 ${
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
                       isActive && pitActive
-                        ? "bg-yellow-400 border-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.9)] cursor-pointer"
+                        ? "bg-yellow-400 border-yellow-200 shadow-[0_0_14px_rgba(250,204,21,1)] cursor-pointer"
                         : isActive
-                          ? "bg-white/20 border-white/40 hover:bg-white/35 cursor-pointer"
-                          : "bg-white/5 border-white/10 cursor-not-allowed"
+                          ? "bg-white/30 border-white/60 hover:bg-white/45 cursor-pointer shadow-md"
+                          : "bg-white/10 border-white/20 cursor-not-allowed"
                     }`}
                   >
-                    <img src={tool.icon} alt={tool.name} className="w-5 h-5 object-contain"
-                      style={isActive && !used ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.3)" }} />
+                    <img src={tool.icon} alt={tool.name} className="w-7 h-7 object-contain"
+                      style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "grayscale(100%) opacity(0.25)" }} />
                   </motion.button>
-                  <span className={`text-[8px] font-bold leading-none ${isActive ? "text-white/80" : "text-white/30"}`}>
+                  <span className={`text-[9px] font-bold leading-none text-center max-w-[48px] ${isActive ? "text-white" : "text-white/30"}`}>
                     {tool.name}
                   </span>
                 </div>
