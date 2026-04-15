@@ -7,41 +7,24 @@ import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
 const TOOLS_CDN = "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page";
 
-type CategoryData = {
-  id: string;
-  name: string;
-  img: string;
-};
-
+type CategoryData = { id: string; name: string; img: string };
 type GameData = {
-  team1Name: string;
-  team2Name: string;
-  gameName: string;
-  team1Categories: CategoryData[];
-  team2Categories: CategoryData[];
-  team1Tools?: string[];
-  team2Tools?: string[];
+  team1Name: string; team2Name: string; gameName: string;
+  team1Categories: CategoryData[]; team2Categories: CategoryData[];
+  team1Tools?: string[]; team2Tools?: string[];
 };
-
 type QuestionData = {
-  categoryId: string;
-  categoryName: string;
-  points: number;
-  catIdx: number;
-  side: "l" | "r";
-  currentTeam: 1 | 2;
-  question: string;
-  answer: string;
-  image?: string;
+  categoryId: string; categoryName: string; points: number;
+  catIdx: number; side: "l" | "r"; currentTeam: 1 | 2;
+  question: string; answer: string; image?: string; pitActive?: boolean;
 };
 
 const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
   double: { name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg" },
-  call: { name: "اتصال بصديق", icon: `${TOOLS_CDN}/circle-call.png` },
-  pit: { name: "الحفرة", icon: `${TOOLS_CDN}/circle-replace.png` },
-  rest: { name: "استريح", icon: `${TOOLS_CDN}/circle-hand.png` },
+  call:   { name: "اتصال بصديق", icon: `${TOOLS_CDN}/circle-call.png` },
+  pit:    { name: "الحفرة",       icon: `${TOOLS_CDN}/circle-replace.png` },
+  rest:   { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
 };
-
 
 export default function QuestionPage() {
   const [, navigate] = useLocation();
@@ -56,46 +39,24 @@ export default function QuestionPage() {
   const [team2Score, setTeam2Score] = useState(0);
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [flashTool, setFlashTool] = useState<{ name: string; key: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("rakez-game-data");
-    if (stored) {
-      setGameData(JSON.parse(stored));
-    } else {
-      setGameData({
-        team1Name: "الفريق الأول",
-        team2Name: "الفريق الثاني",
-        gameName: "ركز",
-        team1Categories: [],
-        team2Categories: [],
-        team1Tools: ["double", "call", "pit", "rest"],
-        team2Tools: ["double", "call", "pit", "rest"],
-      });
-    }
+    if (stored) setGameData(JSON.parse(stored));
+    else setGameData({
+      team1Name: "الفريق الأول", team2Name: "الفريق الثاني", gameName: "ركز",
+      team1Categories: [], team2Categories: [],
+      team1Tools: ["double", "pit", "rest"], team2Tools: ["double", "pit", "rest"],
+    });
 
     const qStored = localStorage.getItem("rakez-current-question");
-    if (qStored) {
-      setQuestionData(JSON.parse(qStored));
-    } else {
-      setQuestionData({
-        categoryId: "sample",
-        categoryName: "معلومات عامة",
-        points: 200,
-        catIdx: 0,
-        currentTeam: 1,
-        question: "ما هو أكبر كوكب في المجموعة الشمسية؟",
-        answer: "المشتري",
-        image: "",
-      });
-    }
+    if (qStored) setQuestionData(JSON.parse(qStored));
+    else setQuestionData({ categoryId: "sample", categoryName: "معلومات عامة", points: 200, catIdx: 0, currentTeam: 1, side: "l", question: "ما هو أكبر كوكب في المجموعة الشمسية؟", answer: "المشتري", image: "" });
 
     const scores = localStorage.getItem("rakez-scores");
-    if (scores) {
-      const parsed = JSON.parse(scores);
-      setTeam1Score(parsed.team1Score || 0);
-      setTeam2Score(parsed.team2Score || 0);
-    }
+    if (scores) { const p = JSON.parse(scores); setTeam1Score(p.team1Score || 0); setTeam2Score(p.team2Score || 0); }
 
     const tools = localStorage.getItem("rakez-used-tools");
     if (tools) setUsedTools(JSON.parse(tools));
@@ -103,49 +64,31 @@ export default function QuestionPage() {
 
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
-    if (isTimerRunning) {
-      timerRef.current = setInterval(() => {
-        setTimer((t) => t + 1);
-      }, 1000);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    if (isTimerRunning) timerRef.current = setInterval(() => setTimer((t) => t + 1), 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isTimerRunning]);
 
   const toggleTimer = () => setIsTimerRunning(!isTimerRunning);
-
-  const resetTimer = () => {
-    setTimer(0);
-    setIsTimerRunning(true);
-  };
-
-  const formatTime = (s: number) => {
-    const mins = Math.floor(s / 60).toString().padStart(2, "0");
-    const secs = (s % 60).toString().padStart(2, "0");
-    return `${mins}:${secs}`;
-  };
+  const resetTimer = () => { setTimer(0); setIsTimerRunning(true); };
+  const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
   const handleCorrect = () => {
     if (!questionData) return;
-    const points = questionData.points;
-    const team = questionData.currentTeam;
-    const newT1 = team === 1 ? team1Score + points : team1Score;
-    const newT2 = team === 2 ? team2Score + points : team2Score;
+    const { points, currentTeam, catIdx, side } = questionData;
+    const newT1 = currentTeam === 1 ? team1Score + points : team1Score;
+    const newT2 = currentTeam === 2 ? team2Score + points : team2Score;
     localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: newT1, team2Score: newT2 }));
-    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, correct: true, team: questionData.currentTeam }));
+    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx, points, side, correct: true, team: currentTeam }));
     navigate("/score-page");
   };
 
   const handleWrong = () => {
     if (!questionData) return;
-    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, correct: false, team: questionData.currentTeam }));
+    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: questionData.currentTeam }));
     navigate("/score-page");
   };
 
-  const handleBackToBoard = () => {
-    navigate("/score-page");
-  };
+  const handleBackToBoard = () => navigate("/score-page");
 
   const handleUseTool = (team: 1 | 2, toolId: string) => {
     const key = team === 1 ? "team1" : "team2";
@@ -153,207 +96,147 @@ export default function QuestionPage() {
     const updated = { ...usedTools, [key]: [...usedTools[key], toolId] };
     setUsedTools(updated);
     localStorage.setItem("rakez-used-tools", JSON.stringify(updated));
+    const tool = HELP_TOOLS_MAP[toolId];
+    if (tool) setFlashTool({ name: tool.name, key: Date.now() });
   };
 
   if (!gameData || !questionData) return null;
 
-  const team1Tools = gameData.team1Tools || ["double", "call", "pit", "rest"];
-  const team2Tools = gameData.team2Tools || ["double", "call", "pit", "rest"];
+  const team1Tools = gameData.team1Tools || ["double", "pit", "rest"];
+  const team2Tools = gameData.team2Tools || ["double", "pit", "rest"];
+  const ct = questionData.currentTeam;
 
   return (
     <div className="min-h-screen bg-white flex flex-col" dir="rtl">
+      {/* Header */}
       <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-3">
           <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
+          {questionData.pitActive && (
+            <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
+              <span>⚡</span><span>الحفرة نشطة</span>
+            </div>
+          )}
         </div>
-
         <div className="flex items-center gap-3">
           <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
-            دور فريق: {questionData.currentTeam === 1 ? gameData.team1Name : gameData.team2Name}
+            دور فريق: {ct === 1 ? gameData.team1Name : gameData.team2Name}
           </div>
-          <div className="text-white/80 font-medium text-sm hidden md:block">
-            {gameData.gameName}
-          </div>
+          <div className="text-white/80 font-medium text-sm hidden md:block">{gameData.gameName}</div>
         </div>
-
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleBackToBoard}
-            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
-          >
-            <Eye size={15} />
-            <span>انتهاء اللعبة</span>
+          <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+            <Eye size={15} /><span>انتهاء اللعبة</span>
           </button>
-          <button
-            onClick={handleBackToBoard}
-            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
-          >
-            <ArrowRight size={15} />
-            <span>الرجوع للوحة</span>
+          <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+            <ArrowRight size={15} /><span>الرجوع</span>
           </button>
-          <button
-            onClick={() => {
-              localStorage.removeItem("rakez-game-data");
-              navigate("/start-game");
-            }}
-            className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36"
-          >
-            <LogOut size={14} />
-            <span>الخروج</span>
+          <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+            <LogOut size={14} /><span>الخروج</span>
           </button>
         </div>
       </div>
+
       <div className="flex-1 flex">
-        <div className="w-[280px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-20 flex flex-col gap-6">
-          <TeamSidebar
+        {/* Sidebar */}
+        <div className="w-[260px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-16 flex flex-col gap-6">
+          {/* Team 1 — show "double" if it's their turn, "rest" if not */}
+          <TeamToolCard
             teamName={gameData.team1Name}
             score={team1Score}
             tools={team1Tools}
             usedTools={usedTools.team1}
             onUseTool={(toolId) => handleUseTool(1, toolId)}
-            isCurrentTeam={questionData.currentTeam === 1}
+            isCurrentTeam={ct === 1}
           />
-
-          <div className="border-t-2 border-gray-200"></div>
-
-          <TeamSidebar
+          <div className="border-t-2 border-gray-200" />
+          {/* Team 2 */}
+          <TeamToolCard
             teamName={gameData.team2Name}
             score={team2Score}
             tools={team2Tools}
             usedTools={usedTools.team2}
             onUseTool={(toolId) => handleUseTool(2, toolId)}
-            isCurrentTeam={questionData.currentTeam === 2}
+            isCurrentTeam={ct === 2}
           />
         </div>
 
+        {/* Question Area */}
         <div className="flex-1 flex flex-col p-6 pt-10">
-
-          {/* ── Question box with embedded timer ── */}
           <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
-
-            {/* Timer: straddles the top border — visually part of the box */}
+            {/* Timer */}
             <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
               <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
-                <button
-                  onClick={resetTimer}
-                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
-                  title="إعادة تشغيل"
-                >
+                <button onClick={resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
                   <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
                 </button>
                 <span className="text-white text-2xl tracking-widest min-w-[80px] text-center select-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                   {formatTime(timer)}
                 </span>
-                <button
-                  onClick={toggleTimer}
-                  className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
-                  title={isTimerRunning ? "إيقاف مؤقت" : "استمرار"}
-                >
+                <button onClick={toggleTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
                   {isTimerRunning ? <Pause size={18} color="#ffffff" strokeWidth={2.5} /> : <Play size={18} color="#ffffff" strokeWidth={2.5} />}
                 </button>
               </div>
             </div>
 
-            {/* Question content — top aligned */}
+            {/* Question text */}
             <div className="px-8 pt-20 pb-4">
-              <p className="text-gray-900 text-center font-extrabold text-[30px]">
-                {questionData.question}
-              </p>
+              <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
             </div>
 
-            {/* Question image — centered, clickable */}
+            {/* Question image */}
             {questionData.image && (
               <div className="flex justify-center px-8 pb-4">
-                <img
-                  src={questionData.image}
-                  alt="صورة السؤال"
-                  onClick={() => setLightboxImage(questionData.image!)}
-                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
-                />
+                <img src={questionData.image} alt="صورة السؤال" onClick={() => setLightboxImage(questionData.image!)}
+                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
               </div>
             )}
 
-            {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Bottom row: category badge (right) | button (left) */}
+            {/* Bottom row */}
             <div className="flex items-end justify-between px-8 pb-8">
-              {/* Category badge — bottom right (RTL: first = right) */}
               <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
-                <span className="font-black text-[#7B2FBE] tracking-wide text-[20px] text-center">
-                  {questionData.categoryName}
-                </span>
+                <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
               </div>
-              {/* Button — bottom left (RTL: last = left) */}
-              <button
-                onClick={() => setShowAnswer(true)}
-                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
-              >
+              <button onClick={() => setShowAnswer(true)}
+                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]">
                 اختر الإجابة
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Answer overlay */}
       <AnimatePresence>
         {showAnswer && !showTeamSelection && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col"
-            dir="rtl"
-          >
-            {/* Navbar — same style as main page */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col" dir="rtl">
             <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-5 flex items-center justify-between shadow-lg shrink-0">
               <div className="flex items-center gap-3">
                 <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" style={{ filter: "drop-shadow(0 0 8px rgba(180,100,255,0.7))" }} />
               </div>
-              <div></div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowAnswer(false)}
-                  className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors"
-                >
-                  <ArrowRight size={14} />
-                  <span>العودة</span>
-                </button>
-              </div>
+              <div />
+              <button onClick={() => setShowAnswer(false)} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                <ArrowRight size={14} /><span>العودة</span>
+              </button>
             </div>
-
-            {/* Body — answer box */}
             <div className="flex-1 flex items-stretch justify-center p-3">
               <div className="w-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col shadow-[0_8px_40px_rgba(123,47,190,0.15)] overflow-hidden">
-
-                {/* Answer text — top */}
                 <div className="px-16 pt-16 pb-4">
-                  <p className="text-[100px] text-gray-900 text-center leading-tight w-full">
-                    {questionData.answer}
-                  </p>
+                  <p className="text-[100px] text-gray-900 text-center leading-tight w-full">{questionData.answer}</p>
                 </div>
-
-                {/* Image — centered in remaining space */}
                 {questionData.image ? (
                   <div className="flex-1 flex items-center justify-center px-16 py-4">
-                    <img
-                      src={questionData.image}
-                      alt="صورة الإجابة"
-                      onClick={() => setLightboxImage(questionData.image!)}
-                      className="max-h-52 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
-                    />
+                    <img src={questionData.image} alt="صورة الإجابة" onClick={() => setLightboxImage(questionData.image!)}
+                      className="max-h-52 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
                   </div>
-                ) : (
-                  <div className="flex-1" />
-                )}
-
-                {/* Button — bottom center */}
+                ) : <div className="flex-1" />}
                 <div className="flex justify-center pb-10">
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                  <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => setShowTeamSelection(true)}
-                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white py-3 px-14 rounded-full shadow-lg transition-colors text-[25px]"
-                  >
+                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white py-3 px-14 rounded-full shadow-lg transition-colors text-[25px]">
                     التالي
                   </motion.button>
                 </div>
@@ -362,60 +245,43 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Team selection overlay */}
       <AnimatePresence>
         {showTeamSelection && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col p-6"
-            dir="rtl"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col p-6" dir="rtl">
             <div className="flex-1 flex flex-col items-center justify-center gap-12">
-              <h1 className="text-4xl font-black text-[#7B2FBE] text-center">
-                أي فريق جاوب صح ؟
-              </h1>
-
+              <h1 className="text-4xl font-black text-[#7B2FBE] text-center">أي فريق جاوب صح ؟</h1>
               <div className="flex flex-col gap-4">
                 <div className="flex gap-4">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      const points = questionData.points;
-                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + points, team2Score }));
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 1 }));
+                      const pts = questionData.points;
+                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + pts, team2Score }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 1 }));
                       navigate("/score-page");
                     }}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
-                  >
+                    className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
                     {gameData?.team1Name}
                   </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      const points = questionData.points;
-                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + points }));
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points, side: questionData.side, correct: true, team: 2 }));
+                      const pts = questionData.points;
+                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + pts }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 2 }));
                       navigate("/score-page");
                     }}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors"
-                  >
+                    className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
                     {gameData?.team2Name}
                   </motion.button>
                 </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: 0 }));
                     navigate("/score-page");
                   }}
-                  className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 px-10 rounded-full shadow-lg transition-colors font-extrabold text-[25px]"
-                >
+                  className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 px-10 rounded-full shadow-lg transition-colors font-extrabold text-[25px]">
                   لا أحد
                 </motion.button>
               </div>
@@ -423,25 +289,44 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Lightbox overlay */}
+
+      {/* Lightbox */}
       <AnimatePresence>
         {lightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setLightboxImage(null)}
-            className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center cursor-zoom-out p-8"
+            className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center cursor-zoom-out p-8">
+            <motion.img initial={{ scale: 0.85 }} animate={{ scale: 1 }} exit={{ scale: 0.85 }}
+              src={lightboxImage} alt="صورة مكبّرة" className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tool flash animation */}
+      <AnimatePresence>
+        {flashTool && (
+          <motion.div
+            key={flashTool.key}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 1, 1, 0] }}
+            transition={{ duration: 1.2, times: [0, 0.1, 0.4, 0.7, 1] }}
+            onAnimationComplete={() => setFlashTool(null)}
+            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
           >
-            <motion.img
-              initial={{ scale: 0.85 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.85 }}
-              src={lightboxImage}
-              alt="صورة مكبّرة"
-              className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+            <motion.div
+              animate={{ backgroundColor: ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"] }}
+              transition={{ duration: 1.2 }}
+              className="absolute inset-0"
             />
+            <motion.div
+              initial={{ scale: 0.7 }}
+              animate={{ scale: [0.7, 1.05, 1] }}
+              transition={{ duration: 0.3 }}
+              className="relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300"
+            >
+              {flashTool.name}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -449,62 +334,52 @@ export default function QuestionPage() {
   );
 }
 
-function TeamSidebar({
-  teamName,
-  score,
-  tools,
-  usedTools,
-  onUseTool,
-  isCurrentTeam,
-}: {
-  teamName: string;
-  score: number;
-  tools: string[];
-  usedTools: string[];
-  onUseTool: (toolId: string) => void;
-  isCurrentTeam: boolean;
+function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentTeam }: {
+  teamName: string; score: number; tools: string[]; usedTools: string[];
+  onUseTool: (toolId: string) => void; isCurrentTeam: boolean;
 }) {
+  // Current team sees "double" (إجابتين), other team sees "rest" (استريح)
+  const relevantToolId = isCurrentTeam ? "double" : "rest";
+  const hasRelevantTool = tools.includes(relevantToolId);
+  const toolUsed = usedTools.includes(relevantToolId);
+  const toolInfo = HELP_TOOLS_MAP[relevantToolId];
+
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className={`w-full text-center py-2 rounded-xl font-black text-white text-sm ${isCurrentTeam ? "bg-[#7B2FBE]" : "bg-[#7B2FBE]/60"}`}>
+      <div className={`w-full text-center py-2 rounded-xl font-black text-white text-sm ${isCurrentTeam ? "bg-[#7B2FBE]" : "bg-[#7B2FBE]/50"}`}>
         {teamName}
       </div>
-
       <div className="text-4xl font-black text-foreground">{score}</div>
 
-      <p className="text-xs font-bold text-foreground/60">وسائل المساعدة</p>
-
-      <div className="flex gap-2 flex-wrap justify-center">
-        {tools.map((toolId) => {
-          const tool = HELP_TOOLS_MAP[toolId];
-          if (!tool) return null;
-          const used = usedTools.includes(toolId);
-          return (
-            <button
-              key={toolId}
-              onClick={() => !used && onUseTool(toolId)}
-              disabled={used}
-              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
-                used
-                  ? "bg-gray-200 opacity-40 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-[#7B2FBE]/10 hover:ring-2 hover:ring-[#7B2FBE] cursor-pointer"
-              }`}
-              title={tool.name}
-            >
-              <img
-                src={tool.icon}
-                alt={tool.name}
-                className="w-7 h-7 object-contain"
-                style={
-                  used
-                    ? { filter: "grayscale(100%) opacity(0.3)" }
-                    : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
-                }
-              />
-            </button>
-          );
-        })}
-      </div>
+      {hasRelevantTool && toolInfo && (
+        <div className="flex flex-col items-center gap-2 w-full">
+          <p className="text-xs font-bold text-foreground/60">
+            {isCurrentTeam ? "وسيلتك في هذا السؤال" : "وسيلتك"}
+          </p>
+          <motion.button
+            whileHover={!toolUsed ? { scale: 1.05 } : {}}
+            whileTap={!toolUsed ? { scale: 0.95 } : {}}
+            onClick={() => !toolUsed && onUseTool(relevantToolId)}
+            disabled={toolUsed}
+            className={`w-full py-2.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all border-2 ${
+              toolUsed
+                ? "bg-gray-100 text-gray-400 border-gray-200 opacity-50 cursor-not-allowed"
+                : isCurrentTeam
+                  ? "bg-[#7B2FBE]/10 text-[#7B2FBE] border-[#7B2FBE]/40 hover:bg-[#7B2FBE] hover:text-white hover:border-[#7B2FBE] cursor-pointer"
+                  : "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-500 hover:text-white hover:border-blue-500 cursor-pointer"
+            }`}
+          >
+            <img
+              src={toolInfo.icon}
+              alt={toolInfo.name}
+              className="w-5 h-5 object-contain"
+              style={toolUsed ? { filter: "grayscale(100%) opacity(0.3)" } : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }}
+            />
+            <span>{toolInfo.name}</span>
+            {toolUsed && <span className="text-xs">(مستخدمة)</span>}
+          </motion.button>
+        </div>
+      )}
     </div>
   );
 }
