@@ -74,17 +74,14 @@ export default function QuestionPage() {
 
   const handleCorrect = () => {
     if (!questionData) return;
-    const { points, currentTeam, catIdx, side } = questionData;
-    const newT1 = currentTeam === 1 ? team1Score + points : team1Score;
-    const newT2 = currentTeam === 2 ? team2Score + points : team2Score;
-    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: newT1, team2Score: newT2 }));
-    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx, points, side, correct: true, team: currentTeam }));
+    const { points, currentTeam, catIdx, side, pitActive } = questionData;
+    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx, points, side, correct: true, team: currentTeam, pitActive: !!pitActive }));
     navigate("/score-page");
   };
 
   const handleWrong = () => {
     if (!questionData) return;
-    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: questionData.currentTeam }));
+    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: false, team: questionData.currentTeam, pitActive: !!questionData.pitActive }));
     navigate("/score-page");
   };
 
@@ -264,8 +261,7 @@ export default function QuestionPage() {
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       const pts = questionData.points;
-                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: team1Score + pts, team2Score }));
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 1 }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 1, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
@@ -274,8 +270,7 @@ export default function QuestionPage() {
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       const pts = questionData.points;
-                      localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score: team2Score + pts }));
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 2 }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 2, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
