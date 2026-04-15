@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navbar } from "@/components/sections/Navbar";
+import { LogOut } from "lucide-react";
 
 const CONFETTI_COLORS = [
   "#f59e0b", "#ef4444", "#3b82f6", "#10b981", "#8b5cf6",
@@ -77,6 +77,7 @@ export default function WinPage() {
   const [data, setData] = useState<{
     team1Name: string; team2Name: string;
     team1Score: number; team2Score: number;
+    gameName: string;
   } | null>(null);
   const [show, setShow] = useState(false);
 
@@ -91,6 +92,7 @@ export default function WinPage() {
         team2Name: g.team2Name || "الفريق الثاني",
         team1Score: s.team1Score || 0,
         team2Score: s.team2Score || 0,
+        gameName: g.gameName || "ركز",
       });
     }
     const t = setTimeout(() => setShow(true), 100);
@@ -106,10 +108,9 @@ export default function WinPage() {
 
   if (!data) return null;
 
-  const { team1Name, team2Name, team1Score, team2Score } = data;
+  const { team1Name, team2Name, team1Score, team2Score, gameName } = data;
   const isTie = team1Score === team2Score;
   const winner = team1Score > team2Score ? team1Name : team2Name;
-  const loserName = team1Score > team2Score ? team2Name : team1Name;
   const winnerScore = Math.max(team1Score, team2Score);
   const loserScore = Math.min(team1Score, team2Score);
 
@@ -120,11 +121,31 @@ export default function WinPage() {
       {/* نجوم بريق */}
       {SPARKLES.map(s => <Sparkle key={s.id} {...s} />)}
 
-      {/* الشريط العلوي */}
-      <Navbar />
+      {/* الشريط العلوي — نفس تصميم صفحة السؤال */}
+      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative z-20">
+        {/* يسار: اللوغو */}
+        <div className="flex items-center shrink-0">
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
+        </div>
+
+        {/* وسط: اسم اللعبة */}
+        <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+          <span className="text-white font-bold text-lg">{gameName}</span>
+        </div>
+
+        {/* يمين: زر الخروج فقط */}
+        <div className="flex items-center shrink-0">
+          <button
+            onClick={handlePlayAgain}
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25"
+          >
+            <LogOut size={14} /><span>الخروج</span>
+          </button>
+        </div>
+      </div>
 
       {/* المحتوى */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 gap-8 px-6 text-center pt-32 pb-16">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 gap-8 px-6 text-center pt-10 pb-16">
 
         {/* تأثير الفوز — نبضة دائرية خلف العنوان */}
         {!isTie && show && (
