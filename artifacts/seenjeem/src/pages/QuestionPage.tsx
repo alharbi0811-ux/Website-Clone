@@ -338,11 +338,8 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
   teamName: string; score: number; tools: string[]; usedTools: string[];
   onUseTool: (toolId: string) => void; isCurrentTeam: boolean;
 }) {
-  // Current team sees "double" (إجابتين), other team sees "rest" (استريح)
-  const relevantToolId = isCurrentTeam ? "double" : "rest";
-  const hasRelevantTool = tools.includes(relevantToolId);
-  const toolUsed = usedTools.includes(relevantToolId);
-  const toolInfo = HELP_TOOLS_MAP[relevantToolId];
+  // الوسيلة المتاحة حسب الدور: الفريق الحالي = جاوب جوابين، الآخر = استريح
+  const activeToolId = isCurrentTeam ? "double" : "rest";
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -351,34 +348,54 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
       </div>
       <div className="text-4xl font-black text-foreground">{score}</div>
 
-      {hasRelevantTool && toolInfo && (
-        <div className="flex flex-col items-center gap-2 w-full">
-          <p className="text-xs font-bold text-foreground/60">
-            {isCurrentTeam ? "وسيلتك في هذا السؤال" : "وسيلتك"}
-          </p>
-          <motion.button
-            whileHover={!toolUsed ? { scale: 1.05 } : {}}
-            whileTap={!toolUsed ? { scale: 0.95 } : {}}
-            onClick={() => !toolUsed && onUseTool(relevantToolId)}
-            disabled={toolUsed}
-            className={`w-full py-2.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all border-2 ${
-              toolUsed
-                ? "bg-gray-100 text-gray-400 border-gray-200 opacity-50 cursor-not-allowed"
-                : isCurrentTeam
-                  ? "bg-[#7B2FBE]/10 text-[#7B2FBE] border-[#7B2FBE]/40 hover:bg-[#7B2FBE] hover:text-white hover:border-[#7B2FBE] cursor-pointer"
-                  : "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-500 hover:text-white hover:border-blue-500 cursor-pointer"
-            }`}
-          >
-            <img
-              src={toolInfo.icon}
-              alt={toolInfo.name}
-              className="w-5 h-5 object-contain"
-              style={toolUsed ? { filter: "grayscale(100%) opacity(0.3)" } : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }}
-            />
-            <span>{toolInfo.name}</span>
-            {toolUsed && <span className="text-xs">(مستخدمة)</span>}
-          </motion.button>
-        </div>
+      {tools.length > 0 && (
+        <>
+          <p className="text-xs font-bold text-foreground/60">وسائل المساعدة</p>
+          <div className="flex flex-col gap-2 w-full">
+            {tools.map((toolId) => {
+              const tool = HELP_TOOLS_MAP[toolId];
+              if (!tool) return null;
+              const used = usedTools.includes(toolId);
+              const isAvailableThisTurn = toolId === activeToolId;
+              const isClickable = isAvailableThisTurn && !used;
+
+              return (
+                <motion.button
+                  key={toolId}
+                  whileHover={isClickable ? { scale: 1.03 } : {}}
+                  whileTap={isClickable ? { scale: 0.97 } : {}}
+                  onClick={() => isClickable && onUseTool(toolId)}
+                  disabled={!isClickable}
+                  className={`w-full py-2 px-3 rounded-2xl font-black text-sm flex items-center gap-2 transition-all border-2 relative ${
+                    used
+                      ? "bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed"
+                      : isAvailableThisTurn
+                        ? "bg-[#7B2FBE]/10 text-[#7B2FBE] border-[#7B2FBE]/50 hover:bg-[#7B2FBE] hover:text-white hover:border-[#7B2FBE] cursor-pointer shadow-sm"
+                        : "bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed opacity-60"
+                  }`}
+                >
+                  <img
+                    src={tool.icon}
+                    alt={tool.name}
+                    className="w-5 h-5 object-contain shrink-0"
+                    style={
+                      used || !isAvailableThisTurn
+                        ? { filter: "grayscale(100%) opacity(0.3)" }
+                        : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
+                    }
+                  />
+                  <span className="flex-1 text-right">{tool.name}</span>
+                  {used && (
+                    <span className="text-[10px] font-bold text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full">مستخدمة</span>
+                  )}
+                  {!used && !isAvailableThisTurn && (
+                    <span className="text-[10px] font-bold text-gray-400">🔒</span>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );
