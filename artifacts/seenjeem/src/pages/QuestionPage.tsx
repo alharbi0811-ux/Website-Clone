@@ -109,8 +109,9 @@ export default function QuestionPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col" dir="rtl">
       {/* Header */}
-      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
+      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative">
+        {/* Left: logo + pit */}
+        <div className="flex items-center gap-3 shrink-0">
           <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
           {questionData.pitActive && (
             <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
@@ -118,13 +119,17 @@ export default function QuestionPage() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-bold text-sm">
-            دور فريق: {ct === 1 ? gameData.team1Name : gameData.team2Name}
-          </div>
-          <div className="text-white/80 font-medium text-sm hidden md:block">{gameData.gameName}</div>
+
+        {/* Center: game name */}
+        <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+          <span className="text-white font-bold text-lg">{gameData.gameName}</span>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Right: turn badge + action buttons */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
+            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
+          </div>
           <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
             <Eye size={15} /><span>انتهاء اللعبة</span>
           </button>
