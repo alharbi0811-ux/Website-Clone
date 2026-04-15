@@ -110,9 +110,12 @@ export default function QuestionPage() {
     <div className="min-h-screen bg-white flex flex-col" dir="rtl">
       {/* Header */}
       <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative">
-        {/* Left: logo + pit */}
+        {/* Left: logo + pit + turn badge */}
         <div className="flex items-center gap-3 shrink-0">
           <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
+            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
+          </div>
           {questionData.pitActive && (
             <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
               <span>⚡</span><span>الحفرة نشطة</span>
@@ -136,9 +139,6 @@ export default function QuestionPage() {
           <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
             <LogOut size={14} /><span>الخروج</span>
           </button>
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
-            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
-          </div>
         </div>
       </div>
 
