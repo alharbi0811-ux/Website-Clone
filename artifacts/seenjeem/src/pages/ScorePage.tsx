@@ -292,7 +292,7 @@ export default function ScorePage() {
             {team1Score}
           </div>
           {/* Tool icons — same height h-10 */}
-          {(gameData.team1Tools || ["double", "pit", "rest"]).map((toolId) => {
+          {((gameData.team1Tools?.length > 0) ? gameData.team1Tools : ["double", "pit", "rest"]).map((toolId) => {
             const tool = HELP_TOOLS_MAP[toolId];
             if (!tool) return null;
             const used = usedTools.team1.includes(toolId);
@@ -341,7 +341,7 @@ export default function ScorePage() {
             <Plus size={18} color="#5a1f8e" strokeWidth={3} />
           </button>
           {/* Tool icons */}
-          {(gameData.team2Tools || ["double", "pit", "rest"]).map((toolId) => {
+          {((gameData.team2Tools?.length > 0) ? gameData.team2Tools : ["double", "pit", "rest"]).map((toolId) => {
             const tool = HELP_TOOLS_MAP[toolId];
             if (!tool) return null;
             const used = usedTools.team2.includes(toolId);

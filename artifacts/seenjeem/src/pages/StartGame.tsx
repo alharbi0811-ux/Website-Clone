@@ -29,8 +29,8 @@ export default function StartGame() {
   const [gameName, setGameName] = useState("");
   const [team1Name, setTeam1Name] = useState("");
   const [team2Name, setTeam2Name] = useState("");
-  const [team1Tools, setTeam1Tools] = useState<string[]>([]);
-  const [team2Tools, setTeam2Tools] = useState<string[]>([]);
+  const [team1Tools, setTeam1Tools] = useState<string[]>(["double", "pit", "rest"]);
+  const [team2Tools, setTeam2Tools] = useState<string[]>(["double", "pit", "rest"]);
   const [showSplitTeams, setShowSplitTeams] = useState(false);
   const [sections, setSections] = useState<Section[]>([]);
   const [loadingSections, setLoadingSections] = useState(true);
