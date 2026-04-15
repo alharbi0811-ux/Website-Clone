@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { categoriesTable, questionsTable, usersTable } from "@workspace/db";
+import { categoriesTable, questionsTable, usersTable, customRolesTable } from "@workspace/db";
 import { eq, count, desc } from "drizzle-orm";
 import { requireAuth, requireAdmin, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
@@ -78,7 +78,7 @@ router.put("/admin/categories/:id", async (req, res) => {
       .set(parsed.data)
       .where(eq(categoriesTable.id, id))
       .returning();
-    if (!cat) return res.status(404).json({ error: "الفئة غير موجودة" });
+    if (!cat) return res.status(404).json({ error: "التصنيف غير موجود" });
     res.json(cat);
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });
@@ -88,7 +88,6 @@ router.put("/admin/categories/:id", async (req, res) => {
 router.delete("/admin/categories/:id", async (req, res) => {
   const id = Number(req.params.id);
   try {
-    await db.delete(questionsTable).where(eq(questionsTable.categoryId, id));
     await db.delete(categoriesTable).where(eq(categoriesTable.id, id));
     res.json({ success: true });
   } catch {
@@ -97,13 +96,11 @@ router.delete("/admin/categories/:id", async (req, res) => {
 });
 
 // ───── Questions ─────
-router.get("/admin/questions", async (req, res) => {
+router.get("/admin/questions", async (_req, res) => {
   try {
-    const categoryId = req.query.categoryId ? Number(req.query.categoryId) : null;
     const qs = await db
       .select()
       .from(questionsTable)
-      .where(categoryId ? eq(questionsTable.categoryId, categoryId) : undefined)
       .orderBy(desc(questionsTable.createdAt));
     res.json(qs);
   } catch {
@@ -112,18 +109,11 @@ router.get("/admin/questions", async (req, res) => {
 });
 
 const questionSchema = z.object({
-  categoryId: z.number().int().positive(),
-  questionText: z.string().min(1),
+  categoryId: z.string().min(1),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  question: z.string().min(1),
   answer: z.string().min(1),
-  optionA: z.string().optional(),
-  optionB: z.string().optional(),
-  optionC: z.string().optional(),
-  optionD: z.string().optional(),
-  correctOption: z.enum(["a", "b", "c", "d"]).optional(),
-  points: z.number().int().optional().default(100),
-  timeSeconds: z.number().int().optional().default(30),
-  difficulty: z.enum(["easy", "medium", "hard"]).optional().default("medium"),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
   isActive: z.boolean().optional().default(true),
 });
 
@@ -185,28 +175,45 @@ router.get("/admin/users", async (_req, res) => {
   }
 });
 
-const ROLES = ["superadmin", "admin", "moderator", "player"] as const;
-type Role = typeof ROLES[number];
-const ROLE_IS_ADMIN: Record<Role, boolean> = {
+// الرتب الأساسية المدمجة
+const BUILT_IN_ROLES = ["superadmin", "admin", "programmer", "writer", "player"] as const;
+type BuiltInRole = typeof BUILT_IN_ROLES[number];
+
+const BUILT_IN_ROLE_IS_ADMIN: Record<BuiltInRole, boolean> = {
   superadmin: true,
   admin: true,
-  moderator: false,
+  programmer: true,
+  writer: false,
   player: false,
 };
 
+async function resolveRoleIsAdmin(role: string): Promise<boolean> {
+  if (BUILT_IN_ROLES.includes(role as BuiltInRole)) {
+    return BUILT_IN_ROLE_IS_ADMIN[role as BuiltInRole];
+  }
+  const [custom] = await db.select().from(customRolesTable).where(eq(customRolesTable.name, role)).limit(1);
+  return custom?.isAdmin ?? false;
+}
+
+async function isValidRole(role: string): Promise<boolean> {
+  if (BUILT_IN_ROLES.includes(role as BuiltInRole)) return true;
+  const [custom] = await db.select().from(customRolesTable).where(eq(customRolesTable.name, role)).limit(1);
+  return !!custom;
+}
+
 router.patch("/admin/users/:id/role", async (req: AuthRequest, res) => {
   const id = Number(req.params.id);
-  const { role } = req.body as { role: Role };
+  const { role } = req.body as { role: string };
 
-  if (!ROLES.includes(role)) {
+  if (!(await isValidRole(role))) {
     return res.status(400).json({ error: "رتبة غير صحيحة" });
   }
 
   const [callerUser] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!)).limit(1);
   if (!callerUser || callerUser.role !== "superadmin") {
-    const targetIsSuperadmin = await db.select({ role: usersTable.role }).from(usersTable).where(eq(usersTable.id, id)).limit(1);
-    if (targetIsSuperadmin[0]?.role === "superadmin") {
-      return res.status(403).json({ error: "لا يمكن تعديل رتبة المدير الأول" });
+    const [targetUser] = await db.select({ role: usersTable.role }).from(usersTable).where(eq(usersTable.id, id)).limit(1);
+    if (targetUser?.role === "superadmin") {
+      return res.status(403).json({ error: "لا يمكن تعديل رتبة المالك" });
     }
   }
 
@@ -215,7 +222,7 @@ router.patch("/admin/users/:id/role", async (req: AuthRequest, res) => {
   }
 
   try {
-    const isAdmin = ROLE_IS_ADMIN[role];
+    const isAdmin = await resolveRoleIsAdmin(role);
     const [updated] = await db
       .update(usersTable)
       .set({ role, isAdmin })
@@ -225,6 +232,54 @@ router.patch("/admin/users/:id/role", async (req: AuthRequest, res) => {
     res.json(updated);
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+// ───── Custom Roles ─────
+
+// GET /admin/roles — يرجع الرتب الأساسية + المخصصة
+router.get("/admin/roles", async (_req, res) => {
+  try {
+    const custom = await db.select().from(customRolesTable).orderBy(customRolesTable.createdAt);
+    const builtIn = [
+      { id: "superadmin", name: "superadmin", label: "المالك",   isAdmin: true,  isBuiltIn: true },
+      { id: "admin",      name: "admin",      label: "المدير",   isAdmin: true,  isBuiltIn: true },
+      { id: "programmer", name: "programmer", label: "المبرمج",  isAdmin: true,  isBuiltIn: true },
+      { id: "writer",     name: "writer",     label: "الكاتب",   isAdmin: false, isBuiltIn: true },
+      { id: "player",     name: "player",     label: "اللاعب",   isAdmin: false, isBuiltIn: true },
+    ];
+    const customMapped = custom.map((r) => ({ ...r, id: String(r.id), isBuiltIn: false }));
+    res.json([...builtIn, ...customMapped]);
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+// POST /admin/roles — إضافة رتبة مخصصة (المالك فقط)
+const customRoleSchema = z.object({
+  name: z.string().min(2).max(30).regex(/^[a-z0-9_]+$/, "الاسم يجب أن يكون بالإنجليزية (حروف صغيرة، أرقام، شرطة سفلية)"),
+  label: z.string().min(1).max(20),
+  isAdmin: z.boolean().optional().default(false),
+});
+
+router.post("/admin/roles", async (req: AuthRequest, res) => {
+  const [callerUser] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!)).limit(1);
+  if (!callerUser || callerUser.role !== "superadmin") {
+    return res.status(403).json({ error: "فقط المالك يمكنه إضافة رتب جديدة" });
+  }
+
+  const parsed = customRoleSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0]?.message || "بيانات غير صحيحة" });
+
+  if (BUILT_IN_ROLES.includes(parsed.data.name as BuiltInRole)) {
+    return res.status(400).json({ error: "هذا الاسم محجوز لرتبة أساسية" });
+  }
+
+  try {
+    const [role] = await db.insert(customRolesTable).values(parsed.data).returning();
+    res.status(201).json({ ...role, id: String(role.id), isBuiltIn: false });
+  } catch {
+    res.status(500).json({ error: "الرتبة موجودة مسبقاً أو خطأ في الخادم" });
   }
 });
 

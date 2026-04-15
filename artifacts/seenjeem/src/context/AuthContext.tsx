@@ -33,17 +33,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       fetch(`${API_BASE}/auth/me`, {
         headers: { Authorization: `Bearer ${savedToken}` },
       })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.user) setUser(data.user);
-          else {
+        .then((r) => {
+          if (r.status === 401 || r.status === 403) {
             localStorage.removeItem("rakez-auth-token");
             setToken(null);
+            setIsLoading(false);
+            return null;
           }
+          return r.json();
+        })
+        .then((data) => {
+          if (!data) return;
+          if (data.user) setUser(data.user);
         })
         .catch(() => {
-          localStorage.removeItem("rakez-auth-token");
-          setToken(null);
+          /* خطأ شبكة — نحافظ على التوكن ونحاول مرة ثانية */
         })
         .finally(() => setIsLoading(false));
     } else {
