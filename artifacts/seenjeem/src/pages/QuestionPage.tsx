@@ -380,11 +380,9 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
                       alt={tool.name}
                       className="w-7 h-7 object-contain"
                       style={
-                        used
-                          ? { filter: "grayscale(100%) opacity(0.25)" }
-                          : isAvailableThisTurn
-                            ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
-                            : { filter: "grayscale(100%) opacity(0.35)" }
+                        isAvailableThisTurn && !used
+                          ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" }
+                          : { filter: "grayscale(100%) opacity(0.3)" }
                       }
                     />
                   </motion.button>
