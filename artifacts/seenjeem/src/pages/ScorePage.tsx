@@ -100,6 +100,10 @@ export default function ScorePage() {
   useEffect(() => { localStorage.setItem("rakez-scores", JSON.stringify({ team1Score, team2Score })); }, [team1Score, team2Score]);
   useEffect(() => { localStorage.setItem("rakez-current-team", JSON.stringify(currentTeam)); }, [currentTeam]);
 
+  const allCategories = gameData ? [...gameData.team1Categories, ...gameData.team2Categories] : [];
+  const totalCells = allCategories.length * POINTS.length * 2;
+  const allPlayed = totalCells > 0 && playedCells.size >= totalCells;
+
   useEffect(() => {
     if (totalCells > 0 && allPlayed) {
       const t = setTimeout(() => navigate("/win-page"), 1200);
@@ -145,10 +149,6 @@ export default function ScorePage() {
   }, [gameData]);
 
   if (!gameData) return null;
-
-  const allCategories = [...gameData.team1Categories, ...gameData.team2Categories];
-  const totalCells = allCategories.length * POINTS.length * 2;
-  const allPlayed = playedCells.size >= totalCells;
 
   const prefetchQuestion = (categoryId: string, diff: string, excludeIds: number[]) => {
     const cacheKey = `${categoryId}-${diff}`;
