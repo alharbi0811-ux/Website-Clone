@@ -337,10 +337,9 @@ export default function ScorePage() {
         {/* Center — absolutely centered */}
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
           <img
-            src={`${import.meta.env.BASE_URL}logo-diwan.png`}
+            src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
             className="h-10 w-auto object-contain"
-            style={{ filter: "brightness(0) invert(1)" }}
           />
         </div>
 
