@@ -336,11 +336,19 @@ export default function ScorePage() {
 
         {/* Center — absolutely centered */}
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
-          <img
+          <motion.img
             src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
             className="h-48 w-auto object-contain"
-            style={{ mixBlendMode: "screen", filter: "drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 25px rgba(255,255,255,0.55)) drop-shadow(0 0 50px rgba(255,255,255,0.3)) drop-shadow(0 0 80px rgba(255,255,255,0.12))" }}
+            style={{ mixBlendMode: "screen" }}
+            animate={{
+              filter: [
+                "drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 28px rgba(255,255,255,0.55)) drop-shadow(0 0 55px rgba(255,255,255,0.3)) drop-shadow(0 0 90px rgba(255,255,255,0.12))",
+                "drop-shadow(0 0 14px rgba(255,255,255,1)) drop-shadow(0 0 36px rgba(255,255,255,0.7)) drop-shadow(0 0 70px rgba(255,255,255,0.4)) drop-shadow(0 0 110px rgba(255,255,255,0.18))",
+                "drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 28px rgba(255,255,255,0.55)) drop-shadow(0 0 55px rgba(255,255,255,0.3)) drop-shadow(0 0 90px rgba(255,255,255,0.12))",
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
