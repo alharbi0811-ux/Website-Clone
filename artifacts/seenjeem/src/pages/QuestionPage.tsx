@@ -43,6 +43,10 @@ export default function QuestionPage() {
   const [activeTurnTeam, setActiveTurnTeam] = useState<1 | 2 | null>(null);
   const [turnFlash, setTurnFlash] = useState<{ teamName: string; key: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [qrTemplate, setQrTemplate] = useState<{
+    templateImageUrl: string | null;
+    qrPositionX: number; qrPositionY: number; qrSize: number;
+  } | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("rakez-game-data");
@@ -75,6 +79,13 @@ export default function QuestionPage() {
     if (isTimerRunning) timerRef.current = setInterval(() => setTimer((t) => t + 1), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isTimerRunning]);
+
+  useEffect(() => {
+    fetch("/api/qr-templates/active")
+      .then((r) => r.ok ? r.json() : null)
+      .then((t) => { if (t) setQrTemplate(t); })
+      .catch(() => {});
+  }, []);
 
   // تبديل الدور بعد 90 ثانية
   useEffect(() => {
@@ -207,11 +218,34 @@ export default function QuestionPage() {
               <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
             </div>
 
-            {/* Question image */}
+            {/* Question image (with optional QR template) */}
             {questionData.image && (
               <div className="flex justify-center px-8 pb-4">
-                <img src={questionData.image} alt="صورة السؤال" onClick={() => setLightboxImage(questionData.image!)}
-                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
+                {qrTemplate ? (
+                  <div
+                    className="relative rounded-2xl overflow-hidden cursor-zoom-in hover:opacity-95 transition-opacity"
+                    style={{ width: 320, aspectRatio: "16/9", background: "#000" }}
+                    onClick={() => setLightboxImage(questionData.image!)}>
+                    {qrTemplate.templateImageUrl && (
+                      <img src={qrTemplate.templateImageUrl} alt="قالب" className="absolute inset-0 w-full h-full object-contain" />
+                    )}
+                    <img
+                      src={questionData.image}
+                      alt="QR"
+                      style={{
+                        position: "absolute",
+                        left: `${qrTemplate.qrPositionX}%`,
+                        top: `${qrTemplate.qrPositionY}%`,
+                        transform: "translate(-50%, -50%)",
+                        width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
+                        maxWidth: "90%",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <img src={questionData.image} alt="صورة السؤال" onClick={() => setLightboxImage(questionData.image!)}
+                    className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
+                )}
               </div>
             )}
 

@@ -3,7 +3,7 @@ import { useLocation, Link } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard, FolderOpen, HelpCircle, Users,
-  LogOut, Menu, X, ChevronLeft, Terminal
+  LogOut, Menu, X, ChevronLeft, Terminal, QrCode
 } from "lucide-react";
 
 interface NavItem {
@@ -18,6 +18,7 @@ const navItems: NavItem[] = [
   { icon: <FolderOpen size={16} />, label: "الفئات", href: "/admin/categories" },
   { icon: <HelpCircle size={16} />, label: "الأسئلة", href: "/admin/questions" },
   { icon: <Users size={16} />, label: "المستخدمون", href: "/admin/users" },
+  { icon: <QrCode size={16} />, label: "قوالب QR", href: "/admin/qr-templates" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

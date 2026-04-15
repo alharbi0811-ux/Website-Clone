@@ -23,6 +23,7 @@ import AdminCategoryQuestions from "@/pages/admin/AdminCategoryQuestions";
 import AdminQuestionForm from "@/pages/admin/AdminQuestionForm";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
+import AdminQRTemplates from "@/pages/admin/AdminQRTemplates";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,9 @@ function Router() {
       </Route>
       <Route path="/admin/users">
         <AdminGuard><AdminUsers /></AdminGuard>
+      </Route>
+      <Route path="/admin/qr-templates">
+        <AdminGuard><AdminQRTemplates /></AdminGuard>
       </Route>
 
       <Route component={NotFound} />
