@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { ArrowRight, LogOut, Gamepad2, Eye, Minus, Plus, RotateCcw, Trophy } from "lucide-react";
+import { ArrowRight, LogOut, Eye, Minus, Plus, RotateCcw, Trophy } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useViewport } from "@/context/ViewportContext";
 
@@ -335,8 +335,13 @@ export default function ScorePage() {
         </div>
 
         {/* Center */}
-        <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center border border-white/20 shrink-0">
-          <Gamepad2 size={20} className="text-white" />
+        <div className="shrink-0 flex items-center justify-center">
+          <img
+            src={`${import.meta.env.BASE_URL}logo-diwan.png`}
+            alt="ديوان الدارع"
+            className="h-10 w-auto object-contain"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
         </div>
 
         {/* Team 2 */}
