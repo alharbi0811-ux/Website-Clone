@@ -305,13 +305,13 @@ export default function ScorePage() {
             );
           })}
           {/* Score */}
-          <button onClick={() => setTeam1Score((s) => Math.max(0, s - 200))} className="w-10 h-10 rounded-full bg-red-500/80 hover:bg-red-600 text-white flex items-center justify-center transition-colors shrink-0">
+          <button onClick={() => setTeam1Score((s) => Math.max(0, s - 200))} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 text-[#7B2FBE] flex items-center justify-center transition-colors shrink-0 shadow-sm">
             <Minus size={14} />
           </button>
           <div className="h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-lg rounded-full shadow-inner px-6 border-2 min-w-[70px] shrink-0">
             {team1Score}
           </div>
-          <button onClick={() => setTeam1Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-green-500/80 hover:bg-green-600 text-white flex items-center justify-center transition-colors shrink-0">
+          <button onClick={() => setTeam1Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 text-[#7B2FBE] flex items-center justify-center transition-colors shrink-0 shadow-sm">
             <Plus size={14} />
           </button>
         </div>
@@ -323,13 +323,13 @@ export default function ScorePage() {
 
         {/* Team 2 */}
         <div className="flex items-center gap-2 flex-1 justify-end">
-          <button onClick={() => setTeam2Score((s) => Math.max(0, s - 200))} className="w-10 h-10 rounded-full bg-red-500/80 hover:bg-red-600 text-white flex items-center justify-center transition-colors shrink-0">
+          <button onClick={() => setTeam2Score((s) => Math.max(0, s - 200))} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 text-[#7B2FBE] flex items-center justify-center transition-colors shrink-0 shadow-sm">
             <Minus size={14} />
           </button>
           <div className="h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-lg rounded-full shadow-inner px-6 border-2 min-w-[70px] shrink-0">
             {team2Score}
           </div>
-          <button onClick={() => setTeam2Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-green-500/80 hover:bg-green-600 text-white flex items-center justify-center transition-colors shrink-0">
+          <button onClick={() => setTeam2Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 text-[#7B2FBE] flex items-center justify-center transition-colors shrink-0 shadow-sm">
             <Plus size={14} />
           </button>
           {/* Tool icons */}
