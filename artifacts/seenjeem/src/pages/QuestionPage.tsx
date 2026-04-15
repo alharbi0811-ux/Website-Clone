@@ -125,11 +125,8 @@ export default function QuestionPage() {
           <span className="text-white font-bold text-lg">{gameData.gameName}</span>
         </div>
 
-        {/* Right: turn badge + action buttons */}
+        {/* Right: action buttons + turn badge at far right */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
-            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
-          </div>
           <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
             <Eye size={15} /><span>انتهاء اللعبة</span>
           </button>
@@ -139,6 +136,9 @@ export default function QuestionPage() {
           <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
             <LogOut size={14} /><span>الخروج</span>
           </button>
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
+            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
+          </div>
         </div>
       </div>
 
