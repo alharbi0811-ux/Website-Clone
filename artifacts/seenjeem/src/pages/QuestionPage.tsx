@@ -39,7 +39,7 @@ export default function QuestionPage() {
   const [team2Score, setTeam2Score] = useState(0);
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [flashTool, setFlashTool] = useState<{ name: string; key: number } | null>(null);
+  const [flashTool, setFlashTool] = useState<{ name: string; key: number; color: "blue" | "white" } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -97,13 +97,14 @@ export default function QuestionPage() {
     setUsedTools(updated);
     localStorage.setItem("rakez-used-tools", JSON.stringify(updated));
     const tool = HELP_TOOLS_MAP[toolId];
-    if (tool) setFlashTool({ name: tool.name, key: Date.now() });
+    const color = toolId === "double" ? "blue" : "white";
+    if (tool) setFlashTool({ name: tool.name, key: Date.now(), color });
   };
 
   if (!gameData || !questionData) return null;
 
-  const team1Tools = gameData.team1Tools || ["double", "pit", "rest"];
-  const team2Tools = gameData.team2Tools || ["double", "pit", "rest"];
+  const team1Tools = (gameData.team1Tools && gameData.team1Tools.length > 0) ? gameData.team1Tools : ["double", "pit", "rest"];
+  const team2Tools = (gameData.team2Tools && gameData.team2Tools.length > 0) ? gameData.team2Tools : ["double", "pit", "rest"];
   const ct = questionData.currentTeam;
 
   return (
@@ -310,30 +311,44 @@ export default function QuestionPage() {
 
       {/* Tool flash animation */}
       <AnimatePresence>
-        {flashTool && (
-          <motion.div
-            key={flashTool.key}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 1, 1, 0] }}
-            transition={{ duration: 1.2, times: [0, 0.1, 0.4, 0.7, 1] }}
-            onAnimationComplete={() => setFlashTool(null)}
-            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
-          >
+        {flashTool && (() => {
+          const isBlue = flashTool.color === "blue";
+          const isWhite = flashTool.color === "white";
+          const overlayColor = isBlue
+            ? ["rgba(59,130,246,0.35)", "rgba(59,130,246,0.05)", "rgba(59,130,246,0.35)", "rgba(59,130,246,0)"]
+            : isWhite
+              ? ["rgba(255,255,255,0.45)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.45)", "rgba(255,255,255,0)"]
+              : ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"];
+          const cardClass = isBlue
+            ? "relative bg-blue-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-blue-300"
+            : isWhite
+              ? "relative bg-white text-[#7B2FBE] px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-[#7B2FBE]/40"
+              : "relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300";
+          return (
             <motion.div
-              animate={{ backgroundColor: ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"] }}
-              transition={{ duration: 1.2 }}
-              className="absolute inset-0"
-            />
-            <motion.div
-              initial={{ scale: 0.7 }}
-              animate={{ scale: [0.7, 1.05, 1] }}
-              transition={{ duration: 0.3 }}
-              className="relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300"
+              key={flashTool.key}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 1, 1, 0] }}
+              transition={{ duration: 1.2, times: [0, 0.1, 0.4, 0.7, 1] }}
+              onAnimationComplete={() => setFlashTool(null)}
+              className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
             >
-              {flashTool.name}
+              <motion.div
+                animate={{ backgroundColor: overlayColor }}
+                transition={{ duration: 1.2 }}
+                className="absolute inset-0"
+              />
+              <motion.div
+                initial={{ scale: 0.7 }}
+                animate={{ scale: [0.7, 1.05, 1] }}
+                transition={{ duration: 0.3 }}
+                className={cardClass}
+              >
+                {flashTool.name}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
