@@ -440,11 +440,6 @@ export default function QuestionPage() {
               <div className="flex-1 flex flex-col p-6 pt-10">
                 <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
 
-                  {/* Question text */}
-                  <div className="px-8 pt-8 pb-4">
-                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
-                  </div>
-
                   {/* Circular timer — centered in card */}
                   <div className="flex-1 flex flex-col items-center justify-center gap-5">
                     <CircularTimerSVG
