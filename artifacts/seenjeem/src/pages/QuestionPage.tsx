@@ -429,48 +429,65 @@ export default function QuestionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
-            style={{ background: circCfg.bg === "rgba(34,197,94,0.12)" ? "#0d1f12" : circCfg.bg === "rgba(234,179,8,0.12)" ? "#1e1a06" : "#1f0d0d" }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
             dir="rtl"
           >
-            {/* Circular timer — large and centered */}
-            <div className="flex flex-col items-center gap-6">
-              <CircularTimerSVG
-                timeLeft={circularTimeLeft}
-                totalTime={circTotal}
-                color={circCfg.color}
-                size={280}
-              />
+            {renderHeader()}
 
-              {/* Pause / Resume + Reset */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setCircularRunning((r) => !r)}
-                  className="w-14 h-14 rounded-full flex items-center justify-center transition-all active:scale-95"
-                  style={{ background: "rgba(255,255,255,0.08)", border: `2px solid ${circCfg.color}` }}
-                >
-                  {circularRunning
-                    ? <Pause size={24} color={circCfg.color} strokeWidth={2.5} />
-                    : <Play  size={24} color={circCfg.color} strokeWidth={2.5} />}
-                </button>
-                <button
-                  onClick={() => { setCircularTimeLeft(circTotal); setCircularRunning(true); }}
-                  className="w-14 h-14 rounded-full flex items-center justify-center transition-all active:scale-95"
-                  style={{ background: "rgba(255,255,255,0.08)", border: `2px solid ${circCfg.color}` }}
-                >
-                  <RotateCw size={22} color={circCfg.color} strokeWidth={2.5} />
-                </button>
+            <div className="flex-1 flex">
+              {renderSidebar()}
+
+              <div className="flex-1 flex flex-col p-6 pt-10">
+                <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
+
+                  {/* Circular timer + controls */}
+                  <div className="absolute -top-[68px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-2 shadow-[0_4px_18px_rgba(123,47,190,0.25)] border-2 border-[#7B2FBE]">
+                      <button
+                        onClick={() => { setCircularTimeLeft(circTotal); setCircularRunning(true); }}
+                        className="w-8 h-8 rounded-xl bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors"
+                      >
+                        <RotateCw size={18} color="#7B2FBE" strokeWidth={2.5} />
+                      </button>
+                      <CircularTimerSVG
+                        timeLeft={circularTimeLeft}
+                        totalTime={circTotal}
+                        color={circCfg.color}
+                        size={110}
+                      />
+                      <button
+                        onClick={() => setCircularRunning((r) => !r)}
+                        className="w-8 h-8 rounded-xl bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors"
+                      >
+                        {circularRunning
+                          ? <Pause size={18} color="#7B2FBE" strokeWidth={2.5} />
+                          : <Play  size={18} color="#7B2FBE" strokeWidth={2.5} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Question text */}
+                  <div className="px-8 pt-24 pb-4">
+                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
+                  </div>
+
+                  <div className="flex-1" />
+
+                  {/* Bottom row */}
+                  <div className="flex items-end justify-between px-8 pb-8">
+                    <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
+                      <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
+                    </div>
+                    <button
+                      onClick={handleRevealAnswer}
+                      className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                    >
+                      كشف الإجابة
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* كشف الإجابة */}
-            <button
-              onClick={handleRevealAnswer}
-              className="text-white font-black py-4 px-14 rounded-full shadow-2xl text-[22px] transition-all hover:scale-105 active:scale-95"
-              style={{ background: circCfg.color, boxShadow: `0 0 32px ${circCfg.color}55` }}
-            >
-              كشف الإجابة
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
