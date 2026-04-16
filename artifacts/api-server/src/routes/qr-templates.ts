@@ -22,6 +22,7 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 router.get("/qr-templates/active", async (_req, res) => {
   try {
+    res.setHeader("Cache-Control", "no-store");
     const [template] = await db
       .select()
       .from(qrTemplates)
