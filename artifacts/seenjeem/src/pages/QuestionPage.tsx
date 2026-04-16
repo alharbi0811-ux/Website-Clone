@@ -96,6 +96,14 @@ export default function QuestionPage() {
     qrPositionX: number; qrPositionY: number; qrSize: number;
   } | null>(null);
 
+  const DEFAULT_DESIGN = {
+    bgColor: "#ffffff", accentColor: "#7B2FBE", textColor: "#111827", cardBgColor: "#ffffff",
+    showQr: true, showImage: true, showCategoryBadge: true, showTimer: true,
+    questionTextSize: 30, answerTextSize: 100, bgImageUrl: null as string | null,
+  };
+  const [design, setDesign] = useState({ ...DEFAULT_DESIGN });
+  const [answerDesign, setAnswerDesign] = useState({ ...DEFAULT_DESIGN });
+
   useEffect(() => {
     const stored = localStorage.getItem("rakez-game-data");
     if (stored) setGameData(JSON.parse(stored));
@@ -149,6 +157,17 @@ export default function QuestionPage() {
       .then((t) => { if (t) setQrTemplate(t); })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!questionData?.categoryId) return;
+    fetch(`/api/category-layouts/for-category/${questionData.categoryId}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.question) setDesign((d) => ({ ...d, ...data.question }));
+        if (data?.answer)   setAnswerDesign((d) => ({ ...d, ...data.answer }));
+      })
+      .catch(() => {});
+  }, [questionData?.categoryId]);
 
   // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط)
   useEffect(() => {
@@ -221,12 +240,11 @@ export default function QuestionPage() {
 
   // ── Template display helper ──────────────────────────────────────────────
   const renderTemplate = () => {
-    // تجاهل صور الفئة القادمة من CDN — فقط الصور المرفوعة للسؤال تُعرض
-    const questionImage = questionData.image && !questionData.image.startsWith(CDN)
+    const questionImage = design.showImage && questionData.image && !questionData.image.startsWith(CDN)
       ? questionData.image
       : null;
 
-    if (questionData.externalPageSlug && qrTemplate) {
+    if (design.showQr && questionData.externalPageSlug && qrTemplate) {
       if (isBadounKalam) {
         return (
           <div className="flex-1 min-h-0 flex items-center justify-center px-4 pb-4">
@@ -298,10 +316,10 @@ export default function QuestionPage() {
         </div>
       );
     }
-    if (questionData.externalPageSlug && !qrTemplate) {
+    if (design.showQr && questionData.externalPageSlug && !qrTemplate) {
       return (
         <div className="flex flex-col items-center gap-3 pb-4">
-          <div className="p-3 bg-white border-4 border-[#7B2FBE] rounded-2xl shadow-[0_0_24px_rgba(123,47,190,0.4)]">
+          <div className="p-3 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 24px ${design.accentColor}66` }}>
             <QRCodeSVG value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={180} />
           </div>
           <p className="text-xs font-mono text-gray-400">/p/{questionData.externalPageSlug}</p>
@@ -403,7 +421,7 @@ export default function QuestionPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white flex flex-col" dir="rtl">
+    <div className="min-h-screen flex flex-col" dir="rtl" style={{ background: design.bgColor }}>
       {renderHeader()}
 
       <div className="flex-1 flex">
@@ -411,12 +429,15 @@ export default function QuestionPage() {
 
         {/* Question Area */}
         <div className="flex-1 flex flex-col p-6 pt-10">
-          <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
+          <div
+            className="flex-1 relative rounded-3xl flex flex-col"
+            style={{ border: `4px solid ${design.accentColor}`, background: design.cardBgColor }}
+          >
 
-            {/* Regular timer — مخفي في فئة بدون كلام */}
-            {!isBadounKalam && (
+            {/* Regular timer — مخفي في فئة بدون كلام أو لو أخفاه الأدمن */}
+            {!isBadounKalam && design.showTimer && (
               <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
-                <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
+                <div className="rounded-2xl px-5 py-2 flex items-center gap-3" style={{ background: design.accentColor, boxShadow: `0 4px 18px ${design.accentColor}80` }}>
                   <button onClick={resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
                     <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
                   </button>
@@ -431,8 +452,8 @@ export default function QuestionPage() {
             )}
 
             {/* Question text */}
-            <div className={`px-8 ${isBadounKalam ? "pt-8" : "pt-20"} pb-4`}>
-              <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
+            <div className={`px-8 ${isBadounKalam ? "pt-8" : (!isBadounKalam && design.showTimer ? "pt-20" : "pt-8")} pb-4`}>
+              <p className="text-center font-extrabold" style={{ color: design.textColor, fontSize: design.questionTextSize }}>{questionData.question}</p>
             </div>
 
             {renderTemplate()}
@@ -441,21 +462,25 @@ export default function QuestionPage() {
 
             {/* Bottom row */}
             <div className="flex items-end justify-between px-8 pb-8">
-              <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
-                <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
-              </div>
+              {design.showCategoryBadge ? (
+                <div className="rounded-2xl bg-white px-4 py-2" style={{ border: `2px solid ${design.accentColor}` }}>
+                  <span className="font-black tracking-wide text-[20px]" style={{ color: design.accentColor }}>{questionData.categoryName}</span>
+                </div>
+              ) : <div />}
 
               {isBadounKalam ? (
                 <button
                   onClick={handleOpenCircularTimer}
-                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                  className="text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                  style={{ background: design.accentColor }}
                 >
                   جاهز
                 </button>
               ) : (
                 <button
                   onClick={() => setShowAnswer(true)}
-                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                  className="text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                  style={{ background: design.accentColor }}
                 >
                   اختر الإجابة
                 </button>
@@ -534,8 +559,9 @@ export default function QuestionPage() {
       <AnimatePresence>
         {showAnswer && !showTeamSelection && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col" dir="rtl">
-            <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-5 flex items-center justify-between shadow-lg shrink-0">
+            className="fixed inset-0 z-50 flex flex-col" dir="rtl" style={{ background: answerDesign.bgColor }}>
+            <div className="px-6 py-5 flex items-center justify-between shadow-lg shrink-0"
+              style={{ background: `linear-gradient(to left, ${answerDesign.accentColor}, ${answerDesign.accentColor}cc)` }}>
               <div className="flex items-center gap-3">
                 <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" style={{ filter: "drop-shadow(0 0 8px rgba(180,100,255,0.7))" }} />
               </div>
@@ -545,9 +571,10 @@ export default function QuestionPage() {
               </button>
             </div>
             <div className="flex-1 flex items-stretch justify-center p-3">
-              <div className="w-full border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col shadow-[0_8px_40px_rgba(123,47,190,0.15)] overflow-hidden">
+              <div className="w-full rounded-3xl flex flex-col overflow-hidden"
+                style={{ border: `4px solid ${answerDesign.accentColor}`, background: answerDesign.cardBgColor, boxShadow: `0 8px 40px ${answerDesign.accentColor}26` }}>
                 <div className="px-16 pt-16 pb-4">
-                  <p className="text-[100px] text-gray-900 text-center leading-tight w-full">{questionData.answer}</p>
+                  <p className="text-center leading-tight w-full" style={{ color: answerDesign.textColor, fontSize: answerDesign.answerTextSize }}>{questionData.answer}</p>
                 </div>
                 {(questionData.answerImage || questionData.image) ? (
                   <div className="flex-1 flex items-center justify-center px-16 py-4">
@@ -562,7 +589,8 @@ export default function QuestionPage() {
                 <div className="flex justify-center pb-10">
                   <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => setShowTeamSelection(true)}
-                    className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white py-3 px-14 rounded-full shadow-lg transition-colors text-[25px]">
+                    className="text-white py-3 px-14 rounded-full shadow-lg transition-colors text-[25px]"
+                    style={{ background: answerDesign.accentColor }}>
                     التالي
                   </motion.button>
                 </div>

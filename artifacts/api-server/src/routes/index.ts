@@ -6,6 +6,7 @@ import historyRouter from "./history";
 import categoriesRouter from "./categories";
 import qrTemplatesRouter from "./qr-templates";
 import externalPagesRouter from "./external-pages";
+import categoryLayoutsRouter from "./category-layouts";
 
 const router: IRouter = Router();
 
@@ -14,6 +15,7 @@ router.use(authRouter);
 router.use(categoriesRouter);
 router.use(qrTemplatesRouter);
 router.use(externalPagesRouter);
+router.use(categoryLayoutsRouter);
 router.use(historyRouter);
 router.use(adminRouter);
 
