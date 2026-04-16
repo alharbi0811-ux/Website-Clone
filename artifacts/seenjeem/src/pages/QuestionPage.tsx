@@ -34,29 +34,33 @@ const CIRCULAR_TIMER_CONFIG: Record<number, { color: string; bg: string; duratio
   600: { color: "#ef4444", bg: "rgba(239,68,68,0.12)",  duration: 40 },
 };
 
-function CircularTimerSVG({ timeLeft, totalTime, color }: { timeLeft: number; totalTime: number; color: string }) {
-  const r = 64;
+function CircularTimerSVG({ timeLeft, totalTime, color, size = 160 }: { timeLeft: number; totalTime: number; color: string; size?: number }) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const strokeW = size * 0.06;
+  const r = cx - strokeW;
   const circ = 2 * Math.PI * r;
   const progress = totalTime > 0 ? timeLeft / totalTime : 0;
   const offset = circ * (1 - progress);
   const mins = Math.floor(timeLeft / 60).toString().padStart(2, "0");
   const secs = (timeLeft % 60).toString().padStart(2, "0");
+  const fontSize = Math.round(size * 0.18);
   return (
-    <svg width="160" height="160" style={{ transform: "rotate(-90deg)" }}>
-      <circle cx="80" cy="80" r={r} fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="10" />
+    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeW} />
       <circle
-        cx="80" cy="80" r={r} fill="none"
-        stroke={color} strokeWidth="10"
+        cx={cx} cy={cy} r={r} fill="none"
+        stroke={color} strokeWidth={strokeW}
         strokeDasharray={circ}
         strokeDashoffset={offset}
         strokeLinecap="round"
         style={{ transition: "stroke-dashoffset 0.9s linear" }}
       />
       <text
-        x="80" y="80"
+        x={cx} y={cy}
         textAnchor="middle" dominantBaseline="middle"
-        transform="rotate(90, 80, 80)"
-        style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 26, fontWeight: 900, fill: color }}
+        transform={`rotate(90, ${cx}, ${cy})`}
+        style={{ fontFamily: "'Orbitron', sans-serif", fontSize, fontWeight: 900, fill: color }}
       >
         {mins}:{secs}
       </text>
@@ -425,51 +429,48 @@ export default function QuestionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
+            style={{ background: circCfg.bg === "rgba(34,197,94,0.12)" ? "#0d1f12" : circCfg.bg === "rgba(234,179,8,0.12)" ? "#1e1a06" : "#1f0d0d" }}
             dir="rtl"
           >
-            {renderHeader()}
+            {/* Circular timer — large and centered */}
+            <div className="flex flex-col items-center gap-6">
+              <CircularTimerSVG
+                timeLeft={circularTimeLeft}
+                totalTime={circTotal}
+                color={circCfg.color}
+                size={280}
+              />
 
-            <div className="flex-1 flex">
-              {renderSidebar()}
-
-              <div className="flex-1 flex flex-col p-6 pt-10">
-                <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
-
-                  {/* Circular timer — centered at top */}
-                  <div className="absolute -top-[52px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
-                    <CircularTimerSVG
-                      timeLeft={circularTimeLeft}
-                      totalTime={circTotal}
-                      color={circCfg.color}
-                    />
-                  </div>
-
-                  {/* Question text */}
-                  <div className="px-8 pt-28 pb-4">
-                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
-                  </div>
-
-                  {renderTemplate()}
-
-                  <div className="flex-1" />
-
-                  {/* Bottom row */}
-                  <div className="flex items-end justify-between px-8 pb-8">
-                    <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
-                      <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
-                    </div>
-                    <button
-                      onClick={handleRevealAnswer}
-                      className="text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
-                      style={{ background: circCfg.color }}
-                    >
-                      كشف الإجابة
-                    </button>
-                  </div>
-                </div>
+              {/* Pause / Resume + Reset */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setCircularRunning((r) => !r)}
+                  className="w-14 h-14 rounded-full flex items-center justify-center transition-all active:scale-95"
+                  style={{ background: "rgba(255,255,255,0.08)", border: `2px solid ${circCfg.color}` }}
+                >
+                  {circularRunning
+                    ? <Pause size={24} color={circCfg.color} strokeWidth={2.5} />
+                    : <Play  size={24} color={circCfg.color} strokeWidth={2.5} />}
+                </button>
+                <button
+                  onClick={() => { setCircularTimeLeft(circTotal); setCircularRunning(true); }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center transition-all active:scale-95"
+                  style={{ background: "rgba(255,255,255,0.08)", border: `2px solid ${circCfg.color}` }}
+                >
+                  <RotateCw size={22} color={circCfg.color} strokeWidth={2.5} />
+                </button>
               </div>
             </div>
+
+            {/* كشف الإجابة */}
+            <button
+              onClick={handleRevealAnswer}
+              className="text-white font-black py-4 px-14 rounded-full shadow-2xl text-[22px] transition-all hover:scale-105 active:scale-95"
+              style={{ background: circCfg.color, boxShadow: `0 0 32px ${circCfg.color}55` }}
+            >
+              كشف الإجابة
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
