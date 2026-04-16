@@ -8,6 +8,7 @@ export const externalPagesTable = pgTable("external_pages", {
   slug: text("slug").notNull().unique(),
   imageUrl: text("image_url"),
   contentText: text("content_text"),
+  designJson: text("design_json").default("{}"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

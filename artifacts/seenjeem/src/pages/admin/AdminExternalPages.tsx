@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Pencil, Globe, X, Check } from "lucide-react";
+import { useLocation } from "wouter";
+import { Plus, Trash2, Pencil, Globe, X, Check, Paintbrush } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 
 interface ExternalPage {
@@ -36,6 +37,7 @@ const emptyForm = { title: "", slug: "", imageUrl: "", contentText: "" };
 
 export default function AdminExternalPages() {
   const adminFetch = useAdminFetch();
+  const [, navigate] = useLocation();
   const [pages, setPages] = useState<ExternalPage[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -239,6 +241,18 @@ export default function AdminExternalPages() {
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={() => navigate(`/admin/external-pages/${p.id}/design`)}
+                  className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-bold transition-all"
+                  style={{
+                    background: "rgba(123,47,190,0.15)",
+                    border: "1px solid rgba(123,47,190,0.3)",
+                    color: "#c084fc",
+                  }}
+                >
+                  <Paintbrush size={12} />
+                  تصميم
+                </button>
                 <button
                   onClick={() => openEdit(p)}
                   className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
