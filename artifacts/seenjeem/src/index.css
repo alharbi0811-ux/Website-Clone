@@ -167,3 +167,57 @@
   background-clip: text;
 }
 
+/* ── iPhone Mode ─────────────────────────────────────── */
+
+body.iphone-mode {
+  background: #0f0f0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+body.iphone-mode #root {
+  width: 393px;
+  height: 852px;
+  border-radius: 44px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
+  flex-shrink: 0;
+  position: relative;
+  /* Layered box-shadow simulates iPhone body/bezel */
+  box-shadow:
+    0 0 0 13px #1c1c1e,
+    0 0 0 14px #3a3a3c,
+    0 0 0 17px #1c1c1e,
+    0 50px 120px rgba(0, 0, 0, 0.95);
+  margin: 20px;
+  scrollbar-width: none;
+}
+
+body.iphone-mode #root::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dynamic Island */
+body.iphone-mode #root::before {
+  content: '';
+  display: block;
+  position: sticky;
+  top: 10px;
+  width: 126px;
+  height: 37px;
+  background: #000;
+  border-radius: 20px;
+  margin: 0 auto;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Make all vh-based heights fill the iPhone screen instead of the viewport */
+body.iphone-mode #root #app-root {
+  min-height: 852px;
+}
+
