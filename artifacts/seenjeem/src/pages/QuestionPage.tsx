@@ -28,6 +28,42 @@ const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
   rest:   { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
 };
 
+const CIRCULAR_TIMER_CONFIG: Record<number, { color: string; bg: string; duration: number }> = {
+  200: { color: "#22c55e", bg: "rgba(34,197,94,0.12)",  duration: 90 },
+  400: { color: "#eab308", bg: "rgba(234,179,8,0.12)",  duration: 60 },
+  600: { color: "#ef4444", bg: "rgba(239,68,68,0.12)",  duration: 40 },
+};
+
+function CircularTimerSVG({ timeLeft, totalTime, color }: { timeLeft: number; totalTime: number; color: string }) {
+  const r = 64;
+  const circ = 2 * Math.PI * r;
+  const progress = totalTime > 0 ? timeLeft / totalTime : 0;
+  const offset = circ * (1 - progress);
+  const mins = Math.floor(timeLeft / 60).toString().padStart(2, "0");
+  const secs = (timeLeft % 60).toString().padStart(2, "0");
+  return (
+    <svg width="160" height="160" style={{ transform: "rotate(-90deg)" }}>
+      <circle cx="80" cy="80" r={r} fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="10" />
+      <circle
+        cx="80" cy="80" r={r} fill="none"
+        stroke={color} strokeWidth="10"
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        style={{ transition: "stroke-dashoffset 0.9s linear" }}
+      />
+      <text
+        x="80" y="80"
+        textAnchor="middle" dominantBaseline="middle"
+        transform="rotate(90, 80, 80)"
+        style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 26, fontWeight: 900, fill: color }}
+      >
+        {mins}:{secs}
+      </text>
+    </svg>
+  );
+}
+
 export default function QuestionPage() {
   const [, navigate] = useLocation();
   const { viewMode } = useViewport();
@@ -35,8 +71,11 @@ export default function QuestionPage() {
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showTeamSelection, setShowTeamSelection] = useState(false);
+  const [showCircularTimer, setShowCircularTimer] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const [circularTimeLeft, setCircularTimeLeft] = useState(0);
+  const [circularRunning, setCircularRunning] = useState(false);
   const [team1Score, setTeam1Score] = useState(0);
   const [team2Score, setTeam2Score] = useState(0);
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
@@ -45,6 +84,7 @@ export default function QuestionPage() {
   const [activeTurnTeam, setActiveTurnTeam] = useState<1 | 2 | null>(null);
   const [turnFlash, setTurnFlash] = useState<{ teamName: string; key: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const circTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [qrTemplate, setQrTemplate] = useState<{
     templateImageUrl: string | null;
     qrPositionX: number; qrPositionY: number; qrSize: number;
@@ -76,11 +116,26 @@ export default function QuestionPage() {
     if (tools) setUsedTools(JSON.parse(tools));
   }, []);
 
+  // Regular upward timer
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (isTimerRunning) timerRef.current = setInterval(() => setTimer((t) => t + 1), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isTimerRunning]);
+
+  // Circular countdown timer
+  useEffect(() => {
+    if (circTimerRef.current) clearInterval(circTimerRef.current);
+    if (circularRunning) {
+      circTimerRef.current = setInterval(() => {
+        setCircularTimeLeft((t) => {
+          if (t <= 1) { clearInterval(circTimerRef.current!); return 0; }
+          return t - 1;
+        });
+      }, 1000);
+    }
+    return () => { if (circTimerRef.current) clearInterval(circTimerRef.current); };
+  }, [circularRunning]);
 
   useEffect(() => {
     fetch("/api/qr-templates/active")
@@ -89,7 +144,7 @@ export default function QuestionPage() {
       .catch(() => {});
   }, []);
 
-  // تبديل الدور بعد 90 ثانية
+  // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط)
   useEffect(() => {
     if (timer === 90 && questionData && gameData) {
       const other = questionData.currentTeam === 1 ? 2 : 1;
@@ -102,6 +157,22 @@ export default function QuestionPage() {
   const toggleTimer = () => setIsTimerRunning(!isTimerRunning);
   const resetTimer = () => { setTimer(0); setIsTimerRunning(true); };
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+
+  const handleOpenCircularTimer = () => {
+    if (!questionData) return;
+    const pts = questionData.points as 200 | 400 | 600;
+    const cfg = CIRCULAR_TIMER_CONFIG[pts] || CIRCULAR_TIMER_CONFIG[200];
+    setCircularTimeLeft(cfg.duration);
+    setCircularRunning(true);
+    setIsTimerRunning(false);
+    setShowCircularTimer(true);
+  };
+
+  const handleRevealAnswer = () => {
+    setCircularRunning(false);
+    setShowCircularTimer(false);
+    setShowAnswer(true);
+  };
 
   const handleCorrect = () => {
     if (!questionData) return;
@@ -135,196 +206,189 @@ export default function QuestionPage() {
   const team2Tools = (gameData.team2Tools && gameData.team2Tools.length > 0) ? gameData.team2Tools : ["double", "pit", "rest"];
   const ct = questionData.currentTeam;
 
+  // فئة بدون كلام
+  const isBadounKalam = questionData.categoryName.includes("كلام") || questionData.categoryName.includes("ولا كلمة");
+
+  const pts = questionData.points as 200 | 400 | 600;
+  const circCfg = CIRCULAR_TIMER_CONFIG[pts] || CIRCULAR_TIMER_CONFIG[200];
+  const circTotal = circCfg.duration;
+
+  // ── Template display helper ──────────────────────────────────────────────
+  const renderTemplate = () => {
+    if (questionData.externalPageSlug && qrTemplate) {
+      return (
+        <div className="flex flex-col items-center pb-6 px-4">
+          <div
+            className="relative rounded-2xl overflow-hidden w-full"
+            style={{ maxWidth: 680, aspectRatio: "16/9" }}
+          >
+            {qrTemplate.templateImageUrl && (
+              <img
+                src={qrTemplate.templateImageUrl}
+                alt="قالب"
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
+              />
+            )}
+            <div
+              style={{
+                position: "absolute",
+                left: `${qrTemplate.qrPositionX}%`,
+                top: `${qrTemplate.qrPositionY}%`,
+                transform: "translate(-50%, -50%)",
+                width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
+                zIndex: 2,
+                background: "white",
+                padding: 4,
+                borderRadius: 4,
+              }}
+            >
+              <QRCodeSVG
+                value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                style={{ width: "100%", height: "auto", display: "block" }}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (questionData.externalPageSlug && !qrTemplate) {
+      return (
+        <div className="flex flex-col items-center gap-3 pb-4">
+          <div className="p-3 bg-white border-4 border-[#7B2FBE] rounded-2xl shadow-[0_0_24px_rgba(123,47,190,0.4)]">
+            <QRCodeSVG value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={180} />
+          </div>
+          <p className="text-xs font-mono text-gray-400">/p/{questionData.externalPageSlug}</p>
+        </div>
+      );
+    }
+    if (questionData.image && qrTemplate) {
+      return (
+        <div className="flex justify-center pb-6 px-4">
+          <div
+            className="relative rounded-2xl overflow-hidden w-full cursor-zoom-in hover:opacity-95 transition-opacity"
+            style={{ maxWidth: 680, aspectRatio: "16/9" }}
+            onClick={() => setLightboxImage(questionData.image!)}
+          >
+            {qrTemplate.templateImageUrl && (
+              <img
+                src={qrTemplate.templateImageUrl}
+                alt="قالب"
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
+              />
+            )}
+            <img
+              src={questionData.image}
+              alt="QR"
+              style={{
+                position: "absolute",
+                left: `${qrTemplate.qrPositionX}%`,
+                top: `${qrTemplate.qrPositionY}%`,
+                transform: "translate(-50%, -50%)",
+                width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
+                maxWidth: "90%",
+                zIndex: 2,
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+    if (questionData.image) {
+      return (
+        <div className="flex justify-center px-8 pb-4">
+          <img
+            src={questionData.image}
+            alt="صورة السؤال"
+            onClick={() => setLightboxImage(questionData.image!)}
+            className="max-h-52 max-w-md object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+          />
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // ── Shared layout parts ──────────────────────────────────────────────────
+  const renderHeader = () => (
+    <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative">
+      <div className="flex items-center gap-3 shrink-0">
+        <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
+        <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
+          دور: {ct === 1 ? gameData!.team1Name : gameData!.team2Name}
+        </div>
+        {questionData.pitActive && (
+          <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
+            <span>⚡</span><span>الحفرة نشطة</span>
+          </div>
+        )}
+      </div>
+      <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+        <span className="text-white font-bold text-lg">{gameData!.gameName}</span>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <Eye size={15} /><span>انتهاء اللعبة</span>
+        </button>
+        <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <ArrowRight size={15} /><span>الرجوع</span>
+        </button>
+        <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <LogOut size={14} /><span>الخروج</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderSidebar = () => (
+    <div className="w-[260px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-16 flex flex-col gap-6">
+      <TeamToolCard
+        teamName={gameData!.team1Name} score={team1Score} tools={team1Tools}
+        usedTools={usedTools.team1} onUseTool={(t) => handleUseTool(1, t)}
+        isCurrentTeam={ct === 1} isActiveTurn={activeTurnTeam === 1}
+      />
+      <div className="border-t-2 border-gray-200" />
+      <TeamToolCard
+        teamName={gameData!.team2Name} score={team2Score} tools={team2Tools}
+        usedTools={usedTools.team2} onUseTool={(t) => handleUseTool(2, t)}
+        isCurrentTeam={ct === 2} isActiveTurn={activeTurnTeam === 2}
+      />
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white flex flex-col" dir="rtl">
-      {/* Header */}
-      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative">
-        {/* Left: logo + pit + turn badge */}
-        <div className="flex items-center gap-3 shrink-0">
-          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
-          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
-            دور: {ct === 1 ? gameData.team1Name : gameData.team2Name}
-          </div>
-          {questionData.pitActive && (
-            <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
-              <span>⚡</span><span>الحفرة نشطة</span>
-            </div>
-          )}
-        </div>
-
-        {/* Center: game name */}
-        <div className="absolute inset-x-0 flex justify-center pointer-events-none">
-          <span className="text-white font-bold text-lg">{gameData.gameName}</span>
-        </div>
-
-        {/* Right: action buttons + turn badge at far right */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-            <Eye size={15} /><span>انتهاء اللعبة</span>
-          </button>
-          <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-            <ArrowRight size={15} /><span>الرجوع</span>
-          </button>
-          <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-            <LogOut size={14} /><span>الخروج</span>
-          </button>
-        </div>
-      </div>
+      {renderHeader()}
 
       <div className="flex-1 flex">
-        {/* Sidebar */}
-        <div className="w-[260px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-16 flex flex-col gap-6">
-          {/* Team 1 — show "double" if it's their turn, "rest" if not */}
-          <TeamToolCard
-            teamName={gameData.team1Name}
-            score={team1Score}
-            tools={team1Tools}
-            usedTools={usedTools.team1}
-            onUseTool={(toolId) => handleUseTool(1, toolId)}
-            isCurrentTeam={ct === 1}
-            isActiveTurn={activeTurnTeam === 1}
-          />
-          <div className="border-t-2 border-gray-200" />
-          {/* Team 2 */}
-          <TeamToolCard
-            teamName={gameData.team2Name}
-            score={team2Score}
-            tools={team2Tools}
-            usedTools={usedTools.team2}
-            onUseTool={(toolId) => handleUseTool(2, toolId)}
-            isCurrentTeam={ct === 2}
-            isActiveTurn={activeTurnTeam === 2}
-          />
-        </div>
+        {renderSidebar()}
 
         {/* Question Area */}
         <div className="flex-1 flex flex-col p-6 pt-10">
           <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
-            {/* Timer */}
-            <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
-              <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
-                <button onClick={resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
-                  <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
-                </button>
-                <span className="text-white text-2xl tracking-widest min-w-[80px] text-center select-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-                  {formatTime(timer)}
-                </span>
-                <button onClick={toggleTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
-                  {isTimerRunning ? <Pause size={18} color="#ffffff" strokeWidth={2.5} /> : <Play size={18} color="#ffffff" strokeWidth={2.5} />}
-                </button>
+
+            {/* Regular timer — مخفي في فئة بدون كلام */}
+            {!isBadounKalam && (
+              <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
+                <div className="bg-[#7B2FBE] rounded-2xl px-5 py-2 flex items-center gap-3 shadow-[0_4px_18px_rgba(123,47,190,0.5)]">
+                  <button onClick={resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
+                    <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
+                  </button>
+                  <span className="text-white text-2xl tracking-widest min-w-[80px] text-center select-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                    {formatTime(timer)}
+                  </span>
+                  <button onClick={toggleTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
+                    {isTimerRunning ? <Pause size={18} color="#ffffff" strokeWidth={2.5} /> : <Play size={18} color="#ffffff" strokeWidth={2.5} />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Question text */}
-            <div className="px-8 pt-20 pb-4">
+            <div className={`px-8 ${isBadounKalam ? "pt-8" : "pt-20"} pb-4`}>
               <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
             </div>
 
-            {/* QR Code + Template overlay — for external page questions */}
-            {questionData.externalPageSlug && qrTemplate && (
-              <div className="flex flex-col items-center gap-2 pb-4">
-                <div
-                  className="relative rounded-2xl overflow-hidden"
-                  style={{ width: 320, aspectRatio: "16/9", background: "#111" }}
-                >
-                  {/* Template background */}
-                  {qrTemplate.templateImageUrl && (
-                    <img
-                      src={qrTemplate.templateImageUrl}
-                      alt="قالب"
-                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
-                    />
-                  )}
-                  {/* Generated QR on top */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: `${qrTemplate.qrPositionX}%`,
-                      top: `${qrTemplate.qrPositionY}%`,
-                      transform: "translate(-50%, -50%)",
-                      width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
-                      zIndex: 2,
-                      background: "white",
-                      padding: 4,
-                      borderRadius: 4,
-                    }}
-                  >
-                    <QRCodeSVG
-                      value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
-                      style={{ width: "100%", height: "auto", display: "block" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* External Page QR Code — standalone (no template) */}
-            {questionData.externalPageSlug && !qrTemplate && (
-              <div className="flex flex-col items-center gap-3 pb-4">
-                <div className="p-3 bg-white border-4 border-[#7B2FBE] rounded-2xl shadow-[0_0_24px_rgba(123,47,190,0.4)]">
-                  <QRCodeSVG
-                    value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
-                    size={180}
-                  />
-                </div>
-                <p className="text-xs font-mono text-gray-400">/p/{questionData.externalPageSlug}</p>
-              </div>
-            )}
-
-            {/* Question image — with template overlay (non-external-page questions) */}
-            {questionData.image && !questionData.externalPageSlug && (
-              <div className="flex justify-center px-8 pb-4">
-                {qrTemplate ? (
-                  <div
-                    className="relative rounded-2xl overflow-hidden cursor-zoom-in hover:opacity-95 transition-opacity"
-                    style={{ width: 320, aspectRatio: "16/9", background: "#111" }}
-                    onClick={() => setLightboxImage(questionData.image!)}
-                  >
-                    {/* Template background */}
-                    {qrTemplate.templateImageUrl && (
-                      <img
-                        src={qrTemplate.templateImageUrl}
-                        alt="قالب"
-                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
-                      />
-                    )}
-                    {/* QR image on top */}
-                    <img
-                      src={questionData.image}
-                      alt="QR"
-                      style={{
-                        position: "absolute",
-                        left: `${qrTemplate.qrPositionX}%`,
-                        top: `${qrTemplate.qrPositionY}%`,
-                        transform: "translate(-50%, -50%)",
-                        width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
-                        maxWidth: "90%",
-                        zIndex: 2,
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <img
-                    src={questionData.image}
-                    alt="صورة السؤال"
-                    onClick={() => setLightboxImage(questionData.image!)}
-                    className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
-                  />
-                )}
-              </div>
-            )}
-
-            {/* Question image — when external page exists but no template */}
-            {questionData.image && questionData.externalPageSlug && !qrTemplate && (
-              <div className="flex justify-center px-8 pb-4">
-                <img
-                  src={questionData.image}
-                  alt="صورة السؤال"
-                  onClick={() => setLightboxImage(questionData.image!)}
-                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
-                />
-              </div>
-            )}
+            {renderTemplate()}
 
             <div className="flex-1" />
 
@@ -333,16 +397,84 @@ export default function QuestionPage() {
               <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
                 <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
               </div>
-              <button onClick={() => setShowAnswer(true)}
-                className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]">
-                اختر الإجابة
-              </button>
+
+              {isBadounKalam ? (
+                <button
+                  onClick={handleOpenCircularTimer}
+                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                >
+                  جاهز
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAnswer(true)}
+                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                >
+                  اختر الإجابة
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Answer overlay */}
+      {/* ── Circular Timer Overlay (بدون كلام) ────────────────────────────── */}
+      <AnimatePresence>
+        {showCircularTimer && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
+            dir="rtl"
+          >
+            {renderHeader()}
+
+            <div className="flex-1 flex">
+              {renderSidebar()}
+
+              <div className="flex-1 flex flex-col p-6 pt-10">
+                <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
+
+                  {/* Circular timer — centered at top */}
+                  <div className="absolute -top-[52px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+                    <CircularTimerSVG
+                      timeLeft={circularTimeLeft}
+                      totalTime={circTotal}
+                      color={circCfg.color}
+                    />
+                  </div>
+
+                  {/* Question text */}
+                  <div className="px-8 pt-28 pb-4">
+                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
+                  </div>
+
+                  {renderTemplate()}
+
+                  <div className="flex-1" />
+
+                  {/* Bottom row */}
+                  <div className="flex items-end justify-between px-8 pb-8">
+                    <div className="border-2 border-[#7B2FBE] rounded-2xl bg-white px-4 py-2">
+                      <span className="font-black text-[#7B2FBE] tracking-wide text-[20px]">{questionData.categoryName}</span>
+                    </div>
+                    <button
+                      onClick={handleRevealAnswer}
+                      className="text-white font-black py-3 px-8 rounded-full shadow-lg transition-all hover:-translate-y-0.5 text-[19px]"
+                      style={{ background: circCfg.color }}
+                    >
+                      كشف الإجابة
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Answer overlay ──────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showAnswer && !showTeamSelection && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -384,7 +516,7 @@ export default function QuestionPage() {
         )}
       </AnimatePresence>
 
-      {/* Team selection overlay */}
+      {/* ── Team selection overlay ──────────────────────────────────────────── */}
       <AnimatePresence>
         {showTeamSelection && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -395,8 +527,7 @@ export default function QuestionPage() {
                 <div className="flex gap-4">
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      const pts = questionData.points;
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 1, pitActive: !!questionData.pitActive }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: true, team: 1, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
@@ -404,8 +535,7 @@ export default function QuestionPage() {
                   </motion.button>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      const pts = questionData.points;
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: pts, side: questionData.side, correct: true, team: 2, pitActive: !!questionData.pitActive }));
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: true, team: 2, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
@@ -521,7 +651,6 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
       </div>
       <div className="text-4xl font-black text-foreground">{score}</div>
 
-      {/* مؤشر دورك */}
       <AnimatePresence>
         {isActiveTurn && (
           <motion.div
