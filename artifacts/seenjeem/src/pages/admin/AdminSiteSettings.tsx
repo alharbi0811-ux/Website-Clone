@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
-import LogoQR from "@/components/LogoQR";
+import { QRCodeSVG } from "qrcode.react";
 import { invalidateSiteLogoCache } from "@/lib/siteLogoCache";
 
 const API_BASE = "/api";
@@ -169,14 +169,27 @@ export default function AdminSiteSettings() {
             style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(123,47,190,0.15)" }}
           >
             <div className="p-4 bg-white rounded-2xl shadow-xl">
-              <LogoQR
+              <QRCodeSVG
                 value="https://example.com/preview"
                 size={180}
+                level="H"
+                {...(logoPreview
+                  ? {
+                      imageSettings: {
+                        src: logoPreview,
+                        height: Math.round(180 * 0.18),
+                        width: Math.round(180 * 0.18),
+                        excavate: true,
+                      },
+                    }
+                  : {})}
               />
             </div>
           </div>
           <p className="text-xs text-center" style={{ color: "#444466" }}>
-            كل رموز QR في النظام ستحتوي على هذا الشعار تلقائياً
+            {logoPreview
+              ? "✓ الشعار سيظهر داخل جميع رموز QR بعد الحفظ"
+              : "ارفع شعاراً لرؤيته داخل QR"}
           </p>
         </div>
 
