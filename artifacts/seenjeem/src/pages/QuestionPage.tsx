@@ -491,6 +491,15 @@ export default function QuestionPage() {
       );
     }
     if (design.showQr && questionData.externalPageSlug && !qrTemplate) {
+      if (isBadounKalam) {
+        return (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="p-4 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 32px ${design.accentColor}88` }}>
+              <LogoQR value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={280} />
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="flex flex-col items-center gap-3 pb-4">
           <div className="p-3 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 24px ${design.accentColor}66` }}>
@@ -668,9 +677,10 @@ export default function QuestionPage() {
               </div>
             )}
 
-            {/* Question text */}
+            {/* Question text — hidden in بدون كلام mode */}
+            {!isBadounKalam && (
             <div
-              className={`px-8 ${isBadounKalam ? "pt-8" : (!isBadounKalam && design.showTimer ? "pt-20" : "pt-8")} pb-4`}
+              className={`px-8 ${design.showTimer ? "pt-20" : "pt-8"} pb-4`}
               {...editProps("question-text", true)}
               style={{
                 ...editOutline("question-text"),
@@ -687,6 +697,7 @@ export default function QuestionPage() {
                 }}
               >{questionData.question}</p>
             </div>
+            )}
 
             {renderTemplate()}
 
