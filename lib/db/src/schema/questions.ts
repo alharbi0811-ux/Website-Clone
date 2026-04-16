@@ -30,6 +30,8 @@ export const questionsTable = pgTable("questions", {
   timeSeconds: integer("time_seconds").notNull().default(30),
   difficulty: difficultyEnum("difficulty").notNull().default("medium"),
   imageUrl: text("image_url"),
+  externalPageId: integer("external_page_id"),
+  qrTemplateId: integer("qr_template_id"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

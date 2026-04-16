@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
+import { QRCodeSVG } from "qrcode.react";
 
 interface Category { id: number; nameAr: string; }
+interface ExternalPage { id: number; title: string; slug: string; }
+interface QrTemplate { id: number; name: string; templateImageUrl: string | null; qrPositionX: number; qrPositionY: number; qrSize: number; }
 
 const difficulties = [
   { value: "easy",   label: "سهل",   points: 200, color: "#34d399", bg: "rgba(16,185,129,0.15)",  border: "rgba(16,185,129,0.35)" },
@@ -44,6 +47,8 @@ export default function AdminQuestionForm() {
 
   const adminFetch = useAdminFetch();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [externalPages, setExternalPages] = useState<ExternalPage[]>([]);
+  const [qrTemplates, setQrTemplates] = useState<QrTemplate[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -56,7 +61,15 @@ export default function AdminQuestionForm() {
     difficulty: "medium",
     points: "400",
     isActive: true,
+    externalPageId: "" as string,
+    qrTemplateId: "" as string,
   });
+
+  const selectedCategory = categories.find((c) => String(c.id) === String(form.categoryId));
+  const isBadounKalam = selectedCategory?.nameAr.includes("كلام") || selectedCategory?.nameAr.includes("ولا كلمة");
+  const selectedPage = externalPages.find((p) => String(p.id) === String(form.externalPageId));
+  const selectedTemplate = qrTemplates.find((t) => String(t.id) === String(form.qrTemplateId));
+  const pageUrl = selectedPage ? `${window.location.origin}/p/${selectedPage.slug}` : "";
 
   const focusHandlers = {
     onFocus: (e: React.FocusEvent<any>) => (e.target.style.borderColor = "rgba(123,47,190,0.6)"),
@@ -68,6 +81,9 @@ export default function AdminQuestionForm() {
   }, [adminFetch]);
 
   useEffect(() => {
+    adminFetch("/external-pages").then((data: ExternalPage[]) => setExternalPages(data)).catch(() => {});
+    adminFetch("/admin/qr-templates").then((data: QrTemplate[]) => setQrTemplates(data)).catch(() => {});
+
     if (isEdit && editId) {
       adminFetch("/admin/questions")
         .then((qs: any[]) => {
@@ -83,6 +99,8 @@ export default function AdminQuestionForm() {
               difficulty: q.difficulty,
               points: String(q.points),
               isActive: q.isActive,
+              externalPageId: q.externalPageId ? String(q.externalPageId) : "",
+              qrTemplateId: q.qrTemplateId ? String(q.qrTemplateId) : "",
             });
           }
         })
@@ -112,6 +130,10 @@ export default function AdminQuestionForm() {
       if (form.optionC) payload.optionC = form.optionC;
       if (form.optionD) payload.optionD = form.optionD;
       if (form.correctOption) payload.correctOption = form.correctOption;
+      if (form.externalPageId) payload.externalPageId = Number(form.externalPageId);
+      else payload.externalPageId = null;
+      if (form.qrTemplateId) payload.qrTemplateId = Number(form.qrTemplateId);
+      else payload.qrTemplateId = null;
 
       if (isEdit && editId) {
         await adminFetch(`/admin/questions/${editId}`, { method: "PUT", body: JSON.stringify(payload) });
@@ -246,6 +268,63 @@ export default function AdminQuestionForm() {
               </div>
             )}
           </div>
+
+          {/* QR / External Page Fields (for بدون كلام categories) */}
+          {isBadounKalam && (
+            <div
+              className="rounded-xl p-4 space-y-4"
+              style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.15)" }}
+            >
+              <p className="text-xs font-mono" style={{ color: "#3b82f6" }}>⬡ إعدادات بدون كلام — QR</p>
+
+              <div>
+                <label style={labelStyle}>الصفحة الخارجية (سيُولَّد QR لها)</label>
+                <select
+                  value={form.externalPageId}
+                  onChange={set("externalPageId")}
+                  style={{ ...inputStyle, cursor: "pointer" }}
+                  {...focusHandlers}
+                >
+                  <option value="">— بدون صفحة —</option>
+                  {externalPages.map((p) => (
+                    <option key={p.id} value={p.id}>{p.title} ({p.slug})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={labelStyle}>قالب QR</label>
+                <select
+                  value={form.qrTemplateId}
+                  onChange={set("qrTemplateId")}
+                  style={{ ...inputStyle, cursor: "pointer" }}
+                  {...focusHandlers}
+                >
+                  <option value="">— بدون قالب —</option>
+                  {qrTemplates.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedPage && (
+                <div className="flex items-center gap-4 p-3 rounded-lg" style={{ background: "rgba(0,0,0,0.3)" }}>
+                  <div className="flex-shrink-0 p-2 bg-white rounded-lg">
+                    <QRCodeSVG value={pageUrl} size={72} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white font-bold text-sm">{selectedPage.title}</p>
+                    <p className="text-xs font-mono truncate" style={{ color: "#3b82f6" }}>{pageUrl}</p>
+                    {selectedTemplate && (
+                      <p className="text-xs mt-1 font-mono" style={{ color: "#8888aa" }}>
+                        قالب: {selectedTemplate.name}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Difficulty + Points (linked) */}
           <div>

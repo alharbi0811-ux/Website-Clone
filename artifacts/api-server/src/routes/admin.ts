@@ -109,11 +109,20 @@ router.get("/admin/questions", async (_req, res) => {
 });
 
 const questionSchema = z.object({
-  categoryId: z.string().min(1),
-  difficulty: z.enum(["easy", "medium", "hard"]),
-  question: z.string().min(1),
+  categoryId: z.coerce.number().int().positive(),
+  difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
+  questionText: z.string().min(1),
   answer: z.string().min(1),
+  optionA: z.string().optional().nullable(),
+  optionB: z.string().optional().nullable(),
+  optionC: z.string().optional().nullable(),
+  optionD: z.string().optional().nullable(),
+  correctOption: z.string().optional().nullable(),
+  points: z.coerce.number().int().optional().default(400),
+  timeSeconds: z.coerce.number().int().optional().default(30),
   imageUrl: z.string().optional().nullable(),
+  externalPageId: z.coerce.number().int().optional().nullable(),
+  qrTemplateId: z.coerce.number().int().optional().nullable(),
   isActive: z.boolean().optional().default(true),
 });
 

@@ -3,6 +3,7 @@ import { useViewport } from "@/context/ViewportContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
 const TOOLS_CDN = "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page";
@@ -17,6 +18,7 @@ type QuestionData = {
   categoryId: string; categoryName: string; points: number;
   catIdx: number; side: "l" | "r"; currentTeam: 1 | 2;
   question: string; answer: string; image?: string; pitActive?: boolean;
+  externalPageSlug?: string | null; externalPageId?: number | null; qrTemplateId?: number | null;
 };
 
 const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
@@ -217,6 +219,19 @@ export default function QuestionPage() {
             <div className="px-8 pt-20 pb-4">
               <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
             </div>
+
+            {/* External Page QR Code (for بدون كلام) */}
+            {questionData.externalPageSlug && (
+              <div className="flex flex-col items-center gap-3 pb-4">
+                <div className="p-3 bg-white border-4 border-[#7B2FBE] rounded-2xl shadow-[0_0_24px_rgba(123,47,190,0.4)]">
+                  <QRCodeSVG
+                    value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                    size={180}
+                  />
+                </div>
+                <p className="text-xs font-mono text-gray-400">/p/{questionData.externalPageSlug}</p>
+              </div>
+            )}
 
             {/* Question image (with optional QR template) */}
             {questionData.image && (

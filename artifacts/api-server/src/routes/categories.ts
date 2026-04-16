@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { categoriesTable, questionsTable } from "@workspace/db";
+import { categoriesTable, questionsTable, externalPagesTable } from "@workspace/db";
 import { eq, asc, and, notInArray, sql } from "drizzle-orm";
 
 const router = Router();
@@ -102,6 +102,16 @@ router.get("/questions/game", async (req, res) => {
     if (questions.length === 0) return res.status(404).json({ error: "لا توجد أسئلة لهذه الفئة" });
 
     const q = questions[0];
+
+    let externalPageSlug: string | null = null;
+    if (q.externalPageId) {
+      const [ep] = await db
+        .select({ slug: externalPagesTable.slug })
+        .from(externalPagesTable)
+        .where(eq(externalPagesTable.id, q.externalPageId));
+      externalPageSlug = ep?.slug ?? null;
+    }
+
     res.json({
       id: q.id,
       question: q.questionText,
@@ -109,6 +119,9 @@ router.get("/questions/game", async (req, res) => {
       image: q.imageUrl ?? "",
       points: q.points,
       difficulty: q.difficulty,
+      externalPageId: q.externalPageId ?? null,
+      externalPageSlug,
+      qrTemplateId: q.qrTemplateId ?? null,
     });
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });
