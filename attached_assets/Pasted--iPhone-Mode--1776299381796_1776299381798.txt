@@ -1,0 +1,106 @@
+أنت الآن مسؤول عن إصلاح iPhone Mode داخل موقع موجود بالفعل.
+
+⚠️ ملاحظة:
+زر التبديل موجود مسبقًا ويقوم بإضافة/إزالة class باسم:
+iphone-mode على <body>
+لا تعدّل على الزر نهائيًا — ركّز فقط على السلوك والتصميم
+
+🎯 الهدف:
+
+إنشاء محاكاة حقيقية لجهاز iPhone داخل المتصفح
+وليس مجرد تصغير الموقع أو استخدام responsive.
+
+🧱 الهيكلة المطلوبة (مهم جدًا):
+
+يجب تغليف كامل محتوى الموقع داخل عنصر:
+
+<div id="app-root">
+  <!-- كل الموقع هنا -->
+</div>
+
+ثم إنشاء حاوية وهمية للجهاز:
+
+<div class="iphone-wrapper">
+  <div class="iphone-frame">
+    <div class="iphone-screen">
+      <div id="app-root"></div>
+    </div>
+  </div>
+</div>
+
+⚠️ يجب نقل #app-root داخل .iphone-screen عند تفعيل الوضع
+وإرجاعه عند إلغاء الوضع (باستخدام JavaScript)
+
+📱 تصميم جهاز الآيفون:
+.iphone-wrapper:
+position: fixed
+top: 0
+left: 0
+width: 100vw
+height: 100vh
+display: flex
+justify-content: center
+align-items: center
+background: #0f0f0f
+z-index: 9999
+.iphone-frame:
+width: 430px
+height: 900px
+background: black
+border-radius: 50px
+padding: 12px
+box-shadow: 0 0 60px rgba(0,0,0,0.8)
+.iphone-screen:
+width: 100%
+height: 100%
+background: white
+border-radius: 40px
+overflow-y: auto
+position: relative
+🧠 JavaScript (أساسي):
+
+عند إضافة iphone-mode:
+
+أنشئ .iphone-wrapper ديناميكيًا
+انقل #app-root داخل .iphone-screen
+امنع تمرير الصفحة الأساسية:
+document.body.style.overflow = "hidden";
+
+عند إزالة iphone-mode:
+
+أرجع #app-root لمكانه الأصلي
+احذف .iphone-wrapper
+أعد التمرير:
+document.body.style.overflow = "";
+🚫 ممنوعات (مهمة جدًا):
+❌ لا تستخدم transform: scale
+❌ لا تستخدم media queries
+❌ لا تغيّر layout الموقع الأصلي
+❌ لا تصغّر العناصر يدويًا
+❌ لا تعتمد على width: 100% فقط
+✅ متطلبات إضافية:
+التبديل يكون فوري بدون reload
+يدعم جميع الصفحات داخل الموقع
+لا يكسر أي event أو JavaScript موجود
+يحافظ على scroll داخل شاشة الآيفون فقط
+💎 تحسينات احترافية (اختياري لكن مفضل):
+إضافة notch:
+.iphone-screen::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 25px;
+  background: black;
+  border-radius: 20px;
+  z-index: 10;
+}
+🎯 النتيجة النهائية:
+عند الضغط على الزر:
+→ يظهر جهاز iPhone في وسط الشاشة
+→ الموقع يعمل داخله كأنه تطبيق حقيقي
+→ Scroll داخل الجهاز فقط
+عند الإلغاء:
+→ يرجع الموقع طبيعي 100%
