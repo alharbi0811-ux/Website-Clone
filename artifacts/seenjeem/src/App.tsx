@@ -67,6 +67,9 @@ function Router() {
       <Route path="/admin/questions/new">
         <AdminGuard><AdminQuestionForm /></AdminGuard>
       </Route>
+      <Route path="/admin/questions/-1">
+        <Redirect to="/admin/questions/new" />
+      </Route>
       <Route path="/admin/questions/:id/edit">
         <AdminGuard><AdminQuestionForm /></AdminGuard>
       </Route>
