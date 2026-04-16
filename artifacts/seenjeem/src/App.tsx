@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider, useViewport } from "@/context/ViewportContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -85,62 +85,80 @@ function Router() {
   );
 }
 
+const ZOOM_KEY = "rakez-zoom-level";
+const ZOOM_MIN = 0.3;
+const ZOOM_MAX = 2.0;
+const ZOOM_STEP = 0.1;
+
+function ZoomControls() {
+  const { viewMode } = useViewport();
+  const isMobile = viewMode === "mobile";
+
+  const [zoom, setZoom] = useState<number>(() => {
+    const saved = localStorage.getItem(ZOOM_KEY);
+    return saved ? parseFloat(saved) : 1;
+  });
+
+  useEffect(() => {
+    const app = document.getElementById("app-root");
+    if (!app) return;
+    if (isMobile) {
+      app.style.transform = `scale(${zoom})`;
+      app.style.transformOrigin = "top center";
+    }
+  }, [zoom, isMobile]);
+
+  function change(delta: number) {
+    setZoom(prev => {
+      const next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, parseFloat((prev + delta).toFixed(2))));
+      localStorage.setItem(ZOOM_KEY, String(next));
+      return next;
+    });
+  }
+
+  function reset() {
+    localStorage.setItem(ZOOM_KEY, "1");
+    setZoom(1);
+  }
+
+  return (
+    <div className="zoom-controls">
+      <button onClick={() => change(-ZOOM_STEP)} title="تصغير">−</button>
+      <span className="zoom-level">{Math.round(zoom * 100)}%</span>
+      <button onClick={() => change(ZOOM_STEP)} title="تكبير">+</button>
+      <button onClick={reset} title="إعادة الحجم" style={{ fontSize: 14 }}>↺</button>
+    </div>
+  );
+}
+
 function AppContent() {
   const { viewMode } = useViewport();
   const isMobile = viewMode === "mobile";
 
   useEffect(() => {
-    const BASE_W = 390;
-    const BASE_H = 844;
-
-    function applyIphoneScale() {
+    if (isMobile) {
+      document.body.classList.add("iphone-mode");
+    } else {
+      document.body.classList.remove("iphone-mode");
       const app = document.getElementById("app-root");
-      if (!app) return;
-      const scaleX = window.innerWidth / BASE_W;
-      const scaleY = window.innerHeight / BASE_H;
-      const scale = Math.min(scaleX, scaleY);
-      app.style.transform = `scale(${scale})`;
-      app.style.transformOrigin = "top center";
-      app.style.width = `${100 / scale}%`;
-      app.style.height = `${100 / scale}%`;
-    }
-
-    function resetIphoneScale() {
-      const app = document.getElementById("app-root");
-      if (!app) return;
-      app.style.transform = "";
-      app.style.transformOrigin = "";
-      app.style.width = "";
-      app.style.height = "";
-    }
-
-    function onResize() {
-      if (document.body.classList.contains("iphone-mode")) {
-        applyIphoneScale();
+      if (app) {
+        app.style.transform = "";
+        app.style.transformOrigin = "";
       }
     }
-
-    if (isMobile) {
-      document.documentElement.classList.add("iphone-mode");
-      document.body.classList.add("iphone-mode");
-      applyIphoneScale();
-      window.addEventListener("resize", onResize);
-    } else {
-      document.documentElement.classList.remove("iphone-mode");
-      document.body.classList.remove("iphone-mode");
-      resetIphoneScale();
-    }
-
     return () => {
-      document.documentElement.classList.remove("iphone-mode");
       document.body.classList.remove("iphone-mode");
-      resetIphoneScale();
-      window.removeEventListener("resize", onResize);
+      const app = document.getElementById("app-root");
+      if (app) {
+        app.style.transform = "";
+        app.style.transformOrigin = "";
+      }
     };
   }, [isMobile]);
 
   return (
     <div id="app-root" dir="rtl" className="light w-full min-h-screen">
+      <ZoomControls />
       <Router />
     </div>
   );
