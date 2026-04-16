@@ -447,7 +447,6 @@ export default function QuestionPage() {
                 <LogoQR
                   value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
                   size={200}
-                  fgColor="#EAB308"
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
               </div>
@@ -484,7 +483,6 @@ export default function QuestionPage() {
               <LogoQR
                 value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
                 size={200}
-                fgColor="#EAB308"
                 style={{ width: "100%", height: "auto", display: "block" }}
               />
             </div>
