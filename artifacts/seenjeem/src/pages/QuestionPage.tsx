@@ -437,7 +437,7 @@ export default function QuestionPage() {
                   left: `${qrTemplate.qrPositionX}%`,
                   top: `${qrTemplate.qrPositionY}%`,
                   transform: "translate(-50%, -50%)",
-                  width: `${Math.round((qrTemplate.qrSize / 320) * 100 * 0.65)}%`,
+                  width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
                   zIndex: 2,
                   background: "white",
                   padding: 4,
