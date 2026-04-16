@@ -221,6 +221,11 @@ export default function QuestionPage() {
 
   // ── Template display helper ──────────────────────────────────────────────
   const renderTemplate = () => {
+    // تجاهل صور الفئة القادمة من CDN — فقط الصور المرفوعة للسؤال تُعرض
+    const questionImage = questionData.image && !questionData.image.startsWith(CDN)
+      ? questionData.image
+      : null;
+
     if (questionData.externalPageSlug && qrTemplate) {
       return (
         <div className="flex flex-col items-center pb-6 px-4">
@@ -267,13 +272,13 @@ export default function QuestionPage() {
         </div>
       );
     }
-    if (questionData.image && qrTemplate) {
+    if (questionImage && qrTemplate) {
       return (
         <div className="flex justify-center pb-6 px-4">
           <div
             className="relative rounded-2xl overflow-hidden w-full cursor-zoom-in hover:opacity-95 transition-opacity"
             style={{ maxWidth: 680, aspectRatio: "16/9" }}
-            onClick={() => setLightboxImage(questionData.image!)}
+            onClick={() => setLightboxImage(questionImage)}
           >
             {qrTemplate.templateImageUrl && (
               <img
@@ -283,7 +288,7 @@ export default function QuestionPage() {
               />
             )}
             <img
-              src={questionData.image}
+              src={questionImage}
               alt="QR"
               style={{
                 position: "absolute",
@@ -299,13 +304,13 @@ export default function QuestionPage() {
         </div>
       );
     }
-    if (questionData.image) {
+    if (questionImage) {
       return (
         <div className="flex justify-center px-8 pb-4">
           <img
-            src={questionData.image}
+            src={questionImage}
             alt="صورة السؤال"
-            onClick={() => setLightboxImage(questionData.image!)}
+            onClick={() => setLightboxImage(questionImage)}
             className="max-h-52 max-w-md object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
           />
         </div>
