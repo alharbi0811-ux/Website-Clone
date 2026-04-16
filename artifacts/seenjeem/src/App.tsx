@@ -91,15 +91,15 @@ function AppContent() {
 
   useEffect(() => {
     if (isMobile) {
+      document.documentElement.classList.add("iphone-mode");
       document.body.classList.add("iphone-mode");
-      document.body.style.overflow = "hidden";
     } else {
+      document.documentElement.classList.remove("iphone-mode");
       document.body.classList.remove("iphone-mode");
-      document.body.style.overflow = "";
     }
     return () => {
+      document.documentElement.classList.remove("iphone-mode");
       document.body.classList.remove("iphone-mode");
-      document.body.style.overflow = "";
     };
   }, [isMobile]);
 
