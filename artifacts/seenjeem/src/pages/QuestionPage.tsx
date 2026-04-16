@@ -440,24 +440,29 @@ export default function QuestionPage() {
               <div className="flex-1 flex flex-col p-6 pt-10">
                 <div className="flex-1 relative border-4 border-[#7B2FBE] rounded-3xl bg-white flex flex-col">
 
-                  {/* Circular timer + controls */}
-                  <div className="absolute -top-[68px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-3 bg-white rounded-2xl px-4 py-2 shadow-[0_4px_18px_rgba(123,47,190,0.25)] border-2 border-[#7B2FBE]">
+                  {/* Question text */}
+                  <div className="px-8 pt-8 pb-4">
+                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
+                  </div>
+
+                  {/* Circular timer — centered in card */}
+                  <div className="flex-1 flex flex-col items-center justify-center gap-5">
+                    <CircularTimerSVG
+                      timeLeft={circularTimeLeft}
+                      totalTime={circTotal}
+                      color={circCfg.color}
+                      size={220}
+                    />
+                    <div className="flex items-center gap-4">
                       <button
                         onClick={() => { setCircularTimeLeft(circTotal); setCircularRunning(true); }}
-                        className="w-8 h-8 rounded-xl bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors"
+                        className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors border border-[#7B2FBE]/30"
                       >
                         <RotateCw size={18} color="#7B2FBE" strokeWidth={2.5} />
                       </button>
-                      <CircularTimerSVG
-                        timeLeft={circularTimeLeft}
-                        totalTime={circTotal}
-                        color={circCfg.color}
-                        size={110}
-                      />
                       <button
                         onClick={() => setCircularRunning((r) => !r)}
-                        className="w-8 h-8 rounded-xl bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors"
+                        className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors border border-[#7B2FBE]/30"
                       >
                         {circularRunning
                           ? <Pause size={18} color="#7B2FBE" strokeWidth={2.5} />
@@ -465,13 +470,6 @@ export default function QuestionPage() {
                       </button>
                     </div>
                   </div>
-
-                  {/* Question text */}
-                  <div className="px-8 pt-24 pb-4">
-                    <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
-                  </div>
-
-                  <div className="flex-1" />
 
                   {/* Bottom row */}
                   <div className="flex items-end justify-between px-8 pb-8">
