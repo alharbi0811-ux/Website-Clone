@@ -334,12 +334,38 @@ export default function AdminCategoryLayouts() {
               <Palette size={16} style={{ color: "#c084fc" }} />
               <span className="font-bold text-sm text-white">{targetLabel}</span>
             </div>
-            {isOverride && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(168,85,247,0.2)", color: "#a855f7", border: "1px solid rgba(168,85,247,0.3)" }}>
-                مخصص
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {isOverride && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full"
+                  style={{ background: "rgba(168,85,247,0.2)", color: "#a855f7", border: "1px solid rgba(168,85,247,0.3)" }}>
+                  مخصص
+                </span>
+              )}
+              {selectedTarget !== "default" && (
+                <a
+                  href={`/question?editMode=1&categoryId=${selectedTarget}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:opacity-90 active:scale-95"
+                  style={{ background: "linear-gradient(135deg, #7B2FBE, #a855f7)", color: "white", textDecoration: "none" }}
+                >
+                  <Eye size={13} />
+                  تعديل مرئي
+                </a>
+              )}
+              {selectedTarget === "default" && (
+                <a
+                  href="/question?editMode=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:opacity-90 active:scale-95"
+                  style={{ background: "linear-gradient(135deg, #7B2FBE, #a855f7)", color: "white", textDecoration: "none" }}
+                >
+                  <Eye size={13} />
+                  معاينة مرئية
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Page tabs */}

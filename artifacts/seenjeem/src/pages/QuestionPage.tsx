@@ -104,7 +104,26 @@ export default function QuestionPage() {
   const [design, setDesign] = useState({ ...DEFAULT_DESIGN });
   const [answerDesign, setAnswerDesign] = useState({ ...DEFAULT_DESIGN });
 
+  // ── Visual Edit Mode (URL: /question?editMode=1&categoryId=X) ──────────────
+  const _sp = new URLSearchParams(window.location.search);
+  const [editMode] = useState(() => _sp.get("editMode") === "1");
+  const [editCatId] = useState(() => _sp.get("categoryId") ? Number(_sp.get("categoryId")) : null);
+  const [editSettings, setEditSettings] = useState({ ...DEFAULT_DESIGN });
+  const [editHovered, setEditHovered] = useState<string | null>(null);
+  const [editSelected, setEditSelected] = useState<string | null>(null);
+  const [editToolbarPos, setEditToolbarPos] = useState<{ x: number; y: number } | null>(null);
+  const [editSaving, setEditSaving] = useState(false);
+
   useEffect(() => {
+    if (editMode) {
+      // Edit mode: load dummy game data
+      setGameData({ team1Name: "الفريق الأول", team2Name: "الفريق الثاني", gameName: "ركز", team1Categories: [], team2Categories: [], team1Tools: ["double", "pit", "rest"], team2Tools: ["double", "pit", "rest"] });
+      setQuestionData({ categoryId: editCatId || "sample", categoryName: "معلومات عامة", points: 400, catIdx: 0, currentTeam: 1, side: "l", question: "ما هو أطول نهر في العالم؟", answer: "نهر النيل", image: "", externalPageSlug: null, pitActive: false, answerImage: "" });
+      setActiveTurnTeam(1);
+      setTeam1Score(800); setTeam2Score(400);
+      return;
+    }
+
     const stored = localStorage.getItem("rakez-game-data");
     if (stored) setGameData(JSON.parse(stored));
     else setGameData({
@@ -159,12 +178,20 @@ export default function QuestionPage() {
   }, []);
 
   useEffect(() => {
-    if (!questionData?.categoryId) return;
-    fetch(`/api/category-layouts/for-category/${questionData.categoryId}`)
+    const catId = editMode ? (editCatId || questionData?.categoryId) : questionData?.categoryId;
+    if (!catId) return;
+    fetch(`/api/category-layouts/for-category/${catId}`)
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
-        if (data?.question) setDesign((d) => ({ ...d, ...data.question }));
-        if (data?.answer)   setAnswerDesign((d) => ({ ...d, ...data.answer }));
+        if (editMode) {
+          const merged = { ...DEFAULT_DESIGN, ...(data?.question || {}) };
+          setEditSettings(merged);
+          setDesign(merged);
+          setAnswerDesign({ ...DEFAULT_DESIGN, ...(data?.answer || {}) });
+        } else {
+          if (data?.question) setDesign((d) => ({ ...d, ...data.question }));
+          if (data?.answer)   setAnswerDesign((d) => ({ ...d, ...data.answer }));
+        }
       })
       .catch(() => {});
   }, [questionData?.categoryId]);
@@ -178,6 +205,64 @@ export default function QuestionPage() {
       setTurnFlash({ teamName: otherName, key: Date.now() });
     }
   }, [timer]);
+
+  // Sync editSettings → design in real time (WYSIWYG)
+  useEffect(() => {
+    if (!editMode) return;
+    setDesign({ ...editSettings });
+    setAnswerDesign({ ...editSettings });
+  }, [editSettings]);
+
+  // ── Edit Mode helpers ──────────────────────────────────────────────────────
+  const handleEditElementClick = (elementId: string, e: React.MouseEvent) => {
+    if (!editMode) return;
+    e.stopPropagation();
+    e.preventDefault();
+    setEditSelected(elementId);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = Math.min(Math.max(8, rect.left), window.innerWidth - 296);
+    const y = Math.min(rect.bottom + 10, window.innerHeight - 300);
+    setEditToolbarPos({ x, y });
+  };
+
+  const updateEdit = (key: string, value: unknown) =>
+    setEditSettings((s) => ({ ...s, [key]: value }));
+
+  const handleSaveEdit = async () => {
+    setEditSaving(true);
+    const token = localStorage.getItem("rakez-token");
+    try {
+      for (const pageKey of ["question", "answer"]) {
+        await fetch("/api/admin/category-layouts", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ categoryId: editCatId, pageKey, settings: editSettings }),
+        });
+      }
+      window.location.href = "/admin/category-layouts";
+    } catch {
+      alert("حدث خطأ أثناء الحفظ");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  const editProps = (elementId: string) =>
+    editMode ? {
+      onMouseEnter: () => setEditHovered(elementId),
+      onMouseLeave: () => setEditHovered(null),
+      onClick: (e: React.MouseEvent) => handleEditElementClick(elementId, e),
+      "data-edit-id": elementId,
+    } : {};
+
+  const editOutline = (elementId: string, extra?: React.CSSProperties): React.CSSProperties =>
+    editMode ? {
+      ...extra,
+      outline: editHovered === elementId ? "3px dashed #3b82f6" : "3px dashed transparent",
+      outlineOffset: "2px",
+      cursor: "crosshair",
+      transition: "outline 0.15s",
+    } : (extra || {});
 
   const toggleTimer = () => setIsTimerRunning(!isTimerRunning);
   const resetTimer = () => { setTimer(0); setIsTimerRunning(true); };
@@ -421,7 +506,11 @@ export default function QuestionPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col" dir="rtl" style={{ background: design.bgColor }}>
+    <div
+      className="min-h-screen flex flex-col" dir="rtl"
+      style={{ background: design.bgColor }}
+      onClick={() => { if (editMode) { setEditSelected(null); setEditToolbarPos(null); } }}
+    >
       {renderHeader()}
 
       <div className="flex-1 flex">
@@ -429,30 +518,58 @@ export default function QuestionPage() {
 
         {/* Question Area */}
         <div className="flex-1 flex flex-col p-6 pt-10">
+
+          {/* Background click zone — in edit mode */}
+          {editMode && (
+            <div
+              {...editProps("background")}
+              style={editOutline("background", { position: "absolute", inset: 0, zIndex: 0, pointerEvents: "auto" })}
+            />
+          )}
+
           <div
             className="flex-1 relative rounded-3xl flex flex-col"
-            style={{ border: `4px solid ${design.accentColor}`, background: design.cardBgColor }}
+            style={{ border: `4px solid ${design.accentColor}`, background: design.cardBgColor, ...editOutline("card") }}
+            {...editProps("card")}
           >
 
             {/* Regular timer — مخفي في فئة بدون كلام أو لو أخفاه الأدمن */}
             {!isBadounKalam && design.showTimer && (
-              <div className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10">
+              <div
+                className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10"
+                {...editProps("timer")}
+                style={editOutline("timer")}
+              >
                 <div className="rounded-2xl px-5 py-2 flex items-center gap-3" style={{ background: design.accentColor, boxShadow: `0 4px 18px ${design.accentColor}80` }}>
-                  <button onClick={resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
+                  <button onClick={editMode ? undefined : resetTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
                     <RotateCw size={18} color="#ffffff" strokeWidth={2.5} />
                   </button>
                   <span className="text-white text-2xl tracking-widest min-w-[80px] text-center select-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     {formatTime(timer)}
                   </span>
-                  <button onClick={toggleTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
+                  <button onClick={editMode ? undefined : toggleTimer} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors">
                     {isTimerRunning ? <Pause size={18} color="#ffffff" strokeWidth={2.5} /> : <Play size={18} color="#ffffff" strokeWidth={2.5} />}
                   </button>
                 </div>
               </div>
             )}
+            {/* Timer placeholder when hidden — allow clicking to show it in edit mode */}
+            {editMode && !design.showTimer && (
+              <div
+                className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10"
+                {...editProps("timer")}
+                style={editOutline("timer", { display: "flex", alignItems: "center", justifyContent: "center", width: 160, height: 46, background: "#e5e7eb", borderRadius: 16, cursor: "crosshair" })}
+              >
+                <span className="text-gray-400 text-sm font-bold">⏱ المؤقت (مخفي)</span>
+              </div>
+            )}
 
             {/* Question text */}
-            <div className={`px-8 ${isBadounKalam ? "pt-8" : (!isBadounKalam && design.showTimer ? "pt-20" : "pt-8")} pb-4`}>
+            <div
+              className={`px-8 ${isBadounKalam ? "pt-8" : (!isBadounKalam && design.showTimer ? "pt-20" : "pt-8")} pb-4`}
+              {...editProps("question-text")}
+              style={editOutline("question-text")}
+            >
               <p className="text-center font-extrabold" style={{ color: design.textColor, fontSize: design.questionTextSize }}>{questionData.question}</p>
             </div>
 
@@ -463,8 +580,19 @@ export default function QuestionPage() {
             {/* Bottom row */}
             <div className="flex items-end justify-between px-8 pb-8">
               {design.showCategoryBadge ? (
-                <div className="rounded-2xl bg-white px-4 py-2" style={{ border: `2px solid ${design.accentColor}` }}>
+                <div
+                  className="rounded-2xl bg-white px-4 py-2"
+                  style={{ border: `2px solid ${design.accentColor}`, ...editOutline("category-badge") }}
+                  {...editProps("category-badge")}
+                >
                   <span className="font-black tracking-wide text-[20px]" style={{ color: design.accentColor }}>{questionData.categoryName}</span>
+                </div>
+              ) : editMode ? (
+                <div
+                  {...editProps("category-badge")}
+                  style={editOutline("category-badge", { padding: "8px 16px", background: "#e5e7eb", borderRadius: 12, cursor: "crosshair" })}
+                >
+                  <span className="text-gray-400 text-sm font-bold">شارة الفئة (مخفية)</span>
                 </div>
               ) : <div />}
 
@@ -718,6 +846,120 @@ export default function QuestionPage() {
           );
         })()}
       </AnimatePresence>
+
+      {/* ── Visual Edit Mode: Floating Toolbar ────────────────────────────────── */}
+      {editMode && editSelected && editToolbarPos && (
+        <div
+          className="fixed z-[9999] rounded-2xl shadow-2xl border border-blue-100 p-4 w-72"
+          style={{ left: editToolbarPos.x, top: editToolbarPos.y, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(12px)" }}
+          onClick={(e) => e.stopPropagation()}
+          dir="rtl"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-black text-sm text-gray-700">
+              {editSelected === "background" && "🎨 خلفية الصفحة"}
+              {editSelected === "card" && "🃏 البطاقة"}
+              {editSelected === "question-text" && "✏️ نص السؤال"}
+              {editSelected === "timer" && "⏱ المؤقت"}
+              {editSelected === "category-badge" && "🏷️ شارة الفئة"}
+            </span>
+            <button onClick={() => { setEditSelected(null); setEditToolbarPos(null); }}
+              className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 text-xs font-bold transition-colors">✕</button>
+          </div>
+
+          {editSelected === "background" && (
+            <div className="flex flex-col gap-3">
+              <label className="text-xs text-gray-500 font-bold">لون الخلفية</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={editSettings.bgColor} onChange={(e) => updateEdit("bgColor", e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer" />
+                <span className="text-xs text-gray-400 font-mono">{editSettings.bgColor}</span>
+              </div>
+            </div>
+          )}
+
+          {editSelected === "card" && (
+            <div className="flex flex-col gap-3">
+              <label className="text-xs text-gray-500 font-bold">خلفية البطاقة</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={editSettings.cardBgColor} onChange={(e) => updateEdit("cardBgColor", e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer" />
+                <span className="text-xs text-gray-400 font-mono">{editSettings.cardBgColor}</span>
+              </div>
+              <label className="text-xs text-gray-500 font-bold">اللون الرئيسي (إطار + مؤقت)</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={editSettings.accentColor} onChange={(e) => updateEdit("accentColor", e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer" />
+                <span className="text-xs text-gray-400 font-mono">{editSettings.accentColor}</span>
+              </div>
+            </div>
+          )}
+
+          {editSelected === "question-text" && (
+            <div className="flex flex-col gap-3">
+              <label className="text-xs text-gray-500 font-bold">لون النص</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={editSettings.textColor} onChange={(e) => updateEdit("textColor", e.target.value)} className="w-10 h-10 rounded-xl border-2 border-gray-200 cursor-pointer" />
+                <span className="text-xs text-gray-400 font-mono">{editSettings.textColor}</span>
+              </div>
+              <label className="text-xs text-gray-500 font-bold">حجم النص: {editSettings.questionTextSize}px</label>
+              <input type="range" min={16} max={60} value={editSettings.questionTextSize}
+                onChange={(e) => updateEdit("questionTextSize", Number(e.target.value))}
+                className="w-full accent-purple-600" />
+            </div>
+          )}
+
+          {editSelected === "timer" && (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-700 font-bold">إظهار المؤقت</span>
+                <button
+                  onClick={() => updateEdit("showTimer", !editSettings.showTimer)}
+                  className={`w-12 h-6 rounded-full transition-colors relative ${editSettings.showTimer ? "bg-purple-600" : "bg-gray-300"}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${editSettings.showTimer ? "right-0.5" : "left-0.5"}`} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {editSelected === "category-badge" && (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-700 font-bold">إظهار شارة الفئة</span>
+                <button
+                  onClick={() => updateEdit("showCategoryBadge", !editSettings.showCategoryBadge)}
+                  className={`w-12 h-6 rounded-full transition-colors relative ${editSettings.showCategoryBadge ? "bg-purple-600" : "bg-gray-300"}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${editSettings.showCategoryBadge ? "right-0.5" : "left-0.5"}`} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Visual Edit Mode: Bottom Save Bar ──────────────────────────────────── */}
+      {editMode && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[9998] flex items-center gap-3 px-6 py-3 rounded-2xl shadow-2xl border border-blue-200"
+          style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
+          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-sm font-bold text-gray-700">وضع التعديل المرئي</span>
+          <span className="text-gray-300">|</span>
+          <span className="text-xs text-gray-400">اضغط على أي عنصر لتعديله</span>
+          <span className="text-gray-300">|</span>
+          <button
+            onClick={handleSaveEdit}
+            disabled={editSaving}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-black px-5 py-1.5 rounded-xl text-sm transition-all active:scale-95 disabled:opacity-60"
+          >
+            {editSaving ? "جاري الحفظ..." : "💾 حفظ"}
+          </button>
+          <button
+            onClick={() => window.history.back()}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-4 py-1.5 rounded-xl text-sm transition-all active:scale-95"
+          >
+            إلغاء
+          </button>
+        </div>
+      )}
     </div>
   );
 }
