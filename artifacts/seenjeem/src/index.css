@@ -175,18 +175,12 @@ body.iphone-mode {
 }
 
 body.iphone-mode {
-  width: 844px !important;
-  height: 390px !important;
-  margin: 0 auto !important;
-  overflow: hidden !important;
+  width: 844px;
+  height: 390px;
+  margin: 0 auto;
+  overflow: hidden;
   background: #111;
-}
-
-body.iphone-mode #app-root {
-  transform: scale(0.75);
-  transform-origin: top left;
-  width: 133.33%;
-  height: 133.33%;
+  position: relative;
 }
 
 body.iphone-mode * {

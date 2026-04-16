@@ -90,16 +90,52 @@ function AppContent() {
   const isMobile = viewMode === "mobile";
 
   useEffect(() => {
+    const BASE_W = 844;
+    const BASE_H = 390;
+
+    function applyIphoneScale() {
+      const app = document.getElementById("app-root");
+      if (!app) return;
+      const scaleX = window.innerWidth / BASE_W;
+      const scaleY = window.innerHeight / BASE_H;
+      const scale = Math.min(scaleX, scaleY);
+      app.style.transform = `scale(${scale})`;
+      app.style.transformOrigin = "top center";
+      app.style.width = `${100 / scale}%`;
+      app.style.height = `${100 / scale}%`;
+    }
+
+    function resetIphoneScale() {
+      const app = document.getElementById("app-root");
+      if (!app) return;
+      app.style.transform = "";
+      app.style.transformOrigin = "";
+      app.style.width = "";
+      app.style.height = "";
+    }
+
+    function onResize() {
+      if (document.body.classList.contains("iphone-mode")) {
+        applyIphoneScale();
+      }
+    }
+
     if (isMobile) {
       document.documentElement.classList.add("iphone-mode");
       document.body.classList.add("iphone-mode");
+      applyIphoneScale();
+      window.addEventListener("resize", onResize);
     } else {
       document.documentElement.classList.remove("iphone-mode");
       document.body.classList.remove("iphone-mode");
+      resetIphoneScale();
     }
+
     return () => {
       document.documentElement.classList.remove("iphone-mode");
       document.body.classList.remove("iphone-mode");
+      resetIphoneScale();
+      window.removeEventListener("resize", onResize);
     };
   }, [isMobile]);
 
