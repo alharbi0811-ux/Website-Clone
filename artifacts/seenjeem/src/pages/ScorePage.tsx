@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { ArrowRight, LogOut, Eye, Minus, Plus, RotateCcw, Trophy } from "lucide-react";
+import { ArrowRight, LogOut, Eye, Minus, Plus, RotateCcw, Trophy, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useViewport } from "@/context/ViewportContext";
 
@@ -16,6 +16,7 @@ const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
   rest:   { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
 };
 
+type CategoryStatus = "open" | "closed" | "in_progress";
 type CategoryData = { id: string; name: string; img: string };
 type GameData = {
   team1Name: string; team2Name: string; gameName: string;
@@ -26,8 +27,9 @@ const POINTS = [200, 400, 600];
 
 export default function ScorePage() {
   const [, navigate] = useLocation();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { viewMode } = useViewport();
+  const isAdmin = user?.isAdmin ?? false;
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<1 | 2>(1);
   const [team1Score, setTeam1Score] = useState(0);
@@ -38,6 +40,7 @@ export default function ScorePage() {
   const [questionCache, setQuestionCache] = useState<Record<string, any>>({});
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [pitActive, setPitActive] = useState(false);
+  const [categoryStatuses, setCategoryStatuses] = useState<Record<string, { status: CategoryStatus; lockMessage: string | null }>>({});
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -79,7 +82,6 @@ export default function ScorePage() {
       setPlayedCells((prev) => { const next = new Set(prev); next.add(key); return next; });
       if (correct && team !== 0) {
         if (pitActive) {
-          // الحفرة: الفائز يكسب النقاط والخاسر يخسرها
           if (team === 1) {
             setTeam1Score((s) => s + points);
             setTeam2Score((s) => s - points);
@@ -125,6 +127,18 @@ export default function ScorePage() {
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [playedCells, team1Score, team2Score, currentTeam, token]);
 
+  // Fetch category statuses
+  useEffect(() => {
+    if (!gameData) return;
+    const cats = [...gameData.team1Categories, ...gameData.team2Categories];
+    const ids = cats.map((c) => c.id).filter((id) => !isNaN(Number(id))).join(",");
+    if (!ids) return;
+    fetch(`${API_BASE}/categories/statuses?ids=${ids}`)
+      .then((r) => r.ok ? r.json() : {})
+      .then((data) => setCategoryStatuses(data))
+      .catch(() => {});
+  }, [gameData]);
+
   const POINTS_LIST = [200, 400, 600];
 
   useEffect(() => {
@@ -167,10 +181,16 @@ export default function ScorePage() {
     if (playedCells.has(key) || loadingCell) return;
 
     const category = allCategories[catIdx];
+
+    // Block locked/in_progress categories for non-admins
+    if (!isAdmin) {
+      const catStatus = categoryStatuses[category.id];
+      if (catStatus && catStatus.status !== "open") return;
+    }
+
     const cacheKey = `${category.id}-${points}`;
     const cached = questionCache[cacheKey];
 
-    // Lock pit when question is pressed
     if (pitActive) {
       const updatedTools = { ...usedTools, [currentTeamKey]: [...usedTools[currentTeamKey], "pit"] };
       setUsedTools(updatedTools);
@@ -278,12 +298,22 @@ export default function ScorePage() {
       <div className="flex-1 min-h-0 p-4 flex flex-col gap-4">
         <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
           {gameData.team1Categories.map((cat, catIdx) => (
-            <CategoryCard key={cat.id} category={cat} catIdx={catIdx} playedCells={playedCells} onCellClick={handleCellClick} teamColor="#7B2FBE" loadingCell={loadingCell} />
+            <CategoryCard
+              key={cat.id} category={cat} catIdx={catIdx} playedCells={playedCells}
+              onCellClick={handleCellClick} teamColor="#7B2FBE" loadingCell={loadingCell}
+              catStatus={categoryStatuses[cat.id] ?? { status: "open", lockMessage: null }}
+              isAdmin={isAdmin}
+            />
           ))}
         </div>
         <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
           {gameData.team2Categories.map((cat, catIdx) => (
-            <CategoryCard key={cat.id} category={cat} catIdx={catIdx + 3} playedCells={playedCells} onCellClick={handleCellClick} teamColor="#9333ea" loadingCell={loadingCell} />
+            <CategoryCard
+              key={cat.id} category={cat} catIdx={catIdx + 3} playedCells={playedCells}
+              onCellClick={handleCellClick} teamColor="#9333ea" loadingCell={loadingCell}
+              catStatus={categoryStatuses[cat.id] ?? { status: "open", lockMessage: null }}
+              isAdmin={isAdmin}
+            />
           ))}
         </div>
       </div>
@@ -445,27 +475,57 @@ export default function ScorePage() {
   );
 }
 
-function CategoryCard({ category, catIdx, playedCells, onCellClick, teamColor, loadingCell }: {
+function CategoryCard({
+  category, catIdx, playedCells, onCellClick, teamColor, loadingCell, catStatus, isAdmin,
+}: {
   category: CategoryData; catIdx: number; playedCells: Set<string>;
   onCellClick: (catIdx: number, points: number, side: "l" | "r") => void;
   teamColor: string; loadingCell?: string | null;
+  catStatus: { status: string; lockMessage: string | null };
+  isAdmin: boolean;
 }) {
+  const isLocked = catStatus.status !== "open";
+  const playerBlocked = isLocked && !isAdmin;
+
   const btnClass = (played: boolean, isLoading: boolean) => `
     w-full flex-1 rounded-xl font-black text-2xl transition-all relative
     ${played ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
       : isLoading ? "bg-[#7B2FBE] text-white cursor-wait"
+      : playerBlocked ? "bg-gray-200/40 text-gray-400 cursor-not-allowed"
       : "bg-white/60 hover:bg-[#7B2FBE] text-gray-700 hover:text-white cursor-pointer shadow-sm hover:shadow-lg border border-white/50 hover:border-[#7B2FBE]"}
   `;
+
+  const statusLabel = catStatus.status === "in_progress" ? "جار العمل عليها" : "مغلق";
+  const lockMsg = catStatus.lockMessage || statusLabel;
+
   return (
-    <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 min-h-0">
-      <div className="flex flex-1 min-h-0">
+    <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 min-h-0 relative">
+      {/* Admin badge for locked categories */}
+      {isAdmin && isLocked && (
+        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+          style={{ background: "rgba(220,38,38,0.85)", color: "#fff", border: "1px solid rgba(220,38,38,0.5)" }}>
+          <Lock size={9} />
+          {catStatus.status === "in_progress" ? "جار العمل" : "مغلق"}
+        </div>
+      )}
+
+      <div className="flex flex-1 min-h-0 relative">
+        {/* Player locked overlay */}
+        {playerBlocked && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl"
+            style={{ background: "rgba(30,10,60,0.72)", backdropFilter: "blur(4px)" }}>
+            <Lock size={28} color="#c084fc" className="mb-2" />
+            <span className="text-white font-black text-sm text-center px-3">{lockMsg}</span>
+          </div>
+        )}
+
         <div className="flex flex-col justify-center gap-2 p-3 flex-1">
           {POINTS.map((points) => {
             const played = playedCells.has(`${catIdx}-${points}-l`);
             const isLoading = loadingCell === `${catIdx}-${points}-l`;
             return (
-              <motion.button key={`l-${points}`} whileHover={!played && !isLoading ? { scale: 1.05 } : {}} whileTap={!played && !isLoading ? { scale: 0.95 } : {}}
-                onClick={() => onCellClick(catIdx, points, "l")} disabled={played || !!loadingCell} className={btnClass(played, isLoading)}>
+              <motion.button key={`l-${points}`} whileHover={!played && !isLoading && !playerBlocked ? { scale: 1.05 } : {}} whileTap={!played && !isLoading && !playerBlocked ? { scale: 0.95 } : {}}
+                onClick={() => onCellClick(catIdx, points, "l")} disabled={played || !!loadingCell || playerBlocked} className={btnClass(played, isLoading)}>
                 {isLoading ? <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
               </motion.button>
             );
@@ -479,8 +539,8 @@ function CategoryCard({ category, catIdx, playedCells, onCellClick, teamColor, l
             const played = playedCells.has(`${catIdx}-${points}-r`);
             const isLoading = loadingCell === `${catIdx}-${points}-r`;
             return (
-              <motion.button key={`r-${points}`} whileHover={!played && !isLoading ? { scale: 1.05 } : {}} whileTap={!played && !isLoading ? { scale: 0.95 } : {}}
-                onClick={() => onCellClick(catIdx, points, "r")} disabled={played || !!loadingCell} className={btnClass(played, isLoading)}>
+              <motion.button key={`r-${points}`} whileHover={!played && !isLoading && !playerBlocked ? { scale: 1.05 } : {}} whileTap={!played && !isLoading && !playerBlocked ? { scale: 0.95 } : {}}
+                onClick={() => onCellClick(catIdx, points, "r")} disabled={played || !!loadingCell || playerBlocked} className={btnClass(played, isLoading)}>
                 {isLoading ? <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
               </motion.button>
             );

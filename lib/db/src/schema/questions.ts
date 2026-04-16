@@ -13,6 +13,8 @@ export const categoriesTable = pgTable("categories", {
   imageUrl: text("image_url"),
   flagUrl: text("flag_url"),
   isActive: boolean("is_active").notNull().default(true),
+  status: text("status").notNull().default("open"),
+  lockMessage: text("lock_message"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

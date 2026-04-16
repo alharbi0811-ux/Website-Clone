@@ -123,6 +123,27 @@ router.delete("/admin/categories/:id", async (req, res) => {
   }
 });
 
+router.put("/admin/categories/:id/status", async (req, res) => {
+  const id = Number(req.params.id);
+  const statusSchema = z.object({
+    status: z.enum(["open", "closed", "in_progress"]),
+    lockMessage: z.string().optional().nullable(),
+  });
+  const parsed = statusSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "بيانات غير صحيحة" });
+  try {
+    const [cat] = await db
+      .update(categoriesTable)
+      .set({ status: parsed.data.status, lockMessage: parsed.data.lockMessage ?? null })
+      .where(eq(categoriesTable.id, id))
+      .returning();
+    if (!cat) return res.status(404).json({ error: "الفئة غير موجودة" });
+    res.json({ id: cat.id, status: cat.status, lockMessage: cat.lockMessage });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
 // ───── Questions ─────
 router.get("/admin/questions", async (_req, res) => {
   try {

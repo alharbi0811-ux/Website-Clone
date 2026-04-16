@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { categoriesTable, questionsTable, externalPagesTable } from "@workspace/db";
-import { eq, asc, and, notInArray, sql } from "drizzle-orm";
+import { eq, asc, and, notInArray, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -48,10 +48,34 @@ router.get("/categories", async (_req, res) => {
           name: c.nameAr,
           img: c.imageUrl ?? "",
           flag: c.flagUrl ?? undefined,
+          status: c.status ?? "open",
+          lockMessage: c.lockMessage ?? null,
         })),
       }));
 
     res.json(sections);
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+// GET /api/categories/statuses?ids=1,2,3,4,5,6
+router.get("/categories/statuses", async (req, res) => {
+  try {
+    const raw = String(req.query.ids || "");
+    const ids = raw.split(",").map(Number).filter(Boolean);
+    if (ids.length === 0) return res.json({});
+
+    const cats = await db
+      .select({ id: categoriesTable.id, status: categoriesTable.status, lockMessage: categoriesTable.lockMessage })
+      .from(categoriesTable)
+      .where(inArray(categoriesTable.id, ids));
+
+    const result: Record<string, { status: string; lockMessage: string | null }> = {};
+    for (const cat of cats) {
+      result[String(cat.id)] = { status: cat.status, lockMessage: cat.lockMessage };
+    }
+    res.json(result);
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });
   }
