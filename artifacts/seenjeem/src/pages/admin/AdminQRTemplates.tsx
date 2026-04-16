@@ -113,31 +113,40 @@ export default function AdminQRTemplates() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const getPositionFromMouse = (e: React.MouseEvent | MouseEvent) => {
+  const getPositionFromMouse = (e: React.MouseEvent | MouseEvent | React.TouchEvent | TouchEvent) => {
     if (!dragContainerRef.current) return null;
     const rect = dragContainerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
-    const y = Math.max(0, Math.min(100, Math.round(((e.clientY - rect.top) / rect.height) * 100)));
+    const clientX = "touches" in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
+    const x = Math.max(0, Math.min(100, Math.round(((clientX - rect.left) / rect.width) * 100)));
+    const y = Math.max(0, Math.min(100, Math.round(((clientY - rect.top) / rect.height) * 100)));
     return { x, y };
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleQrDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
-    const pos = getPositionFromMouse(e);
-    if (pos) setForm((f) => ({ ...f, qrPositionX: pos.x, qrPositionY: pos.y }));
   };
 
   useEffect(() => {
     if (!isDragging) return;
-    const onMove = (e: MouseEvent) => {
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
       const pos = getPositionFromMouse(e);
       if (pos) setForm((f) => ({ ...f, qrPositionX: pos.x, qrPositionY: pos.y }));
     };
     const onUp = () => setIsDragging(false);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
   }, [isDragging]);
 
   const handleSave = async () => {
@@ -377,23 +386,47 @@ export default function AdminQRTemplates() {
 
                 {/* Position & size editor */}
                 <div>
-                  <label className="block text-xs font-bold mb-2" style={{ color: "#9988bb" }}>
-                    <Move size={12} className="inline ml-1" />
-                    موقع وحجم QR — اسحب داخل الصورة لتحديد المكان
-                  </label>
-                  <div ref={dragContainerRef}
-                    className="relative w-full rounded-xl overflow-hidden cursor-crosshair select-none"
-                    style={{ aspectRatio: "16/9", background: "#0a0a14", border: "2px solid rgba(123,47,190,0.4)" }}
-                    onMouseDown={handleMouseDown}>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-bold flex items-center gap-1" style={{ color: "#9988bb" }}>
+                      <Move size={12} />
+                      موقع وحجم QR
+                    </label>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md" style={{ background: "rgba(123,47,190,0.2)", color: "#c084fc" }}>
+                      {isDragging ? "🔵 يتم السحب..." : "⠿ اسحب رمز QR"}
+                    </span>
+                  </div>
+
+                  {/* Canvas */}
+                  <div
+                    ref={dragContainerRef}
+                    className="relative w-full rounded-xl overflow-hidden select-none"
+                    style={{
+                      aspectRatio: "16/9",
+                      background: "#0a0a14",
+                      border: `2px solid ${isDragging ? "rgba(123,47,190,0.9)" : "rgba(123,47,190,0.4)"}`,
+                      cursor: isDragging ? "grabbing" : "default",
+                      transition: "border-color 0.15s",
+                    }}
+                  >
+                    {/* Template image */}
                     {previewSrc ? (
                       <img src={previewSrc} alt="preview" className="w-full h-full object-contain pointer-events-none" />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                        <p className="text-white text-sm font-bold">منطقة القالب</p>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-25 pointer-events-none">
+                        <ImageIcon size={28} className="text-white" />
+                        <p className="text-white text-xs font-bold">ارفع صورة القالب أولاً</p>
                       </div>
                     )}
-                    {/* QR placeholder */}
-                    <div className="absolute pointer-events-none"
+
+                    {/* Crosshair lines */}
+                    <div className="absolute pointer-events-none opacity-20"
+                      style={{ left: `${form.qrPositionX}%`, top: 0, bottom: 0, width: 1, background: "#a855f7" }} />
+                    <div className="absolute pointer-events-none opacity-20"
+                      style={{ top: `${form.qrPositionY}%`, left: 0, right: 0, height: 1, background: "#a855f7" }} />
+
+                    {/* Draggable QR placeholder */}
+                    <div
+                      className="absolute"
                       style={{
                         left: `${form.qrPositionX}%`,
                         top: `${form.qrPositionY}%`,
@@ -401,19 +434,47 @@ export default function AdminQRTemplates() {
                         width: `${qrPx}%`,
                         maxWidth: "60%",
                         minWidth: "6%",
-                      }}>
-                      <div className="bg-white rounded-lg shadow-2xl flex items-center justify-center aspect-square border-4 border-purple-400">
-                        <QrCode className="text-black w-full h-full p-1" />
+                        cursor: isDragging ? "grabbing" : "grab",
+                        zIndex: 10,
+                        filter: isDragging ? "drop-shadow(0 0 8px rgba(168,85,247,0.8))" : "drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
+                        transition: isDragging ? "none" : "filter 0.15s",
+                      }}
+                      onMouseDown={handleQrDragStart}
+                      onTouchStart={handleQrDragStart}
+                    >
+                      {/* QR card */}
+                      <div
+                        className="bg-white rounded-lg flex flex-col items-center justify-center aspect-square"
+                        style={{
+                          border: `3px solid ${isDragging ? "#a855f7" : "#7B2FBE"}`,
+                          padding: "4%",
+                        }}
+                      >
+                        <QrCode className="text-black w-full h-full" style={{ opacity: 0.5 }} />
                       </div>
+                      {/* Drag hint badge */}
+                      {!isDragging && (
+                        <div
+                          className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                          style={{ background: "rgba(123,47,190,0.9)", color: "white" }}
+                        >
+                          ⠿ اسحب
+                        </div>
+                      )}
                     </div>
-                    {/* Crosshair */}
-                    <div className="absolute pointer-events-none opacity-30"
-                      style={{ left: `${form.qrPositionX}%`, top: 0, bottom: 0, width: 1, background: "#7B2FBE" }} />
-                    <div className="absolute pointer-events-none opacity-30"
-                      style={{ top: `${form.qrPositionY}%`, left: 0, right: 0, height: 1, background: "#7B2FBE" }} />
+
+                    {/* Position badge while dragging */}
+                    {isDragging && (
+                      <div
+                        className="absolute bottom-2 left-2 text-[10px] font-mono font-bold px-2 py-1 rounded-lg"
+                        style={{ background: "rgba(123,47,190,0.9)", color: "white" }}
+                      >
+                        {form.qrPositionX}% , {form.qrPositionY}%
+                      </div>
+                    )}
                   </div>
 
-                  {/* Position inputs */}
+                  {/* Numeric inputs */}
                   <div className="grid grid-cols-3 gap-3 mt-3">
                     <div>
                       <label className="block text-[10px] font-bold mb-1" style={{ color: "#666688" }}>X (أفقي %)</label>
@@ -437,13 +498,18 @@ export default function AdminQRTemplates() {
                         style={{ borderColor: "rgba(123,47,190,0.3)" }} />
                     </div>
                   </div>
+
                   {/* Size slider */}
-                  <div className="mt-2">
+                  <div className="mt-3 space-y-1">
+                    <div className="flex items-center justify-between text-[10px] font-bold" style={{ color: "#666688" }}>
+                      <span>حجم QR</span>
+                      <span style={{ color: "#c084fc" }}>{form.qrSize}px</span>
+                    </div>
                     <input type="range" min={50} max={600} step={10} value={form.qrSize}
                       onChange={(e) => setForm((f) => ({ ...f, qrSize: parseInt(e.target.value) }))}
                       className="w-full accent-purple-500" />
-                    <div className="flex justify-between text-[10px] mt-0.5" style={{ color: "#444466" }}>
-                      <span>50px</span><span>600px</span>
+                    <div className="flex justify-between text-[10px]" style={{ color: "#333355" }}>
+                      <span>صغير 50px</span><span>كبير 600px</span>
                     </div>
                   </div>
                 </div>
