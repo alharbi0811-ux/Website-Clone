@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useViewport } from "@/context/ViewportContext";
+import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
@@ -73,6 +74,8 @@ function CircularTimerSVG({ timeLeft, totalTime, color, size = 160 }: { timeLeft
 export default function QuestionPage() {
   const [, navigate] = useLocation();
   const { viewMode } = useViewport();
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin ?? false;
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -107,10 +110,12 @@ export default function QuestionPage() {
   const [design, setDesign] = useState({ ...DEFAULT_DESIGN });
   const [answerDesign, setAnswerDesign] = useState({ ...DEFAULT_DESIGN });
 
-  // ── Visual Edit Mode (URL: /question?editMode=1&categoryId=X) ──────────────
+  // ── Visual Edit Mode (URL: /question?editMode=1&categoryId=X  OR toggled by admin button) ──
   const _sp = new URLSearchParams(window.location.search);
-  const [editMode] = useState(() => _sp.get("editMode") === "1");
-  const [editCatId] = useState(() => _sp.get("categoryId") ? Number(_sp.get("categoryId")) : null);
+  const [editMode, setEditMode] = useState(() => _sp.get("editMode") === "1");
+  const [editCatId, setEditCatId] = useState<number | null>(() =>
+    _sp.get("categoryId") ? Number(_sp.get("categoryId")) : null
+  );
   const [editSettings, setEditSettings] = useState({ ...DEFAULT_DESIGN });
   const [editHovered, setEditHovered] = useState<string | null>(null);
   const [editSelected, setEditSelected] = useState<string | null>(null);
@@ -121,14 +126,15 @@ export default function QuestionPage() {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    if (editMode) {
-      // Edit mode: load dummy game data
+    if (editMode && !questionData) {
+      // Edit mode via URL (no live game): load dummy game data
       setGameData({ team1Name: "الفريق الأول", team2Name: "الفريق الثاني", gameName: "ركز", team1Categories: [], team2Categories: [], team1Tools: ["double", "pit", "rest"], team2Tools: ["double", "pit", "rest"] });
       setQuestionData({ categoryId: editCatId || "sample", categoryName: "معلومات عامة", points: 400, catIdx: 0, currentTeam: 1, side: "l", question: "ما هو أطول نهر في العالم؟", answer: "نهر النيل", image: "", externalPageSlug: null, pitActive: false, answerImage: "" });
       setActiveTurnTeam(1);
       setTeam1Score(800); setTeam2Score(400);
       return;
     }
+    if (editMode) return; // Already in live game — keep real data
 
     const stored = localStorage.getItem("rakez-game-data");
     if (stored) setGameData(JSON.parse(stored));
@@ -200,7 +206,8 @@ export default function QuestionPage() {
         }
       })
       .catch(() => {});
-  }, [questionData?.categoryId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionData?.categoryId, editMode, editCatId]);
 
   // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط)
   useEffect(() => {
@@ -250,6 +257,25 @@ export default function QuestionPage() {
     if (!editMode) return;
     scheduleAutoSave(editSettings);
   }, [editSettings]);
+
+  // ── Enter / Exit Edit Mode ───────────────────────────────────────────────────
+  const handleEnterEditMode = useCallback(() => {
+    const catId = questionData?.categoryId ? Number(questionData.categoryId) : null;
+    setEditCatId(catId);
+    setEditMode(true);
+    setAutoSaveStatus('idle');
+    setEditSelected(null);
+    setEditHovered(null);
+    setEditToolbarPos(null);
+  }, [questionData]);
+
+  const handleExitEditMode = useCallback(() => {
+    setEditMode(false);
+    setEditSelected(null);
+    setEditHovered(null);
+    setEditToolbarPos(null);
+    setAutoSaveStatus('idle');
+  }, []);
 
   // ── Drag Support ────────────────────────────────────────────────────────────
   const startDrag = useCallback((id: string, e: React.MouseEvent) => {
@@ -1172,11 +1198,11 @@ export default function QuestionPage() {
           <div className="w-px h-4 bg-white/20" />
 
           <button
-            onClick={() => window.history.back()}
+            onClick={handleExitEditMode}
             className="text-xs px-3 py-1.5 rounded-lg font-bold transition-all hover:bg-white/10"
             style={{ color: "#888899" }}
           >
-            ← رجوع
+            ✕ خروج من التعديل
           </button>
 
           {/* Reset all positions button */}
@@ -1188,6 +1214,27 @@ export default function QuestionPage() {
             إعادة المواضع
           </button>
         </div>
+      )}
+
+      {/* ── Floating Admin Edit Button (visible only to admin, only when NOT in edit mode) ── */}
+      {isAdmin && !editMode && questionData && (
+        <button
+          onClick={handleEnterEditMode}
+          className="fixed z-[9999] flex items-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-sm shadow-2xl transition-all hover:scale-105 active:scale-95"
+          style={{
+            bottom: "24px",
+            left: "24px",
+            background: "linear-gradient(135deg, #7B2FBE 0%, #5B1FA0 100%)",
+            color: "#fff",
+            border: "1px solid rgba(255,255,255,0.15)",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(123,47,190,0.5)",
+          }}
+          title="وضع التعديل المرئي"
+        >
+          <span style={{ fontSize: "16px" }}>✏️</span>
+          تعديل الصفحة
+        </button>
       )}
 
     </div>
