@@ -1,0 +1,251 @@
+أريدك أن تقوم ببناء نظام متكامل واحترافي داخل موقعي يُعتبر "محرك تصميم صفحات ديناميكي" (Dynamic Page Builder Engine)، بحيث يكون هذا النظام هو الأساس الذي يعتمد عليه الموقع بالكامل في عرض جميع الصفحات.
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 الهدف العام:
+
+إنشاء نظام يسمح لي بالتحكم الكامل في تصميم:
+
+- جميع صفحات الموقع
+- جميع شاشات اللعبة
+- جميع الصفحات الخارجية
+
+باستخدام محرر بصري (Visual Builder) بدون كتابة كود، مع دعم:
+- القوالب
+- QR Code
+- الربط الديناميكي بالبيانات
+- نظام Default + Override
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 المفهوم المعماري:
+
+كل صفحة في الموقع تعتمد على:
+
+1. Page Definition (تعريف الصفحة)
+2. Layout Engine (محرك عرض التصميم)
+3. Data Binding System (ربط البيانات)
+4. Visual Builder (محرر التصميم)
+5. Theme النظام (Default + Custom)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 قاعدة البيانات (Database Design):
+
+1. جدول pages:
+- id
+- page_key (unique identifier)
+- name
+- description
+
+━━━━━━━━━━━━━━━━━━━━━━━
+2. جدول page_layouts:
+- id
+- page_id (FK)
+- layout_type ("default" أو "custom")
+- layout_json (LONGTEXT)
+- version
+- created_at
+- updated_at
+
+━━━━━━━━━━━━━━━━━━━━━━━
+3. جدول categories:
+- id
+- name
+- slug
+
+━━━━━━━━━━━━━━━━━━━━━━━
+4. جدول category_layout_overrides:
+- id
+- category_id
+- page_key (مثلاً: question / answer / result)
+- layout_json
+- is_active
+
+━━━━━━━━━━━━━━━━━━━━━━━
+5. جدول external_pages:
+- id
+- title
+- slug (unique)
+- image_url
+- content_text
+
+━━━━━━━━━━━━━━━━━━━━━━━
+6. جدول qr_templates:
+- id
+- name
+- template_image_url
+- qr_position_x
+- qr_position_y
+- qr_size
+
+━━━━━━━━━━━━━━━━━━━━━━━
+7. جدول questions:
+- id
+- question_text
+- category_id
+- external_page_id
+- qr_template_id
+- layout_override_json (optional)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+8. جدول templates (Design Templates):
+- id
+- name
+- image_url
+- metadata_json
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 نظام Layout JSON (مهم جدًا):
+
+كل تصميم يتم حفظه بصيغة JSON تحتوي على:
+
+{
+  "elements": [
+    {
+      "id": "el_1",
+      "type": "text | image | qr | template | button",
+      "content": "...",
+      "data_binding": "question.text | external.image | etc",
+      "position": { "x": 100, "y": 200 },
+      "size": { "w": 300, "h": 100 },
+      "styles": {
+        "color": "#000",
+        "fontSize": "20px",
+        "zIndex": 2
+      }
+    }
+  ]
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 Data Binding System:
+
+كل عنصر يمكن ربطه ببيانات ديناميكية مثل:
+
+- question.text
+- question.image
+- external_page.image_url
+- external_page.content_text
+- player.name
+
+ويتم استبدال القيم تلقائيًا أثناء العرض.
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 QR Code System:
+
+- عنصر QR داخل النظام
+- يتم ربطه بـ external_page.slug
+- يتم توليد QR تلقائيًا وقت العرض
+- إذا تم اختيار قالب:
+  يتم دمج QR داخل القالب باستخدام position settings
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 Template Element System:
+
+- القوالب عناصر داخل التصميم
+- يمكن إضافتها من المكتبة
+- تعمل كخلفيات أو إطارات
+- تدعم layering
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 Visual Builder (Editor Requirements):
+
+1. Canvas:
+- Drag & Drop
+- Resize
+- Snap Grid
+
+2. Elements Panel:
+- Text
+- Image
+- QR
+- Template
+- Button
+- Timer
+
+3. Properties Panel:
+- تعديل كل خصائص العنصر
+- ربط البيانات (Data Binding Dropdown)
+
+4. Layers Panel:
+- ترتيب العناصر
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 Default + Override Logic:
+
+1. لكل صفحة:
+- Default Layout (إجباري)
+- Custom Layout (اختياري)
+
+2. لكل فئة:
+- يمكن Override لبعض الصفحات
+
+3. لكل سؤال:
+- يمكن Override خاص
+
+Priority:
+Question Override
+→ Category Override
+→ Page Custom
+→ Page Default
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 لوحة التحكم (Admin Panel):
+
+قسم 1: إدارة الصفحات
+- عرض كل الصفحات
+- تعديل Default Layout
+
+قسم 2: Visual Builder
+- محرر كامل
+
+قسم 3: الفئات
+- ربط تصميم خاص
+
+قسم 4: الصفحات الخارجية
+- CRUD كامل
+
+قسم 5: قوالب QR
+
+قسم 6: الأسئلة
+- اختيار:
+  • الصفحة الخارجية
+  • قالب QR
+  • تخصيص التصميم
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 نظام العرض (Rendering Engine):
+
+- يقرأ JSON
+- يفسر العناصر
+- يطبق styles
+- يربط البيانات
+- يرسم العناصر بالترتيب
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 دعم الصفحات الخارجية:
+
+- تستخدم نفس النظام
+- يمكن تخصيص تصميمها
+- أو استخدام الافتراضي
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 ميزات احترافية:
+
+- Live Preview
+- Undo / Redo
+- Versioning
+- Autosave
+- Reset to Default
+- Duplicate Layout
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 الهدف النهائي:
+
+بناء نظام:
+
+- مرن بالكامل
+- قابل للتوسع
+- بدون hardcoding
+- كل شيء ديناميكي
+- يتحكم به الأدمن 100%
+
+هذا النظام يجب أن يكون أساس الموقع بالكامل، وليس مجرد إضافة.
