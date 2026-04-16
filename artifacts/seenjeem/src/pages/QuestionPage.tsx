@@ -704,7 +704,7 @@ export default function QuestionPage() {
             {!isBadounKalam && <div className="flex-1" />}
 
             {/* Bottom row */}
-            <div className="flex items-end justify-between px-8 pb-8">
+            <div className="flex items-end justify-between px-8 pb-8 mt-auto">
               {design.showCategoryBadge ? (
                 <div
                   className="rounded-2xl bg-white px-4 py-2"
