@@ -21,6 +21,7 @@ export interface ExternalDesign {
   imageBorderRadius: number;
   imageHasShadow: boolean;
 
+  showTitle: boolean;
   titleColor: string;
   titleSize: number;
   titleAlign: "center" | "right" | "left";
@@ -58,6 +59,7 @@ export const DEFAULT_EXTERNAL_DESIGN: ExternalDesign = {
   imageBorderRadius: 16,
   imageHasShadow: true,
 
+  showTitle: true,
   titleColor: "#ffffff",
   titleSize: 52,
   titleAlign: "center",
@@ -174,7 +176,7 @@ export default function ExternalPageRenderer({ title, imageUrl, contentText, des
         )}
 
         {/* Title */}
-        <h1
+        {design.showTitle && <h1
           style={{
             color: design.titleColor,
             fontSize: Math.round(design.titleSize * scale),
@@ -188,7 +190,7 @@ export default function ExternalPageRenderer({ title, imageUrl, contentText, des
           }}
         >
           {title}
-        </h1>
+        </h1>}
 
         {/* Content text */}
         {contentText && (

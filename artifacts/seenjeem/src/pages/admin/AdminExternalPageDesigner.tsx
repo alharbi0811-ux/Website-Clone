@@ -362,31 +362,36 @@ export default function AdminExternalPageDesigner() {
 
           {/* ── TITLE ── */}
           {tab === "title" && (
-            <>
-              <Row label="لون العنوان">
-                <ColorSwatch value={design.titleColor} onChange={(c) => update("titleColor", c)} />
-              </Row>
-              <Slider label="حجم الخط" value={design.titleSize} min={16} max={120} unit="px" onChange={(v) => update("titleSize", v)} />
-              <Row label="محاذاة">
-                <AlignButtons value={design.titleAlign} onChange={(v) => update("titleAlign", v)} />
-              </Row>
-              <Row label="وزن الخط">
-                <div className="flex gap-1 flex-wrap">
-                  {[["400", "عادي"], ["700", "عريض"], ["900", "أعرض"]].map(([w, l]) => (
-                    <button key={w} onClick={() => update("titleWeight", w)}
-                      className="px-3 py-1 rounded-lg text-xs font-bold transition-all"
-                      style={{
-                        background: design.titleWeight === w ? "rgba(123,47,190,0.3)" : "rgba(255,255,255,0.05)",
-                        color: design.titleWeight === w ? "#c084fc" : "#666688",
-                        border: `1px solid ${design.titleWeight === w ? "rgba(123,47,190,0.5)" : "transparent"}`,
-                      }}>
-                      {l}
-                    </button>
-                  ))}
+            <div className="space-y-5">
+              <Toggle label="إظهار العنوان" value={design.showTitle} onChange={(v) => update("showTitle", v)} />
+              {design.showTitle && (
+                <div className="space-y-5">
+                  <Row label="لون العنوان">
+                    <ColorSwatch value={design.titleColor} onChange={(c) => update("titleColor", c)} />
+                  </Row>
+                  <Slider label="حجم الخط" value={design.titleSize} min={16} max={120} unit="px" onChange={(v) => update("titleSize", v)} />
+                  <Row label="محاذاة">
+                    <AlignButtons value={design.titleAlign} onChange={(v) => update("titleAlign", v)} />
+                  </Row>
+                  <Row label="وزن الخط">
+                    <div className="flex gap-1 flex-wrap">
+                      {[["400", "عادي"], ["700", "عريض"], ["900", "أعرض"]].map(([w, l]) => (
+                        <button key={w} onClick={() => update("titleWeight", w)}
+                          className="px-3 py-1 rounded-lg text-xs font-bold transition-all"
+                          style={{
+                            background: design.titleWeight === w ? "rgba(123,47,190,0.3)" : "rgba(255,255,255,0.05)",
+                            color: design.titleWeight === w ? "#c084fc" : "#666688",
+                            border: `1px solid ${design.titleWeight === w ? "rgba(123,47,190,0.5)" : "transparent"}`,
+                          }}>
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </Row>
+                  <Toggle label="ظل النص" value={design.titleHasShadow} onChange={(v) => update("titleHasShadow", v)} />
                 </div>
-              </Row>
-              <Toggle label="ظل النص" value={design.titleHasShadow} onChange={(v) => update("titleHasShadow", v)} />
-            </>
+              )}
+            </div>
           )}
 
           {/* ── CONTENT ── */}
