@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { siteSettingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { requireAdmin } from "../middleware/auth";
+import { requireAuth, requireAdmin } from "../middleware/auth";
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.get("/site-settings", async (_req, res) => {
 });
 
 // PUT /api/admin/site-settings  (admin only)
-router.put("/admin/site-settings", requireAdmin, async (req, res) => {
+router.put("/admin/site-settings", requireAuth, requireAdmin, async (req, res) => {
   try {
     const { siteLogoUrl, siteName } = req.body as {
       siteLogoUrl?: string;
