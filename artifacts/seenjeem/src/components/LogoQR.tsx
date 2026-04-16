@@ -11,6 +11,8 @@ interface LogoQRProps {
   style?: React.CSSProperties;
   className?: string;
   logoSizeRatio?: number;
+  fgColor?: string;
+  bgColor?: string;
 }
 
 export default function LogoQR({
@@ -19,6 +21,8 @@ export default function LogoQR({
   style,
   className,
   logoSizeRatio = DEFAULT_LOGO_SIZE_RATIO,
+  fgColor = "#000000",
+  bgColor = "#ffffff",
 }: LogoQRProps) {
   const cached = getCachedLogoUrl();
   const [logoUrl, setLogoUrl] = useState<string | null>(
@@ -42,6 +46,8 @@ export default function LogoQR({
       value={value}
       size={size}
       level="H"
+      fgColor={fgColor}
+      bgColor={bgColor}
       style={style}
       className={className}
       {...(logoUrl
