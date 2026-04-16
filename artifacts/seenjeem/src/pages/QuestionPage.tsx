@@ -416,8 +416,13 @@ export default function QuestionPage() {
       ? questionData.image
       : null;
 
-    if (design.showQr && questionData.externalPageSlug && qrTemplate) {
-      if (isBadounKalam) {
+    // بدون كلام — الباركود يظهر دائماً بغض النظر عن وجود slug أو قالب
+    if (isBadounKalam) {
+      const qrValue = questionData.externalPageSlug
+        ? `${window.location.origin}/p/${questionData.externalPageSlug}`
+        : window.location.origin;
+
+      if (qrTemplate) {
         return (
           <div className="flex-1 min-h-0 flex items-center justify-center px-4 pb-4">
             <div
@@ -444,16 +449,23 @@ export default function QuestionPage() {
                   borderRadius: 4,
                 }}
               >
-                <LogoQR
-                  value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
-                  size={200}
-                  style={{ width: "100%", height: "auto", display: "block" }}
-                />
+                <LogoQR value={qrValue} size={200} style={{ width: "100%", height: "auto", display: "block" }} />
               </div>
             </div>
           </div>
         );
       }
+
+      return (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="p-4 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 32px ${design.accentColor}88` }}>
+            <LogoQR value={qrValue} size={280} />
+          </div>
+        </div>
+      );
+    }
+
+    if (design.showQr && questionData.externalPageSlug && qrTemplate) {
       return (
         <div className="flex flex-col items-center pb-6 px-4">
           <div
@@ -491,15 +503,6 @@ export default function QuestionPage() {
       );
     }
     if (design.showQr && questionData.externalPageSlug && !qrTemplate) {
-      if (isBadounKalam) {
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="p-4 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 32px ${design.accentColor}88` }}>
-              <LogoQR value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={280} />
-            </div>
-          </div>
-        );
-      }
       return (
         <div className="flex flex-col items-center gap-3 pb-4">
           <div className="p-3 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 24px ${design.accentColor}66` }}>
