@@ -184,7 +184,7 @@ export default function ScorePage() {
         categoryId: category.id, categoryName: category.name,
         points, catIdx, side, currentTeam,
         questionId: q.id, question: q.question, answer: q.answer,
-        image: q.image || category.img,
+        image: q.image || "",
         answerImage: q.answerImage || "",
         externalPageSlug: q.externalPageSlug || null,
         pitActive,

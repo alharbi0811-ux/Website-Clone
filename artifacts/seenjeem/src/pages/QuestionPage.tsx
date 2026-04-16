@@ -220,8 +220,46 @@ export default function QuestionPage() {
               <p className="text-gray-900 text-center font-extrabold text-[30px]">{questionData.question}</p>
             </div>
 
-            {/* External Page QR Code (for بدون كلام) */}
-            {questionData.externalPageSlug && (
+            {/* QR Code + Template overlay — for external page questions */}
+            {questionData.externalPageSlug && qrTemplate && (
+              <div className="flex flex-col items-center gap-2 pb-4">
+                <div
+                  className="relative rounded-2xl overflow-hidden"
+                  style={{ width: 320, aspectRatio: "16/9", background: "#111" }}
+                >
+                  {/* Template background */}
+                  {qrTemplate.templateImageUrl && (
+                    <img
+                      src={qrTemplate.templateImageUrl}
+                      alt="قالب"
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
+                    />
+                  )}
+                  {/* Generated QR on top */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: `${qrTemplate.qrPositionX}%`,
+                      top: `${qrTemplate.qrPositionY}%`,
+                      transform: "translate(-50%, -50%)",
+                      width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
+                      zIndex: 2,
+                      background: "white",
+                      padding: 4,
+                      borderRadius: 4,
+                    }}
+                  >
+                    <QRCodeSVG
+                      value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* External Page QR Code — standalone (no template) */}
+            {questionData.externalPageSlug && !qrTemplate && (
               <div className="flex flex-col items-center gap-3 pb-4">
                 <div className="p-3 bg-white border-4 border-[#7B2FBE] rounded-2xl shadow-[0_0_24px_rgba(123,47,190,0.4)]">
                   <QRCodeSVG
@@ -233,17 +271,24 @@ export default function QuestionPage() {
               </div>
             )}
 
-            {/* Question image (with optional QR template) */}
-            {questionData.image && (
+            {/* Question image — with template overlay (non-external-page questions) */}
+            {questionData.image && !questionData.externalPageSlug && (
               <div className="flex justify-center px-8 pb-4">
                 {qrTemplate ? (
                   <div
                     className="relative rounded-2xl overflow-hidden cursor-zoom-in hover:opacity-95 transition-opacity"
-                    style={{ width: 320, aspectRatio: "16/9", background: "#000" }}
-                    onClick={() => setLightboxImage(questionData.image!)}>
+                    style={{ width: 320, aspectRatio: "16/9", background: "#111" }}
+                    onClick={() => setLightboxImage(questionData.image!)}
+                  >
+                    {/* Template background */}
                     {qrTemplate.templateImageUrl && (
-                      <img src={qrTemplate.templateImageUrl} alt="قالب" className="absolute inset-0 w-full h-full object-contain" />
+                      <img
+                        src={qrTemplate.templateImageUrl}
+                        alt="قالب"
+                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
+                      />
                     )}
+                    {/* QR image on top */}
                     <img
                       src={questionData.image}
                       alt="QR"
@@ -254,13 +299,30 @@ export default function QuestionPage() {
                         transform: "translate(-50%, -50%)",
                         width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
                         maxWidth: "90%",
+                        zIndex: 2,
                       }}
                     />
                   </div>
                 ) : (
-                  <img src={questionData.image} alt="صورة السؤال" onClick={() => setLightboxImage(questionData.image!)}
-                    className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
+                  <img
+                    src={questionData.image}
+                    alt="صورة السؤال"
+                    onClick={() => setLightboxImage(questionData.image!)}
+                    className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+                  />
                 )}
+              </div>
+            )}
+
+            {/* Question image — when external page exists but no template */}
+            {questionData.image && questionData.externalPageSlug && !qrTemplate && (
+              <div className="flex justify-center px-8 pb-4">
+                <img
+                  src={questionData.image}
+                  alt="صورة السؤال"
+                  onClick={() => setLightboxImage(questionData.image!)}
+                  className="max-h-44 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+                />
               </div>
             )}
 
