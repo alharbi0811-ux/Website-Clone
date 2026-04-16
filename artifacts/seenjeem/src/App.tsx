@@ -26,6 +26,7 @@ import AdminAllQuestions from "@/pages/admin/AdminAllQuestions";
 import AdminQRTemplates from "@/pages/admin/AdminQRTemplates";
 import AdminExternalPages from "@/pages/admin/AdminExternalPages";
 import AdminCategoryLayouts from "@/pages/admin/AdminCategoryLayouts";
+import AdminSiteSettings from "@/pages/admin/AdminSiteSettings";
 import ExternalPage from "@/pages/ExternalPage";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,9 @@ function Router() {
       </Route>
       <Route path="/admin/category-layouts">
         <AdminGuard><AdminCategoryLayouts /></AdminGuard>
+      </Route>
+      <Route path="/admin/site-settings">
+        <AdminGuard><AdminSiteSettings /></AdminGuard>
       </Route>
 
       <Route path="/p/:slug" component={ExternalPage} />

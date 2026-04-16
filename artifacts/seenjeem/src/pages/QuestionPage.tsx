@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import LogoQR from "@/components/LogoQR";
 
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
 const TOOLS_CDN = "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page";
@@ -444,8 +444,9 @@ export default function QuestionPage() {
                   borderRadius: 4,
                 }}
               >
-                <QRCodeSVG
+                <LogoQR
                   value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                  size={200}
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
               </div>
@@ -479,8 +480,9 @@ export default function QuestionPage() {
                 borderRadius: 4,
               }}
             >
-              <QRCodeSVG
+              <LogoQR
                 value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                size={200}
                 style={{ width: "100%", height: "auto", display: "block" }}
               />
             </div>
@@ -492,7 +494,7 @@ export default function QuestionPage() {
       return (
         <div className="flex flex-col items-center gap-3 pb-4">
           <div className="p-3 bg-white rounded-2xl" style={{ border: `4px solid ${design.accentColor}`, boxShadow: `0 0 24px ${design.accentColor}66` }}>
-            <QRCodeSVG value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={180} />
+            <LogoQR value={`${window.location.origin}/p/${questionData.externalPageSlug}`} size={180} />
           </div>
           <p className="text-xs font-mono text-gray-400">/p/{questionData.externalPageSlug}</p>
         </div>

@@ -3,7 +3,7 @@ import { useLocation, useRoute } from "wouter";
 import { ArrowRight, Check, Eye, EyeOff, ImagePlus, X, Loader2 } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { useAuth } from "@/context/AuthContext";
-import { QRCodeSVG } from "qrcode.react";
+import LogoQR from "@/components/LogoQR";
 
 interface Category { id: number; nameAr: string; }
 interface ExternalPage { id: number; title: string; slug: string; }
@@ -439,7 +439,7 @@ export default function AdminQuestionForm() {
               {selectedPage && (
                 <div className="flex items-center gap-4 p-3 rounded-lg" style={{ background: "rgba(0,0,0,0.3)" }}>
                   <div className="flex-shrink-0 p-2 bg-white rounded-lg">
-                    <QRCodeSVG value={pageUrl} size={72} />
+                    <LogoQR value={pageUrl} size={72} />
                   </div>
                   <div className="min-w-0">
                     <p className="text-white font-bold text-sm">{selectedPage.title}</p>

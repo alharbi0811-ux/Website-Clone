@@ -3,7 +3,7 @@ import { useLocation, Link } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard, FolderOpen, HelpCircle, Users,
-  LogOut, Menu, X, ChevronLeft, Terminal, QrCode, Globe, Palette
+  LogOut, Menu, X, ChevronLeft, Terminal, QrCode, Globe, Palette, Settings2
 } from "lucide-react";
 
 interface NavItem {
@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { icon: <QrCode size={16} />, label: "قوالب QR", href: "/admin/qr-templates" },
   { icon: <Globe size={16} />, label: "الصفحات الخارجية", href: "/admin/external-pages" },
   { icon: <Palette size={16} />, label: "تصاميم الفئات", href: "/admin/category-layouts" },
+  { icon: <Settings2 size={16} />, label: "إعدادات الموقع", href: "/admin/site-settings" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

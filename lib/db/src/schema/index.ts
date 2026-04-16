@@ -5,3 +5,4 @@ export * from "./custom_roles";
 export * from "./qr_templates";
 export * from "./external_pages";
 export * from "./category_layouts";
+export * from "./site_settings";
