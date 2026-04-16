@@ -90,8 +90,8 @@ function AppContent() {
   const isMobile = viewMode === "mobile";
 
   useEffect(() => {
-    const BASE_W = 844;
-    const BASE_H = 390;
+    const BASE_W = 390;
+    const BASE_H = 844;
 
     function applyIphoneScale() {
       const app = document.getElementById("app-root");
