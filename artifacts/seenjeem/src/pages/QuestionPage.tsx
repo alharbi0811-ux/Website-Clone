@@ -434,8 +434,8 @@ export default function QuestionPage() {
               <div
                 style={{
                   position: "absolute",
-                  left: "50%",
-                  top: "50%",
+                  left: `${qrTemplate.qrPositionX}%`,
+                  top: `${qrTemplate.qrPositionY}%`,
                   transform: "translate(-50%, -50%)",
                   width: `${Math.round((qrTemplate.qrSize / 320) * 100 * 0.65)}%`,
                   zIndex: 2,
