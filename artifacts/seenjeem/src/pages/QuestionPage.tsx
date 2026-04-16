@@ -37,17 +37,18 @@ const CIRCULAR_TIMER_CONFIG: Record<number, { color: string; bg: string; duratio
 function CircularTimerSVG({ timeLeft, totalTime, color, size = 160 }: { timeLeft: number; totalTime: number; color: string; size?: number }) {
   const cx = size / 2;
   const cy = size / 2;
-  const strokeW = size * 0.06;
-  const r = cx - strokeW;
+  const strokeW = size * 0.07;
+  const r = cx - strokeW - 2;
   const circ = 2 * Math.PI * r;
   const progress = totalTime > 0 ? timeLeft / totalTime : 0;
   const offset = circ * (1 - progress);
-  const mins = Math.floor(timeLeft / 60).toString().padStart(2, "0");
-  const secs = (timeLeft % 60).toString().padStart(2, "0");
-  const fontSize = Math.round(size * 0.18);
+  const display = timeLeft.toString().padStart(2, "0");
+  const fontSize = Math.round(size * 0.28);
   return (
     <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeW} />
+      {/* Track circle */}
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={strokeW} strokeOpacity={0.15} />
+      {/* Progress circle */}
       <circle
         cx={cx} cy={cy} r={r} fill="none"
         stroke={color} strokeWidth={strokeW}
@@ -56,13 +57,14 @@ function CircularTimerSVG({ timeLeft, totalTime, color, size = 160 }: { timeLeft
         strokeLinecap="round"
         style={{ transition: "stroke-dashoffset 0.9s linear" }}
       />
+      {/* Number */}
       <text
         x={cx} y={cy}
         textAnchor="middle" dominantBaseline="middle"
         transform={`rotate(90, ${cx}, ${cy})`}
         style={{ fontFamily: "'Orbitron', sans-serif", fontSize, fontWeight: 900, fill: color }}
       >
-        {mins}:{secs}
+        {display}
       </text>
     </svg>
   );
@@ -451,17 +453,19 @@ export default function QuestionPage() {
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => { setCircularTimeLeft(circTotal); setCircularRunning(true); }}
-                        className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors border border-[#7B2FBE]/30"
+                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
+                        style={{ background: `${circCfg.color}20`, border: `2px solid ${circCfg.color}` }}
                       >
-                        <RotateCw size={18} color="#7B2FBE" strokeWidth={2.5} />
+                        <RotateCw size={18} color={circCfg.color} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => setCircularRunning((r) => !r)}
-                        className="w-10 h-10 rounded-full bg-[#7B2FBE]/10 hover:bg-[#7B2FBE]/20 flex items-center justify-center transition-colors border border-[#7B2FBE]/30"
+                        className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-95"
+                        style={{ background: `${circCfg.color}20`, border: `2px solid ${circCfg.color}` }}
                       >
                         {circularRunning
-                          ? <Pause size={18} color="#7B2FBE" strokeWidth={2.5} />
-                          : <Play  size={18} color="#7B2FBE" strokeWidth={2.5} />}
+                          ? <Pause size={18} color={circCfg.color} strokeWidth={2.5} />
+                          : <Play  size={18} color={circCfg.color} strokeWidth={2.5} />}
                       </button>
                     </div>
                   </div>
