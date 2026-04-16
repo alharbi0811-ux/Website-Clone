@@ -448,7 +448,7 @@ export default function QuestionPage() {
                       timeLeft={circularTimeLeft}
                       totalTime={circTotal}
                       color={circCfg.color}
-                      size={340}
+                      size={460}
                     />
                     <div className="flex items-center gap-4">
                       <button
