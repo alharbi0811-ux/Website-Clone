@@ -227,6 +227,42 @@ export default function QuestionPage() {
       : null;
 
     if (questionData.externalPageSlug && qrTemplate) {
+      if (isBadounKalam) {
+        return (
+          <div className="flex-1 min-h-0 flex items-center justify-center px-4 pb-4">
+            <div
+              className="relative rounded-2xl overflow-hidden w-full h-full"
+              style={{ aspectRatio: "16/9", maxHeight: "100%" }}
+            >
+              {qrTemplate.templateImageUrl && (
+                <img
+                  src={qrTemplate.templateImageUrl}
+                  alt="قالب"
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }}
+                />
+              )}
+              <div
+                style={{
+                  position: "absolute",
+                  left: `${qrTemplate.qrPositionX}%`,
+                  top: `${qrTemplate.qrPositionY}%`,
+                  transform: "translate(-50%, -50%)",
+                  width: `${Math.round((qrTemplate.qrSize / 320) * 100)}%`,
+                  zIndex: 2,
+                  background: "white",
+                  padding: 4,
+                  borderRadius: 4,
+                }}
+              >
+                <QRCodeSVG
+                  value={`${window.location.origin}/p/${questionData.externalPageSlug}`}
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="flex flex-col items-center pb-6 px-4">
           <div
@@ -401,7 +437,7 @@ export default function QuestionPage() {
 
             {renderTemplate()}
 
-            <div className="flex-1" />
+            {!isBadounKalam && <div className="flex-1" />}
 
             {/* Bottom row */}
             <div className="flex items-end justify-between px-8 pb-8">
