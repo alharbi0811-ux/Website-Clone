@@ -125,20 +125,19 @@ export default function ScorePage() {
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [playedCells, team1Score, team2Score, currentTeam, token]);
 
-  const DIFF_MAP: Record<number, string> = { 200: "easy", 400: "medium", 600: "hard" };
+  const POINTS_LIST = [200, 400, 600];
 
   useEffect(() => {
     if (!gameData) return;
     const cats = [...gameData.team1Categories, ...gameData.team2Categories];
-    const diffs = ["easy", "medium", "hard"];
     const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
     const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
     cats.forEach((cat) => {
-      diffs.forEach((diff) => {
-        const cacheKey = `${cat.id}-${diff}`;
+      POINTS_LIST.forEach((pts) => {
+        const cacheKey = `${cat.id}-${pts}`;
         setQuestionCache((prev) => {
           if (prev[cacheKey]) return prev;
-          fetch(`${API_BASE}/questions/game?categoryId=${cat.id}&difficulty=${diff}${excludeParam}`)
+          fetch(`${API_BASE}/questions/game?categoryId=${cat.id}&points=${pts}${excludeParam}`)
             .then((r) => (r.ok ? r.json() : null))
             .then((data) => { if (data) setQuestionCache((p) => ({ ...p, [cacheKey]: data })); })
             .catch(() => {});
@@ -150,10 +149,10 @@ export default function ScorePage() {
 
   if (!gameData) return null;
 
-  const prefetchQuestion = (categoryId: string, diff: string, excludeIds: number[]) => {
-    const cacheKey = `${categoryId}-${diff}`;
+  const prefetchQuestion = (categoryId: string, pts: number, excludeIds: number[]) => {
+    const cacheKey = `${categoryId}-${pts}`;
     const excludeParam = excludeIds.length ? `&excludeIds=${excludeIds.join(",")}` : "";
-    fetch(`${API_BASE}/questions/game?categoryId=${categoryId}&difficulty=${diff}${excludeParam}`)
+    fetch(`${API_BASE}/questions/game?categoryId=${categoryId}&points=${pts}${excludeParam}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => { if (data) setQuestionCache((p) => ({ ...p, [cacheKey]: data })); })
       .catch(() => {});
@@ -168,8 +167,7 @@ export default function ScorePage() {
     if (playedCells.has(key) || loadingCell) return;
 
     const category = allCategories[catIdx];
-    const diff = DIFF_MAP[points] || "medium";
-    const cacheKey = `${category.id}-${diff}`;
+    const cacheKey = `${category.id}-${points}`;
     const cached = questionCache[cacheKey];
 
     // Lock pit when question is pressed
@@ -198,13 +196,13 @@ export default function ScorePage() {
       const newUsed = [...usedIds, cached.id];
       localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
       setQuestionCache((prev) => { const next = { ...prev }; delete next[cacheKey]; return next; });
-      prefetchQuestion(category.id, diff, newUsed);
+      prefetchQuestion(category.id, points, newUsed);
       navigateToQuestion(cached);
     } else {
       setLoadingCell(key);
       const usedIds: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
       const excludeParam = usedIds.length ? `&excludeIds=${usedIds.join(",")}` : "";
-      fetch(`${API_BASE}/questions/game?categoryId=${category.id}&difficulty=${diff}${excludeParam}`)
+      fetch(`${API_BASE}/questions/game?categoryId=${category.id}&points=${points}${excludeParam}`)
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
           const q = data || { question: "لا توجد أسئلة لهذه الفئة.", answer: "—", image: category.img };
@@ -212,7 +210,7 @@ export default function ScorePage() {
             const latest: number[] = JSON.parse(localStorage.getItem("rakez-used-question-ids") || "[]");
             const newUsed = [...latest, data.id];
             localStorage.setItem("rakez-used-question-ids", JSON.stringify(newUsed));
-            prefetchQuestion(category.id, diff, newUsed);
+            prefetchQuestion(category.id, points, newUsed);
           }
           navigateToQuestion(q);
         })

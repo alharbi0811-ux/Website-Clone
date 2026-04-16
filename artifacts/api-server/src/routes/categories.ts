@@ -58,46 +58,32 @@ router.get("/categories", async (_req, res) => {
 });
 
 // Random question for game play
-// GET /api/questions/game?categoryId=:id&difficulty=easy|medium|hard&excludeIds=1,2,3
+// GET /api/questions/game?categoryId=:id&points=200|400|600&excludeIds=1,2,3
 router.get("/questions/game", async (req, res) => {
   try {
     const categoryId = Number(req.query.categoryId);
-    const difficulty = (req.query.difficulty as string) || undefined;
+    const points = Number(req.query.points) || undefined;
     const excludeIds = req.query.excludeIds
       ? String(req.query.excludeIds).split(",").map(Number).filter(Boolean)
       : [];
 
     if (!categoryId) return res.status(400).json({ error: "categoryId مطلوب" });
+    if (!points || ![200, 400, 600].includes(points)) return res.status(400).json({ error: "points يجب أن يكون 200 أو 400 أو 600" });
 
-    const diffMap: Record<string, string> = { "200": "easy", "400": "medium", "600": "hard" };
-    const resolvedDiff = difficulty ?? undefined;
+    const conditions = [
+      eq(questionsTable.categoryId, categoryId),
+      eq(questionsTable.isActive, true),
+      eq(questionsTable.points, points),
+      ...(excludeIds.length > 0 ? [notInArray(questionsTable.id, excludeIds)] : []),
+    ];
+    const where = and(...conditions);
 
-    const buildWhere = (withDiff: boolean) => {
-      const conditions = [
-        eq(questionsTable.categoryId, categoryId),
-        eq(questionsTable.isActive, true),
-        ...(withDiff && resolvedDiff ? [eq(questionsTable.difficulty, resolvedDiff as any)] : []),
-        ...(excludeIds.length > 0 ? [notInArray(questionsTable.id, excludeIds)] : []),
-      ];
-      return conditions.length === 1 ? conditions[0] : and(...conditions);
-    };
-
-    // Try with difficulty first, then fall back to any
-    let questions = await db
+    const questions = await db
       .select()
       .from(questionsTable)
-      .where(buildWhere(true))
+      .where(where)
       .orderBy(sql`RANDOM()`)
       .limit(1);
-
-    if (questions.length === 0 && resolvedDiff) {
-      questions = await db
-        .select()
-        .from(questionsTable)
-        .where(buildWhere(false))
-        .orderBy(sql`RANDOM()`)
-        .limit(1);
-    }
 
     if (questions.length === 0) return res.status(404).json({ error: "لا توجد أسئلة لهذه الفئة" });
 
