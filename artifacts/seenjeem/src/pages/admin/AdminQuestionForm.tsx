@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useRoute } from "wouter";
-import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeOff, ImagePlus, X, Loader2 } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
+import { useAuth } from "@/context/AuthContext";
 import { QRCodeSVG } from "qrcode.react";
 
 interface Category { id: number; nameAr: string; }
@@ -46,11 +47,16 @@ export default function AdminQuestionForm() {
   const preselectedCategory = urlParams.get("categoryId");
 
   const adminFetch = useAdminFetch();
+  const { token } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [externalPages, setExternalPages] = useState<ExternalPage[]>([]);
   const [qrTemplates, setQrTemplates] = useState<QrTemplate[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploadingQ, setUploadingQ] = useState(false);
+  const [uploadingA, setUploadingA] = useState(false);
+  const imgQRef = useRef<HTMLInputElement>(null);
+  const imgARef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     categoryId: preselectedCategory || "",
@@ -61,9 +67,32 @@ export default function AdminQuestionForm() {
     difficulty: "medium",
     points: "400",
     isActive: true,
+    imageUrl: "" as string,
+    answerImageUrl: "" as string,
     externalPageId: "" as string,
     qrTemplateId: "" as string,
   });
+
+  async function uploadImage(file: File, field: "imageUrl" | "answerImageUrl") {
+    const setUploading = field === "imageUrl" ? setUploadingQ : setUploadingA;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "فشل الرفع");
+      setForm((p) => ({ ...p, [field]: data.url }));
+    } catch (err: any) {
+      setError(err.message || "فشل رفع الصورة");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const selectedCategory = categories.find((c) => String(c.id) === String(form.categoryId));
   const isBadounKalam = selectedCategory?.nameAr.includes("كلام") || selectedCategory?.nameAr.includes("ولا كلمة");
@@ -99,6 +128,8 @@ export default function AdminQuestionForm() {
               difficulty: q.difficulty,
               points: String(q.points),
               isActive: q.isActive,
+              imageUrl: q.imageUrl || "",
+              answerImageUrl: q.answerImageUrl || "",
               externalPageId: q.externalPageId ? String(q.externalPageId) : "",
               qrTemplateId: q.qrTemplateId ? String(q.qrTemplateId) : "",
             });
@@ -130,6 +161,8 @@ export default function AdminQuestionForm() {
       if (form.optionC) payload.optionC = form.optionC;
       if (form.optionD) payload.optionD = form.optionD;
       if (form.correctOption) payload.correctOption = form.correctOption;
+      payload.imageUrl = form.imageUrl || null;
+      payload.answerImageUrl = form.answerImageUrl || null;
       if (form.externalPageId) payload.externalPageId = Number(form.externalPageId);
       else payload.externalPageId = null;
       if (form.qrTemplateId) payload.qrTemplateId = Number(form.qrTemplateId);
@@ -205,10 +238,106 @@ export default function AdminQuestionForm() {
             />
           </div>
 
+          {/* Question Image */}
+          <div>
+            <label style={labelStyle}>صورة السؤال (اختياري)</label>
+            <input
+              ref={imgQRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f, "imageUrl"); e.target.value = ""; }}
+            />
+            {form.imageUrl ? (
+              <div className="relative rounded-xl overflow-hidden" style={{ border: "1px solid rgba(123,47,190,0.3)", background: "#0b0b14" }}>
+                <img src={form.imageUrl} alt="صورة السؤال" className="w-full object-contain max-h-48" />
+                <div className="absolute top-2 left-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => imgQRef.current?.click()}
+                    className="px-3 py-1 rounded-lg text-xs font-bold text-white"
+                    style={{ background: "rgba(123,47,190,0.8)" }}
+                  >
+                    تغيير
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm((p) => ({ ...p, imageUrl: "" }))}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center"
+                    style={{ background: "rgba(248,113,113,0.8)" }}
+                  >
+                    <X size={13} color="white" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => imgQRef.current?.click()}
+                disabled={uploadingQ}
+                className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-xl transition-all disabled:opacity-60"
+                style={{ border: "2px dashed rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", color: "#555577" }}
+              >
+                {uploadingQ
+                  ? <><Loader2 size={20} className="animate-spin" style={{ color: "#7B2FBE" }} /><span className="text-xs font-mono">جاري الرفع...</span></>
+                  : <><ImagePlus size={20} /><span className="text-xs font-mono">اضغط لرفع صورة السؤال</span></>
+                }
+              </button>
+            )}
+          </div>
+
           {/* Answer */}
           <div>
             <label style={labelStyle}>الإجابة الصحيحة *</label>
             <input type="text" value={form.answer} onChange={set("answer")} required placeholder="الإجابة..." style={inputStyle} {...focusHandlers} />
+          </div>
+
+          {/* Answer Image */}
+          <div>
+            <label style={labelStyle}>صورة الجواب (اختياري)</label>
+            <input
+              ref={imgARef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f, "answerImageUrl"); e.target.value = ""; }}
+            />
+            {form.answerImageUrl ? (
+              <div className="relative rounded-xl overflow-hidden" style={{ border: "1px solid rgba(52,211,153,0.3)", background: "#0b0b14" }}>
+                <img src={form.answerImageUrl} alt="صورة الجواب" className="w-full object-contain max-h-48" />
+                <div className="absolute top-2 left-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => imgARef.current?.click()}
+                    className="px-3 py-1 rounded-lg text-xs font-bold text-white"
+                    style={{ background: "rgba(16,185,129,0.8)" }}
+                  >
+                    تغيير
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm((p) => ({ ...p, answerImageUrl: "" }))}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center"
+                    style={{ background: "rgba(248,113,113,0.8)" }}
+                  >
+                    <X size={13} color="white" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => imgARef.current?.click()}
+                disabled={uploadingA}
+                className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-xl transition-all disabled:opacity-60"
+                style={{ border: "2px dashed rgba(52,211,153,0.15)", background: "rgba(52,211,153,0.02)", color: "#555577" }}
+              >
+                {uploadingA
+                  ? <><Loader2 size={20} className="animate-spin" style={{ color: "#34d399" }} /><span className="text-xs font-mono">جاري الرفع...</span></>
+                  : <><ImagePlus size={20} /><span className="text-xs font-mono">اضغط لرفع صورة الجواب</span></>
+                }
+              </button>
+            )}
           </div>
 
           {/* Options */}

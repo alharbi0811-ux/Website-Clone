@@ -185,6 +185,8 @@ export default function ScorePage() {
         points, catIdx, side, currentTeam,
         questionId: q.id, question: q.question, answer: q.answer,
         image: q.image || category.img,
+        answerImage: q.answerImage || "",
+        externalPageSlug: q.externalPageSlug || null,
         pitActive,
       }));
       setPitActive(false);

@@ -17,7 +17,7 @@ type GameData = {
 type QuestionData = {
   categoryId: string; categoryName: string; points: number;
   catIdx: number; side: "l" | "r"; currentTeam: 1 | 2;
-  question: string; answer: string; image?: string; pitActive?: boolean;
+  question: string; answer: string; image?: string; answerImage?: string; pitActive?: boolean;
   externalPageSlug?: string | null; externalPageId?: number | null; qrTemplateId?: number | null;
 };
 
@@ -299,10 +299,14 @@ export default function QuestionPage() {
                 <div className="px-16 pt-16 pb-4">
                   <p className="text-[100px] text-gray-900 text-center leading-tight w-full">{questionData.answer}</p>
                 </div>
-                {questionData.image ? (
+                {(questionData.answerImage || questionData.image) ? (
                   <div className="flex-1 flex items-center justify-center px-16 py-4">
-                    <img src={questionData.image} alt="صورة الإجابة" onClick={() => setLightboxImage(questionData.image!)}
-                      className="max-h-52 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity" />
+                    <img
+                      src={questionData.answerImage || questionData.image}
+                      alt="صورة الإجابة"
+                      onClick={() => setLightboxImage((questionData.answerImage || questionData.image)!)}
+                      className="max-h-52 max-w-xs object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+                    />
                   </div>
                 ) : <div className="flex-1" />}
                 <div className="flex justify-center pb-10">

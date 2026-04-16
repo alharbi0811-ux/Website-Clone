@@ -122,6 +122,7 @@ router.get("/questions/game", async (req, res) => {
       externalPageId: q.externalPageId ?? null,
       externalPageSlug,
       qrTemplateId: q.qrTemplateId ?? null,
+      answerImage: q.answerImageUrl ?? "",
     });
   } catch {
     res.status(500).json({ error: "خطأ في الخادم" });

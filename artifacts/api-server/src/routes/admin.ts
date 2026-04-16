@@ -1,4 +1,7 @@
 import { Router } from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import { db } from "@workspace/db";
 import { categoriesTable, questionsTable, usersTable, customRolesTable } from "@workspace/db";
 import { eq, count, desc } from "drizzle-orm";
@@ -7,7 +10,32 @@ import { z } from "zod";
 
 const router = Router();
 
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+const imgStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `question-${Date.now()}-${Math.random().toString(36).slice(2, 7)}${ext}`);
+  },
+});
+const uploadImg = multer({
+  storage: imgStorage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("يجب أن يكون الملف صورة"));
+  },
+});
+
 router.use(requireAuth, requireAdmin);
+
+// ───── Image Upload ─────
+router.post("/admin/upload-image", uploadImg.single("image"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "لم يتم رفع أي صورة" });
+  res.json({ url: `/api/uploads/${req.file.filename}` });
+});
 
 // ───── Stats ─────
 router.get("/admin/stats", async (_req, res) => {
@@ -121,6 +149,7 @@ const questionSchema = z.object({
   points: z.coerce.number().int().optional().default(400),
   timeSeconds: z.coerce.number().int().optional().default(30),
   imageUrl: z.string().optional().nullable(),
+  answerImageUrl: z.string().optional().nullable(),
   externalPageId: z.coerce.number().int().optional().nullable(),
   qrTemplateId: z.coerce.number().int().optional().nullable(),
   isActive: z.boolean().optional().default(true),
