@@ -52,10 +52,10 @@ const iStyle = { background: "rgba(123,47,190,0.08)", border: "1px solid rgba(12
 const iCls   = "w-full px-3 py-2.5 rounded-xl text-sm text-white font-medium focus:outline-none focus:border-[#7B2FBE] transition-all";
 
 function Inp({ label, k, form, setForm, placeholder, textarea }: {
-  label: string; k: string; form: Record<string, string>; setForm: (f: any) => void;
+  label: string; k: string; form: Record<string, string>; setForm: (f: Record<string, string>) => void;
   placeholder?: string; textarea?: boolean;
 }) {
-  const shared = { value: form[k] ?? "", onChange: (e: any) => setForm((f: any) => ({ ...f, [k]: e.target.value })), placeholder, className: `${iCls} ${textarea ? "resize-none" : ""}`, style: iStyle };
+  const shared = { value: form[k] ?? "", onChange: (e: any) => setForm({ ...form, [k]: e.target.value }), placeholder, className: `${iCls} ${textarea ? "resize-none" : ""}`, style: iStyle };
   return (
     <div>
       <label className="block text-xs font-bold mb-1.5" style={{ color: "#8888aa" }}>{label}</label>
@@ -65,14 +65,14 @@ function Inp({ label, k, form, setForm, placeholder, textarea }: {
 }
 
 function Sel({ label, k, form, setForm, opts, placeholder }: {
-  label: string; k: string; form: Record<string, string>; setForm: (f: any) => void;
+  label: string; k: string; form: Record<string, string>; setForm: (f: Record<string, string>) => void;
   opts: { value: string; label: string }[]; placeholder?: string;
 }) {
   return (
     <div>
       <label className="block text-xs font-bold mb-1.5" style={{ color: "#8888aa" }}>{label}</label>
       <div className="relative">
-        <select value={form[k] ?? ""} onChange={e => setForm((f: any) => ({ ...f, [k]: e.target.value }))}
+        <select value={form[k] ?? ""} onChange={e => setForm({ ...form, [k]: e.target.value })}
           className={`${iCls} appearance-none pr-8`} style={iStyle}>
           {placeholder && <option value="">{placeholder}</option>}
           {opts.map(o => <option key={o.value} value={o.value} style={{ background: "#1a1a2e" }}>{o.label}</option>)}
@@ -356,20 +356,50 @@ export default function AdminStudyMode() {
         <Inp label="اسم الدرس" k="name" form={form} setForm={setForm} placeholder="مثال: الدرس الأول" />
       </>
     );
-    if (tab === "questions") return (
-      <>
-        <Sel label="المادة" k="subjectId" form={form} setForm={(f: any) => setForm({ ...f, unitId: "", lessonId: "" })} placeholder="اختر المادة"
-          opts={subjects.map(s => ({ value: String(s.id), label: s.name }))} />
-        <Sel label="الوحدة" k="unitId" form={form} setForm={(f: any) => setForm({ ...f, lessonId: "" })} placeholder="اختر الوحدة"
-          opts={units.filter(u => !form.subjectId || u.subjectId === Number(form.subjectId)).map(u => ({ value: String(u.id), label: u.name }))} />
-        <Sel label="الدرس (اختياري)" k="lessonId" form={form} setForm={setForm}
-          opts={[{ value: "", label: "— بدون درس —" }, ...lessons.filter(l => !form.unitId || l.unitId === Number(form.unitId)).map(l => ({ value: String(l.id), label: l.name }))]} />
-        <Inp label="نص السؤال" k="questionText" form={form} setForm={setForm} placeholder="اكتب السؤال هنا" textarea />
-        <Inp label="صورة السؤال (URL اختياري)" k="questionImage" form={form} setForm={setForm} placeholder="https://..." />
-        <Inp label="نص الإجابة" k="answerText" form={form} setForm={setForm} placeholder="اكتب الإجابة هنا" textarea />
-        <Inp label="صورة الإجابة (URL اختياري)" k="answerImage" form={form} setForm={setForm} placeholder="https://..." />
-      </>
-    );
+    if (tab === "questions") {
+      const filteredByStage = form._stageFilter
+        ? grades.filter(g => g.stageId === Number(form._stageFilter))
+        : grades;
+      const filteredSubjects = form._gradeFilter
+        ? subjects.filter(s => s.gradeId === Number(form._gradeFilter))
+        : form._stageFilter
+          ? subjects.filter(s => s.gradeId !== null && filteredByStage.some(g => g.id === s.gradeId))
+          : subjects;
+      return (
+        <>
+          <div className="rounded-xl p-3 mb-1" style={{ background: "rgba(123,47,190,0.06)", border: "1px dashed rgba(123,47,190,0.25)" }}>
+            <p className="text-xs font-bold mb-2" style={{ color: "#7B2FBE" }}>🎯 تصفية حسب الصف (اختياري)</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Sel label="المرحلة" k="_stageFilter" form={form}
+                setForm={(f) => setForm({ ...f, _gradeFilter: "", subjectId: "", unitId: "", lessonId: "" })}
+                placeholder="كل المراحل"
+                opts={stages.map(s => ({ value: String(s.id), label: s.name }))} />
+              <Sel label="الصف" k="_gradeFilter" form={form}
+                setForm={(f) => setForm({ ...f, subjectId: "", unitId: "", lessonId: "" })}
+                placeholder="كل الصفوف"
+                opts={filteredByStage.map(g => ({ value: String(g.id), label: g.name }))} />
+            </div>
+          </div>
+          <Sel label="المادة" k="subjectId" form={form}
+            setForm={(f) => setForm({ ...f, unitId: "", lessonId: "" })}
+            placeholder="اختر المادة"
+            opts={filteredSubjects.map(s => ({
+              value: String(s.id),
+              label: s.gradeId ? `${gradeName(s.gradeId)} — ${s.name}` : s.name
+            }))} />
+          <Sel label="الوحدة" k="unitId" form={form}
+            setForm={(f) => setForm({ ...f, lessonId: "" })}
+            placeholder="اختر الوحدة"
+            opts={units.filter(u => !form.subjectId || u.subjectId === Number(form.subjectId)).map(u => ({ value: String(u.id), label: `ف${u.term} — ${u.name}` }))} />
+          <Sel label="الدرس (اختياري)" k="lessonId" form={form} setForm={setForm}
+            opts={[{ value: "", label: "— بدون درس —" }, ...lessons.filter(l => !form.unitId || l.unitId === Number(form.unitId)).map(l => ({ value: String(l.id), label: l.name }))]} />
+          <Inp label="نص السؤال" k="questionText" form={form} setForm={setForm} placeholder="اكتب السؤال هنا" textarea />
+          <Inp label="صورة السؤال (URL اختياري)" k="questionImage" form={form} setForm={setForm} placeholder="https://..." />
+          <Inp label="نص الإجابة" k="answerText" form={form} setForm={setForm} placeholder="اكتب الإجابة هنا" textarea />
+          <Inp label="صورة الإجابة (URL اختياري)" k="answerImage" form={form} setForm={setForm} placeholder="https://..." />
+        </>
+      );
+    }
   };
 
   const tabLabel: Record<Tab, string> = { stages: "المرحلة", grades: "الصف", subjects: "المادة", units: "الوحدة", lessons: "الدرس", questions: "السؤال" };
