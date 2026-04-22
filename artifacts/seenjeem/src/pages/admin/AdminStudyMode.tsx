@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
+import { useAdminFetch } from "@/hooks/useAdminFetch";
 import {
   BookOpen, Layers, BookMarked, HelpCircle,
   Plus, Trash2, Edit2, X, Check, ChevronDown,
 } from "lucide-react";
-
-const API_BASE = "/api";
 
 type Subject = { id: number; name: string; createdAt?: string };
 type Unit = { id: number; name: string; subjectId: number; term: number };
@@ -74,7 +72,6 @@ const inputStyle = {
   background: "rgba(123,47,190,0.08)",
   border: "1px solid rgba(123,47,190,0.25)",
 };
-const inputFocusStyle = "focus:border-[#7B2FBE]";
 
 function SelectField({
   label, value, onChange, options, placeholder,
@@ -91,7 +88,7 @@ function SelectField({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`${inputCls} ${inputFocusStyle} appearance-none pr-8`}
+          className={`${inputCls} focus:border-[#7B2FBE] appearance-none pr-8`}
           style={inputStyle}
         >
           {placeholder && <option value="">{placeholder}</option>}
@@ -108,41 +105,38 @@ function SelectField({
 }
 
 export default function AdminStudyMode() {
+  const adminFetch = useAdminFetch();
   const [tab, setTab] = useState<Tab>("subjects");
+  const [error, setError] = useState<string | null>(null);
 
-  // Data
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [questions, setQuestions] = useState<StudyQuestion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Modal state
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-
-  // Form state
   const [form, setForm] = useState<Record<string, string>>({});
-
-  const headers = (path: string) => ({
-    "Content-Type": "application/json",
-    ...(document.cookie.includes("session") ? {} : {}),
-  });
 
   const fetchAll = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [s, u, l, q] = await Promise.all([
-        fetch(`${API_BASE}/admin/study/subjects`, { credentials: "include" }).then((r) => r.json()),
-        fetch(`${API_BASE}/admin/study/units`, { credentials: "include" }).then((r) => r.json()),
-        fetch(`${API_BASE}/admin/study/lessons`, { credentials: "include" }).then((r) => r.json()),
-        fetch(`${API_BASE}/admin/study/questions`, { credentials: "include" }).then((r) => r.json()),
+        adminFetch("/admin/study/subjects"),
+        adminFetch("/admin/study/units"),
+        adminFetch("/admin/study/lessons"),
+        adminFetch("/admin/study/questions"),
       ]);
       setSubjects(Array.isArray(s) ? s : []);
       setUnits(Array.isArray(u) ? u : []);
       setLessons(Array.isArray(l) ? l : []);
       setQuestions(Array.isArray(q) ? q : []);
-    } catch (e) {}
+    } catch (e: any) {
+      setError(e.message || "خطأ في تحميل البيانات");
+    }
     setLoading(false);
   };
 
@@ -158,42 +152,41 @@ export default function AdminStudyMode() {
   };
   const closeModal = () => { setShowModal(false); setEditing(null); setForm({}); };
 
+  const endpointMap: Record<Tab, string> = {
+    subjects: "subjects",
+    units: "units",
+    lessons: "lessons",
+    questions: "questions",
+  };
+
   const handleDelete = async (id: number) => {
     if (!confirm("حذف هذا العنصر؟")) return;
-    const endpointMap: Record<Tab, string> = {
-      subjects: "subjects",
-      units: "units",
-      lessons: "lessons",
-      questions: "questions",
-    };
-    await fetch(`${API_BASE}/admin/study/${endpointMap[tab]}/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    fetchAll();
+    try {
+      await adminFetch(`/admin/study/${endpointMap[tab]}/${id}`, { method: "DELETE" });
+      fetchAll();
+    } catch (e: any) {
+      alert(e.message || "خطأ في الحذف");
+    }
   };
 
   const handleSave = async () => {
-    const endpointMap: Record<Tab, string> = {
-      subjects: "subjects",
-      units: "units",
-      lessons: "lessons",
-      questions: "questions",
-    };
-    const endpoint = `${API_BASE}/admin/study/${endpointMap[tab]}`;
+    const endpoint = `/admin/study/${endpointMap[tab]}`;
     const method = editing ? "PUT" : "POST";
     const url = editing ? `${endpoint}/${editing.id}` : endpoint;
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(form),
-    });
-    closeModal();
-    fetchAll();
+    setSaving(true);
+    try {
+      await adminFetch(url, {
+        method,
+        body: JSON.stringify(form),
+      });
+      closeModal();
+      fetchAll();
+    } catch (e: any) {
+      alert(e.message || "خطأ في الحفظ");
+    } finally {
+      setSaving(false);
+    }
   };
-
-  // ──────────────── Tab content helpers ────────────────
 
   const subjectName = (id: number) => subjects.find((s) => s.id === id)?.name ?? "-";
   const unitName = (id: number) => units.find((u) => u.id === id)?.name ?? "-";
@@ -203,6 +196,13 @@ export default function AdminStudyMode() {
     if (loading) return (
       <div className="flex justify-center py-16">
         <div className="w-7 h-7 rounded-full border-2 border-[#7B2FBE]/30 border-t-[#7B2FBE] animate-spin" />
+      </div>
+    );
+
+    if (error) return (
+      <div className="text-center py-10">
+        <p className="text-red-400 text-sm font-medium">{error}</p>
+        <button onClick={fetchAll} className="mt-3 text-xs text-[#7B2FBE] hover:underline">إعادة المحاولة</button>
       </div>
     );
 
@@ -228,7 +228,7 @@ export default function AdminStudyMode() {
               </td>
             </tr>
           ))}
-          {subjects.length === 0 && <tr><td colSpan={3} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد مواد</td></tr>}
+          {subjects.length === 0 && <tr><td colSpan={3} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد مواد — أضف أول مادة</td></tr>}
         </tbody>
       </table>
     );
@@ -257,7 +257,7 @@ export default function AdminStudyMode() {
               </td>
             </tr>
           ))}
-          {units.length === 0 && <tr><td colSpan={4} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد وحدات</td></tr>}
+          {units.length === 0 && <tr><td colSpan={4} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد وحدات — أضف مادة أولاً</td></tr>}
         </tbody>
       </table>
     );
@@ -284,7 +284,7 @@ export default function AdminStudyMode() {
               </td>
             </tr>
           ))}
-          {lessons.length === 0 && <tr><td colSpan={3} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد دروس</td></tr>}
+          {lessons.length === 0 && <tr><td colSpan={3} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد دروس — أضف وحدات أولاً</td></tr>}
         </tbody>
       </table>
     );
@@ -321,13 +321,11 @@ export default function AdminStudyMode() {
               </td>
             </tr>
           ))}
-          {questions.length === 0 && <tr><td colSpan={6} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد أسئلة</td></tr>}
+          {questions.length === 0 && <tr><td colSpan={6} className="text-center py-10 text-sm" style={{ color: "#555577" }}>لا توجد أسئلة — أضف مواد ووحدات أولاً</td></tr>}
         </tbody>
       </table>
     );
   };
-
-  // ──────────────── Modal forms ────────────────
 
   const renderForm = () => {
     const inp = (key: string, label: string, placeholder?: string, textarea?: boolean) => (
@@ -338,7 +336,7 @@ export default function AdminStudyMode() {
             onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
             placeholder={placeholder}
             rows={3}
-            className={`${inputCls} ${inputFocusStyle} resize-none`}
+            className={`${inputCls} focus:border-[#7B2FBE] resize-none`}
             style={inputStyle}
           />
         ) : (
@@ -346,7 +344,7 @@ export default function AdminStudyMode() {
             value={form[key] ?? ""}
             onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
             placeholder={placeholder}
-            className={`${inputCls} ${inputFocusStyle}`}
+            className={`${inputCls} focus:border-[#7B2FBE]`}
             style={inputStyle}
           />
         )}
@@ -393,9 +391,7 @@ export default function AdminStudyMode() {
         <SelectField
           label="المادة"
           value={form.subjectId ?? ""}
-          onChange={(v) => {
-            setForm((f) => ({ ...f, subjectId: v, unitId: "", lessonId: "" }));
-          }}
+          onChange={(v) => setForm((f) => ({ ...f, subjectId: v, unitId: "", lessonId: "" }))}
           options={subjects.map((s) => ({ value: String(s.id), label: s.name }))}
           placeholder="اختر المادة"
         />
@@ -435,58 +431,56 @@ export default function AdminStudyMode() {
   };
 
   return (
-    <AdminLayout>
-      <div dir="rtl">
-        {/* Page header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-black text-white flex items-center gap-2">
-              <BookOpen size={20} className="text-[#7B2FBE]" />
-              وضع الدراسة
-            </h1>
-            <p className="text-xs mt-1" style={{ color: "#555577" }}>
-              إدارة المواد والوحدات والدروس والأسئلة
-            </p>
-          </div>
+    <div dir="rtl">
+      {/* Page header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-black text-white flex items-center gap-2">
+            <BookOpen size={20} className="text-[#7B2FBE]" />
+            وضع الدراسة
+          </h1>
+          <p className="text-xs mt-1" style={{ color: "#555577" }}>
+            إدارة المواد والوحدات والدروس والأسئلة
+          </p>
+        </div>
+        <button
+          onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+          style={{ background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)", boxShadow: "0 0 16px rgba(123,47,190,0.3)" }}
+        >
+          <Plus size={15} />
+          إضافة {tabLabels[tab]}
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div
+        className="flex gap-1 p-1 rounded-xl mb-5 w-fit"
+        style={{ background: "rgba(123,47,190,0.1)" }}
+      >
+        {TABS.map((t) => (
           <button
-            onClick={openCreate}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-            style={{ background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)", boxShadow: "0 0 16px rgba(123,47,190,0.3)" }}
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+            style={
+              tab === t.key
+                ? { background: "#7B2FBE", color: "white", boxShadow: "0 0 12px rgba(123,47,190,0.4)" }
+                : { color: "#8888aa" }
+            }
           >
-            <Plus size={15} />
-            إضافة {tabLabels[tab]}
+            {t.icon}
+            {t.label}
           </button>
-        </div>
+        ))}
+      </div>
 
-        {/* Tabs */}
-        <div
-          className="flex gap-1 p-1 rounded-xl mb-5 w-fit"
-          style={{ background: "rgba(123,47,190,0.1)" }}
-        >
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-bold transition-all"
-              style={
-                tab === t.key
-                  ? { background: "#7B2FBE", color: "white", boxShadow: "0 0 12px rgba(123,47,190,0.4)" }
-                  : { color: "#8888aa" }
-              }
-            >
-              {t.icon}
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Table */}
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{ border: "1px solid rgba(123,47,190,0.2)", background: "#0f0f1e" }}
-        >
-          <div className="overflow-x-auto">{renderTable()}</div>
-        </div>
+      {/* Table */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ border: "1px solid rgba(123,47,190,0.2)", background: "#0f0f1e" }}
+      >
+        <div className="overflow-x-auto">{renderTable()}</div>
       </div>
 
       {/* Modal */}
@@ -499,10 +493,15 @@ export default function AdminStudyMode() {
           <div className="flex gap-3 pt-2">
             <button
               onClick={handleSave}
-              className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90"
+              disabled={saving}
+              className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)" }}
             >
-              <Check size={14} />
+              {saving ? (
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
+              ) : (
+                <Check size={14} />
+              )}
               {editing ? "حفظ التعديلات" : "إضافة"}
             </button>
             <button
@@ -515,6 +514,6 @@ export default function AdminStudyMode() {
           </div>
         </Modal>
       )}
-    </AdminLayout>
+    </div>
   );
 }
