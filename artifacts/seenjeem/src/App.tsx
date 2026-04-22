@@ -13,6 +13,8 @@ import QuestionPage from "@/pages/QuestionPage";
 import LoginPage from "@/pages/LoginPage";
 import HistoryPage from "@/pages/HistoryPage";
 import WinPage from "@/pages/WinPage";
+import StudyModeSetup from "@/pages/StudyModeSetup";
+import StudyModeGame from "@/pages/StudyModeGame";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -27,6 +29,7 @@ import AdminExternalPages from "@/pages/admin/AdminExternalPages";
 import AdminExternalPageDesigner from "@/pages/admin/AdminExternalPageDesigner";
 import AdminCategoryLayouts from "@/pages/admin/AdminCategoryLayouts";
 import AdminSiteSettings from "@/pages/admin/AdminSiteSettings";
+import AdminStudyMode from "@/pages/admin/AdminStudyMode";
 import ExternalPage from "@/pages/ExternalPage";
 
 const queryClient = new QueryClient();
@@ -49,6 +52,8 @@ function Router() {
       <Route path="/question" component={QuestionPage} />
       <Route path="/history" component={HistoryPage} />
       <Route path="/win-page" component={WinPage} />
+      <Route path="/study-setup" component={StudyModeSetup} />
+      <Route path="/study-game" component={StudyModeGame} />
 
       <Route path="/admin">
         <AdminGuard><AdminDashboard /></AdminGuard>
@@ -94,6 +99,9 @@ function Router() {
       </Route>
       <Route path="/admin/site-settings">
         <AdminGuard><AdminSiteSettings /></AdminGuard>
+      </Route>
+      <Route path="/admin/study-mode">
+        <AdminGuard><AdminStudyMode /></AdminGuard>
       </Route>
 
       <Route path="/p/:slug" component={ExternalPage} />

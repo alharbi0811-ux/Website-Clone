@@ -8,6 +8,7 @@ import qrTemplatesRouter from "./qr-templates";
 import externalPagesRouter from "./external-pages";
 import categoryLayoutsRouter from "./category-layouts";
 import siteSettingsRouter from "./site-settings";
+import studyModeRouter from "./study-mode";
 
 const router: IRouter = Router();
 
@@ -18,6 +19,7 @@ router.use(qrTemplatesRouter);
 router.use(externalPagesRouter);
 router.use(categoryLayoutsRouter);
 router.use(siteSettingsRouter);
+router.use(studyModeRouter);
 router.use(historyRouter);
 router.use(adminRouter);
 

@@ -52,7 +52,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-6 mb-16 w-full max-w-lg justify-center"
+          className="flex flex-col sm:flex-row gap-4 mb-16 w-full max-w-lg justify-center"
         >
           <button
             onClick={() => navigate("/start-game")}
@@ -60,6 +60,13 @@ export function Hero() {
           >
             <span className="relative z-10">إنشاء لعبة</span>
             <div className="absolute inset-0 bg-white/15 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
+          </button>
+          <button
+            onClick={() => navigate("/study-setup")}
+            className="group relative w-full sm:w-auto bg-white/10 border-2 border-white/40 text-white font-bold text-xl py-4 px-10 rounded-2xl hover:bg-white/20 hover:border-white/70 hover:-translate-y-1 transition-all overflow-hidden backdrop-blur-sm"
+          >
+            <span className="relative z-10">وضع الدراسة</span>
+            <div className="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
           </button>
         </motion.div>
 

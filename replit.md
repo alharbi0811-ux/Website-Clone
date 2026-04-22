@@ -111,12 +111,17 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 Arabic trivia game "ركز" (Rakez) — a React + Vite web app cloned from seenjeemkw.com.
 
 - **Theme**: Light mode, purple (#7B2FBE) / white glassmorphism, RTL Arabic
-- **Routing**: wouter — `/` (Home), `/start-game` (StartGame), `/score-page` (ScorePage), `/question` (QuestionPage)
+- **Routing**: wouter — `/` (Home), `/start-game` (StartGame), `/score-page` (ScorePage), `/question` (QuestionPage), `/study-setup` (StudyModeSetup), `/study-game` (StudyModeGame)
 - **Pages**:
   - `Home.tsx` — Landing page with Navbar, Hero, HelpTools
   - `StartGame.tsx` — Category selection (8 sections, 6 max picks: 3/team), team info form (names, help tools), saves to localStorage and navigates to `/score-page`
   - `ScorePage.tsx` — Game board with 2×3 grid of category cards, clicking a cell navigates to `/question`, score tracking, team turns, end-game modal
   - `QuestionPage.tsx` — Question display with timer (30s countdown), points badge, question text/image, right sidebar with team scores & help tools, answer reveal with correct/wrong buttons, navigates back to ScorePage with result
+  - `StudyModeSetup.tsx` — 5-step wizard: subject → game name + team names → term → unit → lessons/focus toggle; saves to localStorage and navigates to `/study-game`
+  - `StudyModeGame.tsx` — Question display with stopwatch timer (start/pause), answer reveal, team scoring per question, end-game modal; stores state in localStorage
+- **Study Mode DB Tables**: `study_subjects`, `study_units` (with term 1/2), `study_lessons`, `study_questions` (question/answer text + optional images)
+- **Study Mode API routes**: `GET /api/study/subjects|units|lessons|questions` (public), `GET|POST|PUT|DELETE /api/admin/study/subjects|units|lessons|questions` (admin)
+- **Admin Study Mode**: `/admin/study-mode` — tabbed page managing subjects/units/lessons/questions with CRUD modals
 - **CDN**: `https://d442zbpa1tgal.cloudfront.net` for category images
 - **Data flow**: StartGame → localStorage (`rakez-game-data`) → ScorePage → localStorage (`rakez-current-question`) → QuestionPage → localStorage (`rakez-answered-cell`) → ScorePage
 - **localStorage keys**: `rakez-game-data`, `rakez-scores`, `rakez-played-cells`, `rakez-current-team`, `rakez-current-question`, `rakez-answered-cell`, `rakez-used-tools`
