@@ -267,26 +267,26 @@ export default function ScorePage() {
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-6 md:pt-[24px] md:pb-[24px] shadow-lg border-b border-white/10">
-        <div className="flex items-center justify-between relative">
+      <div className="score-topbar shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-6 md:pt-[24px] md:pb-[24px] shadow-lg border-b border-white/10">
+        <div className="flex items-center justify-between h-full relative">
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
-            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-7 md:h-10 md:pl-[22px] md:pr-[22px]" />
-            <div className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 md:px-5 md:py-2 md:pt-[10px] md:pb-[10px] md:pl-[25px] md:pr-[25px] rounded-full font-bold border border-white/20 text-[11px] md:text-[15px]">
+            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-6 md:h-10 md:pl-[22px] md:pr-[22px]" />
+            <div className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 md:px-5 md:py-2 md:pt-[10px] md:pb-[10px] md:pl-[25px] md:pr-[25px] rounded-full font-bold border border-white/20 text-[10px] md:text-[15px]">
               دور: {currentTeamName}
             </div>
           </div>
           <div className="absolute inset-x-0 flex justify-center pointer-events-none">
-            <span className="text-white font-bold text-sm md:text-lg">{gameData.gameName}</span>
+            <span className="text-white font-bold text-xs md:text-lg">{gameData.gameName}</span>
           </div>
-          <div className="flex items-center gap-1 md:gap-2 shrink-0">
-            <button onClick={handleEndGame} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
-              <Eye size={15} /><span className="hidden md:inline">انتهاء اللعبة</span>
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+            <button onClick={handleEndGame} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
+              <Eye size={16} /><span className="hidden md:inline">انتهاء اللعبة</span>
             </button>
-            <button onClick={handleResetBoard} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
-              <RotateCcw size={15} /><span className="hidden md:inline">إعادة</span>
+            <button onClick={handleResetBoard} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
+              <RotateCcw size={16} /><span className="hidden md:inline">إعادة</span>
             </button>
-            <button onClick={handleExit} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
-              <LogOut size={14} /><span className="hidden md:inline">الخروج</span>
+            <button onClick={handleExit} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
+              <LogOut size={16} /><span className="hidden md:inline">الخروج</span>
             </button>
           </div>
         </div>

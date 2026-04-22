@@ -178,6 +178,36 @@
     overflow-x: hidden;
   }
 
+  /* ── Score Page — Top Bar (mobile compact) ── */
+
+  /* Top bar: fixed compact height on mobile, content always centered */
+  .score-topbar {
+    min-height: 52px !important;
+    height: 52px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .score-topbar > div {
+    width: 100%;
+    align-items: center;
+  }
+
+  /* Icon-only action buttons: square, touch-friendly 44px */
+  .topbar-icon-btn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   /* ── Score Page ── */
 
   /* Game board: ensure both rows share available height without overflow */
