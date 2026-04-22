@@ -229,7 +229,7 @@ export default function StudyModeGame() {
                   </div>
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
                 </div>
-                <p className="text-3xl font-black text-gray-900 leading-relaxed">{currentQ.questionText}</p>
+                <p className="text-5xl font-black text-gray-900 leading-relaxed">{currentQ.questionText}</p>
                 {currentQ.questionImage && (
                   <img src={currentQ.questionImage} alt="" className="w-full rounded-xl object-contain max-h-48 mt-4 border border-gray-100" />
                 )}
