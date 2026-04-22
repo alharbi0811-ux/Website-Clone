@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/sections/Navbar";
-import { Check, Gamepad2, Info, X } from "lucide-react";
+import { Check, Info, X, Search } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 
@@ -12,6 +12,8 @@ type Category = {
   name: string;
   img: string;
   flag?: string;
+  status?: string;
+  lockMessage?: string | null;
 };
 
 type Section = {
@@ -19,7 +21,6 @@ type Section = {
   flag?: string;
   categories: Category[];
 };
-
 
 export default function StartGame() {
   const [, navigate] = useLocation();
@@ -31,9 +32,9 @@ export default function StartGame() {
   const [team2Name, setTeam2Name] = useState("");
   const [team1Tools, setTeam1Tools] = useState<string[]>(["double", "pit", "rest"]);
   const [team2Tools, setTeam2Tools] = useState<string[]>(["double", "pit", "rest"]);
-  const [showSplitTeams, setShowSplitTeams] = useState(false);
   const [sections, setSections] = useState<Section[]>([]);
   const [loadingSections, setLoadingSections] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetch(`${API_BASE}/categories`)
@@ -53,7 +54,7 @@ export default function StartGame() {
     const setter = team === 1 ? setTeam1Tools : setTeam2Tools;
     const current = team === 1 ? team1Tools : team2Tools;
     if (current.includes(toolId)) {
-      setter(current.filter(t => t !== toolId));
+      setter(current.filter((t) => t !== toolId));
     } else if (current.length < 3) {
       setter([...current, toolId]);
     }
@@ -72,6 +73,22 @@ export default function StartGame() {
   const team1 = selectedIds.slice(0, 3);
   const team2 = selectedIds.slice(3, 6);
 
+  // Filter sections based on search query
+  const filteredSections = useMemo(() => {
+    if (!searchQuery.trim()) return sections;
+    const q = searchQuery.trim().toLowerCase();
+    return sections
+      .map((s) => ({
+        ...s,
+        categories: s.categories.filter((c) =>
+          c.name.toLowerCase().includes(q)
+        ),
+      }))
+      .filter((s) => s.categories.length > 0);
+  }, [sections, searchQuery]);
+
+  const totalFiltered = filteredSections.reduce((acc, s) => acc + s.categories.length, 0);
+
   return (
     <div className="min-h-screen bg-background text-foreground" dir="rtl">
       <Navbar />
@@ -83,19 +100,51 @@ export default function StartGame() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
+            className="text-center mb-8"
           >
             <h1 className="text-4xl md:text-5xl font-black text-foreground mb-3">إنشاء لعبة</h1>
             <p className="text-foreground/60 text-lg">لعبة جماعية تفاعلية نختبر فيها معرفتكم وثقافتكم</p>
           </motion.div>
 
-          {/* Game Type */}
+          {/* Search Bar */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="hidden"
+            transition={{ delay: 0.08 }}
+            className="mb-8 flex justify-center"
           >
+            <div className="relative w-full max-w-lg">
+              <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#7B2FBE" }} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ابحث عن فئة..."
+                dir="rtl"
+                className="w-full py-3 pr-12 pl-5 rounded-full text-base font-medium outline-none transition-all"
+                style={{
+                  background: "#fff",
+                  border: "2px solid",
+                  borderColor: searchQuery ? "#7B2FBE" : "#e9d5ff",
+                  boxShadow: searchQuery ? "0 0 0 3px rgba(123,47,190,0.12)" : "none",
+                  color: "#1a1a2e",
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center transition-colors"
+                  style={{ background: "#e9d5ff", color: "#7B2FBE" }}
+                >
+                  <X size={11} />
+                </button>
+              )}
+              {searchQuery && totalFiltered > 0 && (
+                <span className="absolute -bottom-6 right-2 text-xs font-medium" style={{ color: "#7B2FBE" }}>
+                  {totalFiltered} فئة
+                </span>
+              )}
+            </div>
           </motion.div>
 
           {/* Selection Status */}
@@ -149,7 +198,20 @@ export default function StartGame() {
                 <div className="w-10 h-10 border-4 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" />
               </div>
             ) : null}
-            {!loadingSections && sections.map((section, sIdx) => (
+
+            {/* No search results */}
+            {!loadingSections && searchQuery && filteredSections.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <Search size={40} className="mx-auto mb-4 text-purple-200" />
+                <p className="text-foreground/40 text-lg font-medium">لا توجد فئات تطابق "<span className="text-[#7B2FBE]">{searchQuery}</span>"</p>
+              </motion.div>
+            )}
+
+            {!loadingSections && filteredSections.map((section, sIdx) => (
               <motion.div
                 key={section.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -178,6 +240,7 @@ export default function StartGame() {
                     const teamIdx = selectedIds.indexOf(cat.id);
                     const isTeam1 = teamIdx >= 0 && teamIdx < 3;
                     const disabled = !selected && selectedIds.length >= MAX;
+                    const isLocked = cat.status && cat.status !== "open";
 
                     return (
                       <motion.div
@@ -225,14 +288,10 @@ export default function StartGame() {
                             </div>
                           )}
 
-                          {/* Country flag badge - bottom right */}
+                          {/* Country flag badge */}
                           {cat.flag && (
                             <div className="absolute bottom-10 right-2 z-10">
-                              <img
-                                src={cat.flag}
-                                alt="flag"
-                                className="h-5 w-7 object-cover rounded shadow"
-                              />
+                              <img src={cat.flag} alt="flag" className="h-5 w-7 object-cover rounded shadow" />
                             </div>
                           )}
 
@@ -287,24 +346,15 @@ export default function StartGame() {
                     />
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-bold bg-white px-2">اسم الفريق</span>
                   </div>
-
                   <p className="text-sm font-bold text-foreground/70 mb-3">الفريق الأول : اختر 3 وسائل مساعدة</p>
                   <div className="flex justify-center gap-3">
-                    {HELP_TOOLS.map(tool => {
+                    {HELP_TOOLS.map((tool) => {
                       const selected = team1Tools.includes(tool.id);
                       return (
-                        <button
-                          key={tool.id}
-                          onClick={() => toggleTool(1, tool.id)}
-                          className="flex flex-col items-center gap-1"
-                        >
+                        <button key={tool.id} onClick={() => toggleTool(1, tool.id)} className="flex flex-col items-center gap-1">
                           <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${selected ? "ring-3 ring-[#7B2FBE] bg-[#7B2FBE]/10" : "bg-gray-100"}`}>
-                            <img
-                              src={tool.icon}
-                              alt={tool.name}
-                              className="w-10 h-10 object-contain"
-                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }}
-                            />
+                            <img src={tool.icon} alt={tool.name} className="w-10 h-10 object-contain"
+                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }} />
                           </div>
                           <span className="text-[10px] font-bold text-foreground/60">{tool.name}</span>
                         </button>
@@ -325,24 +375,15 @@ export default function StartGame() {
                     />
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-bold bg-white px-2">اسم الفريق</span>
                   </div>
-
                   <p className="text-sm font-bold text-foreground/70 mb-3">الفريق الثاني : اختر 3 وسائل مساعدة</p>
                   <div className="flex justify-center gap-3">
-                    {HELP_TOOLS.map(tool => {
+                    {HELP_TOOLS.map((tool) => {
                       const selected = team2Tools.includes(tool.id);
                       return (
-                        <button
-                          key={tool.id}
-                          onClick={() => toggleTool(2, tool.id)}
-                          className="flex flex-col items-center gap-1"
-                        >
+                        <button key={tool.id} onClick={() => toggleTool(2, tool.id)} className="flex flex-col items-center gap-1">
                           <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${selected ? "ring-3 ring-[#7B2FBE] bg-[#7B2FBE]/10" : "bg-gray-100"}`}>
-                            <img
-                              src={tool.icon}
-                              alt={tool.name}
-                              className="w-10 h-10 object-contain"
-                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }}
-                            />
+                            <img src={tool.icon} alt={tool.name} className="w-10 h-10 object-contain"
+                              style={selected ? { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15)" } : { filter: "grayscale(100%) opacity(0.5)" }} />
                           </div>
                           <span className="text-[10px] font-bold text-foreground/60">{tool.name}</span>
                         </button>
@@ -360,15 +401,15 @@ export default function StartGame() {
               >
                 <button
                   onClick={async () => {
-                    const allCats = sections.flatMap(s => s.categories);
-                    const t1Cats = team1.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
-                    const t2Cats = team2.map(id => allCats.find(c => c.id === id)!).filter(Boolean);
+                    const allCats = sections.flatMap((s) => s.categories);
+                    const t1Cats = team1.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
+                    const t2Cats = team2.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
                     const gData = {
                       team1Name: team1Name || "الفريق الأول",
                       team2Name: team2Name || "الفريق الثاني",
                       gameName: gameName || "ركز",
-                      team1Categories: t1Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
-                      team2Categories: t2Cats.map(c => ({ id: c.id, name: c.name, img: c.img })),
+                      team1Categories: t1Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
+                      team2Categories: t2Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
                       team1Tools,
                       team2Tools,
                     };
