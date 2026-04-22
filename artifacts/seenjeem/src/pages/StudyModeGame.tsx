@@ -163,16 +163,7 @@ export default function StudyModeGame() {
           <p className="text-white font-black text-sm truncate px-2">{gameData.gameName}</p>
           <p className="text-white/70 text-xs">{currentIndex + 1} / {total}</p>
         </div>
-        {/* Timer */}
-        <div
-          onClick={() => setRunning(r => !r)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl cursor-pointer transition-all font-black text-sm select-none ${
-            timer > 20 ? "bg-red-500/30 text-red-200" : timer > 10 ? "bg-yellow-500/30 text-yellow-200" : "bg-white/20 text-white"
-          }`}
-        >
-          {running ? <Pause size={14} /> : <Play size={14} />}
-          {formatTime(timer)}
-        </div>
+        <div className="w-9 flex-shrink-0" />
       </div>
 
       {/* Progress bar */}
@@ -211,6 +202,18 @@ export default function StudyModeGame() {
 
         {/* Center – Question + answer */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 gap-5 overflow-y-auto">
+
+          {/* Timer – above question */}
+          <div
+            onClick={() => setRunning(r => !r)}
+            className={`flex items-center gap-2 px-5 py-2 rounded-2xl cursor-pointer transition-all font-black text-lg select-none ${
+              timer > 20 ? "bg-red-100 text-red-500" : timer > 10 ? "bg-yellow-100 text-yellow-600" : "bg-purple-100 text-[#7B2FBE]"
+            }`}
+          >
+            {running ? <Pause size={16} /> : <Play size={16} />}
+            {formatTime(timer)}
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div key={currentIndex}
               initial={{ opacity: 0, y: 16, scale: 0.97 }}
@@ -218,15 +221,15 @@ export default function StudyModeGame() {
               exit={{ opacity: 0, y: -16, scale: 0.97 }}
               className="w-full max-w-lg"
             >
-              {/* Question card */}
-              <div className="bg-white border-2 border-purple-100 rounded-3xl p-6 shadow-xl shadow-purple-100/50">
-                <div className="flex items-center gap-2 mb-4">
+              {/* Question – no card frame */}
+              <div className="px-2 py-2 text-center">
+                <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white font-black text-xs flex items-center justify-center flex-shrink-0">
                     {currentIndex + 1}
                   </div>
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
                 </div>
-                <p className="text-xl font-black text-gray-900 leading-relaxed">{currentQ.questionText}</p>
+                <p className="text-3xl font-black text-gray-900 leading-relaxed">{currentQ.questionText}</p>
                 {currentQ.questionImage && (
                   <img src={currentQ.questionImage} alt="" className="w-full rounded-xl object-contain max-h-48 mt-4 border border-gray-100" />
                 )}
