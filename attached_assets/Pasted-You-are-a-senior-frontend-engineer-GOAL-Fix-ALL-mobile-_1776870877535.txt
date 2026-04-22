@@ -1,0 +1,81 @@
+You are a senior frontend engineer.
+
+GOAL:
+Fix ALL mobile layout issues without affecting desktop design at all.
+
+CRITICAL RULE:
+Desktop layout (width > 1024px) must remain EXACTLY untouched.
+
+You are ONLY allowed to modify styles inside mobile media queries.
+
+----------------------------------
+SAFE MOBILE SYSTEM
+----------------------------------
+
+1) DO NOT change any base (desktop) CSS.
+
+2) Wrap ALL mobile changes inside:
+
+@media (max-width: 768px) { }
+
+@media (orientation: landscape) and (max-width: 768px) { }
+
+----------------------------------
+3) FIX MOBILE ONLY (NO DESKTOP IMPACT)
+----------------------------------
+
+Inside mobile rules ONLY:
+
+A) Prevent layout breaking:
+- Disable any fixed heights causing overflow
+- Add:
+  min-height: 0;
+  overflow-y: auto;
+
+B) Fix scaling safely:
+- DO NOT use global vh changes
+- Only adjust font sizes using clamp():
+  font-size: clamp(14px, 3.5vw, 18px);
+
+C) Prevent overlap:
+- Ensure flex containers use:
+  flex-wrap: wrap;
+
+D) Fix width issues:
+- Replace only MOBILE widths with:
+  width: 100%;
+  max-width: 100%;
+
+E) Safe container rule:
+- Never change desktop widths or layout rules outside media query
+
+----------------------------------
+4) GAME + CREATE GAME PAGES ONLY
+----------------------------------
+
+Only apply structural fixes to:
+- Game page
+- Create game page
+
+Rules:
+- Maintain 15vh / 70vh / 15vh ONLY inside mobile media query if needed
+- Ensure middle section scrolls properly
+- Prevent any element from escaping container
+
+----------------------------------
+5) ICON MODE (OPTIONAL MOBILE IMPROVEMENT)
+----------------------------------
+
+On mobile ONLY:
+- Convert bottom bar text into icons
+- Hide labels using display:none (mobile only)
+- Keep desktop unchanged
+
+----------------------------------
+FINAL OUTPUT:
+----------------------------------
+
+- Return full updated HTML + CSS
+- Desktop must remain visually identical to original
+- Mobile must be fixed without affecting desktop
+- No global layout changes allowed

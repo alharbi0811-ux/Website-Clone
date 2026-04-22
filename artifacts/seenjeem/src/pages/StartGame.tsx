@@ -192,7 +192,7 @@ export default function StartGame() {
           </motion.div>
 
           {/* Sections with categories */}
-          <div className="space-y-12">
+          <div className="space-y-6 md:space-y-12">
             {loadingSections ? (
               <div className="flex items-center justify-center py-24">
                 <div className="w-10 h-10 border-4 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" />
@@ -217,7 +217,7 @@ export default function StartGame() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: sIdx * 0.05 }}
-                className="border-2 border-[#7B2FBE] rounded-3xl p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
+                className="border-2 border-[#7B2FBE] rounded-3xl p-4 md:p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
               >
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-5">
@@ -228,7 +228,7 @@ export default function StartGame() {
                       className="h-7 w-10 object-cover rounded shadow-sm"
                     />
                   )}
-                  <h2 className="text-2xl font-black text-foreground">{section.name}</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground">{section.name}</h2>
                   <div className="flex-1 h-px bg-purple-100" />
                   <span className="text-sm text-foreground/40 font-medium">{section.categories.length} فئة</span>
                 </div>
@@ -334,9 +334,9 @@ export default function StartGame() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-12"
+              className="mt-6 md:mt-12"
             >
-              <h2 className="text-3xl font-black text-foreground mb-8 text-center">حدد معلومات الفرق</h2>
+              <h2 className="text-2xl md:text-3xl font-black text-foreground mb-5 md:mb-8 text-center">حدد معلومات الفرق</h2>
 
               <div className="flex justify-center mb-8">
                 <div className="relative w-full max-w-sm">

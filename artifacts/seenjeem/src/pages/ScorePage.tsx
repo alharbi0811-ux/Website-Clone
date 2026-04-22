@@ -267,34 +267,34 @@ export default function ScorePage() {
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10 pt-[24px] pb-[24px]">
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-6 md:pt-[24px] md:pb-[24px] shadow-lg border-b border-white/10">
         <div className="flex items-center justify-between relative">
-          <div className="flex items-center gap-4 shrink-0">
-            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10 pl-[22px] pr-[22px]" />
-            <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-full font-bold border border-white/20 text-[15px] pt-[10px] pb-[10px] pl-[25px] pr-[25px]">
-              دور فريق: {currentTeamName}
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
+            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-7 md:h-10 md:pl-[22px] md:pr-[22px]" />
+            <div className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 md:px-5 md:py-2 md:pt-[10px] md:pb-[10px] md:pl-[25px] md:pr-[25px] rounded-full font-bold border border-white/20 text-[11px] md:text-[15px]">
+              دور: {currentTeamName}
             </div>
           </div>
           <div className="absolute inset-x-0 flex justify-center pointer-events-none">
-            <span className="text-white font-bold text-lg">{gameData.gameName}</span>
+            <span className="text-white font-bold text-sm md:text-lg">{gameData.gameName}</span>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button onClick={handleEndGame} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <Eye size={15} /><span>انتهاء اللعبة</span>
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
+            <button onClick={handleEndGame} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
+              <Eye size={15} /><span className="hidden md:inline">انتهاء اللعبة</span>
             </button>
-            <button onClick={handleResetBoard} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <RotateCcw size={15} /><span>إعادة</span>
+            <button onClick={handleResetBoard} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
+              <RotateCcw size={15} /><span className="hidden md:inline">إعادة</span>
             </button>
-            <button onClick={handleExit} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <LogOut size={14} /><span>الخروج</span>
+            <button onClick={handleExit} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-5 md:py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 md:w-36">
+              <LogOut size={14} /><span className="hidden md:inline">الخروج</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 min-h-0 p-4 flex flex-col gap-4">
-        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+      <div className="flex-1 min-h-0 p-2 md:p-4 flex flex-col gap-2 md:gap-4">
+        <div className="flex-1 min-h-0 grid grid-cols-3 gap-1.5 md:gap-4">
           {gameData.team1Categories.map((cat, catIdx) => (
             <CategoryCard
               key={cat.id} category={cat} catIdx={catIdx} playedCells={playedCells}
@@ -304,7 +304,7 @@ export default function ScorePage() {
             />
           ))}
         </div>
-        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+        <div className="flex-1 min-h-0 grid grid-cols-3 gap-1.5 md:gap-4">
           {gameData.team2Categories.map((cat, catIdx) => (
             <CategoryCard
               key={cat.id} category={cat} catIdx={catIdx + 3} playedCells={playedCells}
@@ -317,13 +317,13 @@ export default function ScorePage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 border-t border-white/10 py-4 flex items-center justify-between gap-4 relative">
+      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-2 md:px-6 border-t border-white/10 py-2 md:py-4 flex items-center justify-between gap-1 md:gap-4 relative">
         {/* Team 1 */}
-        <div className="flex items-center gap-2 flex-1">
-          <div className="h-10 flex items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
+        <div className="flex items-center gap-1 md:gap-2 flex-1">
+          <div className="hidden md:flex h-10 items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
             {gameData.team1Name}
           </div>
-          <div className="h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-lg rounded-full shadow-inner px-4 border-2 min-w-[60px] shrink-0">
+          <div className="h-8 md:h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-sm md:text-lg rounded-full shadow-inner px-2 md:px-4 border-2 min-w-[40px] md:min-w-[60px] shrink-0">
             {team1Score}
           </div>
           {/* Tool icons — same height h-10 */}
@@ -340,7 +340,7 @@ export default function ScorePage() {
                 onClick={() => isActive && handlePitToggle()}
                 disabled={!isActive}
                 title={tool.name}
-                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all border-2 ${
+                className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center shrink-0 transition-all border-2 ${
                   isActive && pitActive
                     ? "bg-yellow-400 border-yellow-200 shadow-[0_0_12px_rgba(250,204,21,0.9)] cursor-pointer"
                     : isActive
@@ -348,17 +348,17 @@ export default function ScorePage() {
                       : "bg-white/8 border-white/15 cursor-not-allowed"
                 }`}
               >
-                <img src={tool.icon} alt={tool.name} className="w-5 h-5 object-contain"
+                <img src={tool.icon} alt={tool.name} className="w-4 h-4 md:w-5 md:h-5 object-contain"
                   style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "brightness(0) invert(1) opacity(0.35)" }} />
               </motion.button>
             );
           })}
           {/* Score controls */}
-          <button onClick={() => setTeam1Score((s) => s - 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
-            <Minus size={18} color="#5a1f8e" strokeWidth={3} />
+          <button onClick={() => setTeam1Score((s) => s - 200)} className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
+            <Minus size={14} color="#5a1f8e" strokeWidth={3} />
           </button>
-          <button onClick={() => setTeam1Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
-            <Plus size={18} color="#5a1f8e" strokeWidth={3} />
+          <button onClick={() => setTeam1Score((s) => s + 200)} className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
+            <Plus size={14} color="#5a1f8e" strokeWidth={3} />
           </button>
         </div>
 
@@ -367,7 +367,7 @@ export default function ScorePage() {
           <motion.img
             src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
-            className="h-48 w-auto object-contain"
+            className="h-16 md:h-48 w-auto object-contain"
             style={{ mixBlendMode: "screen" }}
             animate={{
               filter: [
@@ -381,12 +381,12 @@ export default function ScorePage() {
         </div>
 
         {/* Team 2 */}
-        <div className="flex items-center gap-2 flex-1 justify-end">
-          <button onClick={() => setTeam2Score((s) => s - 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
-            <Minus size={18} color="#5a1f8e" strokeWidth={3} />
+        <div className="flex items-center gap-1 md:gap-2 flex-1 justify-end">
+          <button onClick={() => setTeam2Score((s) => s - 200)} className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
+            <Minus size={14} color="#5a1f8e" strokeWidth={3} />
           </button>
-          <button onClick={() => setTeam2Score((s) => s + 200)} className="w-10 h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
-            <Plus size={18} color="#5a1f8e" strokeWidth={3} />
+          <button onClick={() => setTeam2Score((s) => s + 200)} className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors shrink-0 shadow-sm">
+            <Plus size={14} color="#5a1f8e" strokeWidth={3} />
           </button>
           {/* Tool icons */}
           {((gameData.team2Tools?.length > 0) ? gameData.team2Tools : ["double", "pit", "rest"]).map((toolId) => {
@@ -402,7 +402,7 @@ export default function ScorePage() {
                 onClick={() => isActive && handlePitToggle()}
                 disabled={!isActive}
                 title={tool.name}
-                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all border-2 ${
+                className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center shrink-0 transition-all border-2 ${
                   isActive && pitActive
                     ? "bg-yellow-400 border-yellow-200 shadow-[0_0_12px_rgba(250,204,21,0.9)] cursor-pointer"
                     : isActive
@@ -410,15 +410,15 @@ export default function ScorePage() {
                       : "bg-white/8 border-white/15 cursor-not-allowed"
                 }`}
               >
-                <img src={tool.icon} alt={tool.name} className="w-5 h-5 object-contain"
+                <img src={tool.icon} alt={tool.name} className="w-4 h-4 md:w-5 md:h-5 object-contain"
                   style={isActive ? { filter: "brightness(0) invert(1)" } : { filter: "brightness(0) invert(1) opacity(0.35)" }} />
               </motion.button>
             );
           })}
-          <div className="h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-lg rounded-full shadow-inner px-4 border-2 min-w-[60px] shrink-0">
+          <div className="h-8 md:h-10 flex items-center justify-center bg-white/90 text-[#7B2FBE] font-black text-sm md:text-lg rounded-full shadow-inner px-2 md:px-4 border-2 min-w-[40px] md:min-w-[60px] shrink-0">
             {team2Score}
           </div>
-          <div className="h-10 flex items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
+          <div className="hidden md:flex h-10 items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
             {gameData.team2Name}
           </div>
         </div>
@@ -486,7 +486,7 @@ function CategoryCard({
   const playerBlocked = isLocked && !isAdmin;
 
   const btnClass = (played: boolean, isLoading: boolean) => `
-    w-full flex-1 rounded-xl font-black text-2xl transition-all relative
+    w-full flex-1 rounded-xl font-black text-sm md:text-2xl transition-all relative
     ${played ? "bg-gray-300/40 text-gray-400 cursor-not-allowed"
       : isLoading ? "bg-[#7B2FBE] text-white cursor-wait"
       : playerBlocked ? "bg-gray-200/40 text-gray-400 cursor-not-allowed"
@@ -517,29 +517,29 @@ function CategoryCard({
           </div>
         )}
 
-        <div className="flex flex-col justify-center gap-2 p-3 flex-1">
+        <div className="flex flex-col justify-center gap-1 md:gap-2 p-1 md:p-3 flex-1">
           {POINTS.map((points) => {
             const played = playedCells.has(`${catIdx}-${points}-l`);
             const isLoading = loadingCell === `${catIdx}-${points}-l`;
             return (
               <motion.button key={`l-${points}`} whileHover={!played && !isLoading && !playerBlocked ? { scale: 1.05 } : {}} whileTap={!played && !isLoading && !playerBlocked ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points, "l")} disabled={played || !!loadingCell || playerBlocked} className={btnClass(played, isLoading)}>
-                {isLoading ? <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
+                {isLoading ? <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
               </motion.button>
             );
           })}
         </div>
-        <div className="w-[40%] min-w-[120px] relative self-stretch flex items-center justify-center overflow-hidden">
+        <div className="w-[40%] min-w-[50px] md:min-w-[120px] relative self-stretch flex items-center justify-center overflow-hidden">
           <img src={category.img} alt={category.name} className="w-full h-full object-contain" />
         </div>
-        <div className="flex flex-col justify-center gap-2 p-3 flex-1">
+        <div className="flex flex-col justify-center gap-1 md:gap-2 p-1 md:p-3 flex-1">
           {POINTS.map((points) => {
             const played = playedCells.has(`${catIdx}-${points}-r`);
             const isLoading = loadingCell === `${catIdx}-${points}-r`;
             return (
               <motion.button key={`r-${points}`} whileHover={!played && !isLoading && !playerBlocked ? { scale: 1.05 } : {}} whileTap={!played && !isLoading && !playerBlocked ? { scale: 0.95 } : {}}
                 onClick={() => onCellClick(catIdx, points, "r")} disabled={played || !!loadingCell || playerBlocked} className={btnClass(played, isLoading)}>
-                {isLoading ? <span className="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
+                {isLoading ? <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" /> : points}
               </motion.button>
             );
           })}

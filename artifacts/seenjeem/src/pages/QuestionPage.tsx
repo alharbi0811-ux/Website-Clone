@@ -559,37 +559,37 @@ export default function QuestionPage() {
 
   // ── Shared layout parts ──────────────────────────────────────────────────
   const renderHeader = () => (
-    <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-3 flex items-center justify-between shadow-lg relative">
-      <div className="flex items-center gap-3 shrink-0">
-        <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10" />
-        <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-bold text-sm border border-white/20">
+    <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-4 md:py-3 flex items-center justify-between shadow-lg relative">
+      <div className="flex items-center gap-2 md:gap-3 shrink-0">
+        <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-7 md:h-10" />
+        <div className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 md:px-4 md:py-2 rounded-full font-bold text-[11px] md:text-sm border border-white/20">
           دور: {ct === 1 ? gameData!.team1Name : gameData!.team2Name}
         </div>
         {questionData.pitActive && (
-          <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-black flex items-center gap-1">
-            <span>⚡</span><span>الحفرة نشطة</span>
+          <div className="bg-yellow-400 text-black px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-black flex items-center gap-1">
+            <span>⚡</span><span className="hidden md:inline">الحفرة نشطة</span>
           </div>
         )}
       </div>
       <div className="absolute inset-x-0 flex justify-center pointer-events-none">
-        <span className="text-white font-bold text-lg">{gameData!.gameName}</span>
+        <span className="text-white font-bold text-sm md:text-lg">{gameData!.gameName}</span>
       </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <Eye size={15} /><span>انتهاء اللعبة</span>
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
+        <button onClick={handleBackToBoard} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <Eye size={14} /><span className="hidden md:inline">انتهاء اللعبة</span>
         </button>
-        <button onClick={handleBackToBoard} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <ArrowRight size={15} /><span>الرجوع</span>
+        <button onClick={handleBackToBoard} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <ArrowRight size={14} /><span className="hidden md:inline">الرجوع</span>
         </button>
-        <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <LogOut size={14} /><span>الخروج</span>
+        <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
+          <LogOut size={14} /><span className="hidden md:inline">الخروج</span>
         </button>
       </div>
     </div>
   );
 
   const renderSidebar = () => (
-    <div className="w-[260px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-16 flex flex-col gap-6">
+    <div className="hidden md:flex w-[260px] bg-gray-50 border-l-2 border-gray-100 p-4 pt-16 flex-col gap-6">
       <TeamToolCard
         teamName={gameData!.team1Name} score={team1Score} tools={team1Tools}
         usedTools={usedTools.team1} onUseTool={(t) => handleUseTool(1, t)}
