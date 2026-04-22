@@ -36,7 +36,7 @@ export function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
-        isScrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-2 md:py-3" : "py-3 md:py-5"
+        isScrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3" : "py-5"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +47,7 @@ export function Navbar() {
               <img
                 src="/logo-rakez.png"
                 alt="ركز"
-                className="h-12 sm:h-16 md:h-20 w-auto hover:scale-105 transition-transform"
+                className="h-20 md:h-24 w-auto hover:scale-105 transition-transform"
                 style={{ filter: "drop-shadow(0 0 10px rgba(123, 47, 190, 0.5)) drop-shadow(0 0 22px rgba(123, 47, 190, 0.25))" }}
               />
             </Link>
@@ -57,7 +57,7 @@ export function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => navigate(link.href)}
-                  className="text-foreground hover:text-primary font-medium transition-colors relative group text-center text-lg md:text-[22px] lg:text-[25px]"
+                  className="text-foreground hover:text-primary font-medium transition-colors relative group text-center text-[25px]"
                 >
                   {link.name}
                   <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
@@ -74,7 +74,7 @@ export function Navbar() {
                   <Link href="/admin">
                     <a className="flex items-center gap-1.5 text-[#7B2FBE] font-semibold text-sm px-3 py-2 rounded-full bg-violet-50 hover:bg-violet-100 transition-colors">
                       <LayoutDashboard size={15} />
-                      <span className="text-base md:text-[18px]">الإدارة</span>
+                      <span className="text-[20px]">الإدارة</span>
                     </a>
                   </Link>
                 )}
@@ -84,7 +84,7 @@ export function Navbar() {
                     className="flex items-center gap-2 text-foreground font-medium px-4 py-2 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <User size={18} />
-                    <span className="text-base md:text-[18px] max-w-[140px] truncate">{user.displayName || user.username}</span>
+                    <span className="text-[20px]">{user.displayName || user.username}</span>
                   </button>
                   <AnimatePresence>
                     {accountMenuOpen && (
@@ -118,7 +118,7 @@ export function Navbar() {
             )}
             <button
               onClick={() => navigate("/start-game")}
-              className="bg-[#7B2FBE] text-white font-bold py-2 px-5 md:py-2.5 md:px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all text-base md:text-[18px]"
+              className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all text-[20px]"
             >
               إنشاء لعبة
             </button>
