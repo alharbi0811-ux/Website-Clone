@@ -1,0 +1,74 @@
+You are a senior frontend engineer specializing in responsive design.
+
+Your task is to refactor my existing website to be FULLY RESPONSIVE across all devices, with special attention to iPhone screens in BOTH portrait and landscape orientations.
+
+CRITICAL RULES:
+- Do NOT redesign the UI.
+- Do NOT change colors, branding, or visual style.
+- Do NOT change the structure unless required for responsiveness.
+- ONLY improve responsiveness and layout behavior.
+
+REMOVE FAKE RESPONSIVE LOGIC:
+- Completely REMOVE any button, toggle, script, or feature that switches between "mobile/iPhone mode" and "desktop mode".
+- Remove all related JavaScript, CSS classes, or conditions tied to this fake mode.
+- The website must rely ONLY on real responsive design (no manual switching).
+
+CORE RESPONSIVE REQUIREMENTS:
+
+1) VIEWPORT:
+Ensure the following meta tag exists in <head>:
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+2) FLUID LAYOUT:
+- Replace ALL fixed widths (px) with flexible units: %, max-width, vw, or use flex/grid.
+- Avoid hard-coded heights unless necessary.
+- Ensure containers scale naturally with screen size.
+
+3) LAYOUT SYSTEM:
+- Refactor layout using Flexbox and/or CSS Grid.
+- Remove excessive use of absolute positioning unless ضروری.
+- Prevent overlapping elements on smaller screens.
+
+4) MOBILE (PORTRAIT):
+Target: max-width 480px – 768px
+- Stack all sections vertically
+- Make buttons full-width or touch-friendly
+- Increase spacing for readability
+- Adjust font sizes (no tiny text)
+- Prevent horizontal scrolling completely
+- Fix overflow issues
+
+5) MOBILE (LANDSCAPE):
+Use:
+@media (orientation: landscape)
+
+- Optimize layout for wider but shorter screens
+- Reduce excessive vertical spacing
+- Keep content visible without awkward scrolling
+- Optionally arrange elements in 2 columns if space allows
+- Ensure UI does not feel “zoomed” or broken
+
+6) TABLET RANGE:
+@media (min-width: 768px) and (max-width: 1024px)
+- Create a balanced layout between mobile and desktop
+
+7) DESKTOP:
+(min-width: 1024px)
+- MUST remain visually identical to current design
+- No layout breaking allowed
+
+8) IMAGES & MEDIA:
+- Make all images responsive (max-width: 100%)
+- Prevent overflow خارج الحاويات
+
+9) TESTING LOGIC:
+- Ensure smooth behavior when resizing the browser
+- Ensure correct rendering on iPhone portrait and landscape (similar to Safari dev tools)
+
+10) OUTPUT:
+- Return FULL updated HTML, CSS (and JS if modified)
+- Clean, readable, well-structured code
+- Add comments explaining major responsive changes
+
+FINAL GOAL:
+The website should automatically adapt to ANY screen (desktop, iPhone portrait, iPhone landscape) WITHOUT any manual toggle or button, and look clean, usable, and consistent across all sizes.

@@ -3,8 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
-import { ViewportProvider, useViewport } from "@/context/ViewportContext";
-import { useEffect, useState } from "react";
+import { ViewportProvider } from "@/context/ViewportContext";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -104,85 +103,6 @@ function Router() {
   );
 }
 
-const ZOOM_KEY = "rakez-zoom-level";
-const ZOOM_MIN = 0.3;
-const ZOOM_MAX = 2.0;
-const ZOOM_STEP = 0.1;
-
-function ZoomControls() {
-  const { viewMode } = useViewport();
-  const isMobile = viewMode === "mobile";
-
-  const [zoom, setZoom] = useState<number>(() => {
-    const saved = localStorage.getItem(ZOOM_KEY);
-    return saved ? parseFloat(saved) : 1;
-  });
-
-  useEffect(() => {
-    const app = document.getElementById("app-root");
-    if (!app) return;
-    if (isMobile) {
-      app.style.transform = `scale(${zoom})`;
-      app.style.transformOrigin = "top center";
-    }
-  }, [zoom, isMobile]);
-
-  function change(delta: number) {
-    setZoom(prev => {
-      const next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, parseFloat((prev + delta).toFixed(2))));
-      localStorage.setItem(ZOOM_KEY, String(next));
-      return next;
-    });
-  }
-
-  function reset() {
-    localStorage.setItem(ZOOM_KEY, "1");
-    setZoom(1);
-  }
-
-  return (
-    <div className="zoom-controls">
-      <button onClick={() => change(-ZOOM_STEP)} title="تصغير">−</button>
-      <span className="zoom-level">{Math.round(zoom * 100)}%</span>
-      <button onClick={() => change(ZOOM_STEP)} title="تكبير">+</button>
-      <button onClick={reset} title="إعادة الحجم" style={{ fontSize: 14 }}>↺</button>
-    </div>
-  );
-}
-
-function AppContent() {
-  const { viewMode } = useViewport();
-  const isMobile = viewMode === "mobile";
-
-  useEffect(() => {
-    if (isMobile) {
-      document.body.classList.add("iphone-mode");
-    } else {
-      document.body.classList.remove("iphone-mode");
-      const app = document.getElementById("app-root");
-      if (app) {
-        app.style.transform = "";
-        app.style.transformOrigin = "";
-      }
-    }
-    return () => {
-      document.body.classList.remove("iphone-mode");
-      const app = document.getElementById("app-root");
-      if (app) {
-        app.style.transform = "";
-        app.style.transformOrigin = "";
-      }
-    };
-  }, [isMobile]);
-
-  return (
-    <div id="app-root" dir="rtl" className="light w-full min-h-screen">
-      <ZoomControls />
-      <Router />
-    </div>
-  );
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -190,7 +110,9 @@ function App() {
         <TooltipProvider>
           <ViewportProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <AppContent />
+              <div id="app-root" dir="rtl" className="light w-full min-h-screen">
+                <Router />
+              </div>
             </WouterRouter>
             <Toaster />
           </ViewportProvider>

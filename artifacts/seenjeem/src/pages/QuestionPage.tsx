@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useViewport } from "@/context/ViewportContext";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
@@ -73,7 +72,6 @@ function CircularTimerSVG({ timeLeft, totalTime, color, size = 160 }: { timeLeft
 
 export default function QuestionPage() {
   const [, navigate] = useLocation();
-  const { viewMode } = useViewport();
   const { user } = useAuth();
   const isAdmin = user?.isAdmin ?? false;
   const [gameData, setGameData] = useState<GameData | null>(null);

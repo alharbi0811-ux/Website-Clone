@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { ArrowRight, LogOut, Eye, Minus, Plus, RotateCcw, Trophy, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useViewport } from "@/context/ViewportContext";
 
 const API_BASE = "/api";
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
@@ -28,7 +27,6 @@ const POINTS = [200, 400, 600];
 export default function ScorePage() {
   const [, navigate] = useLocation();
   const { token, user } = useAuth();
-  const { viewMode } = useViewport();
   const isAdmin = user?.isAdmin ?? false;
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<1 | 2>(1);

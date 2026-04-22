@@ -1,21 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-
-type ViewMode = "desktop" | "mobile";
+import { createContext, useContext, ReactNode } from "react";
 
 interface ViewportContextType {
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
+  viewMode: "desktop";
 }
 
-const ViewportContext = createContext<ViewportContextType>({
-  viewMode: "desktop",
-  setViewMode: () => {},
-});
+const ViewportContext = createContext<ViewportContextType>({ viewMode: "desktop" });
 
 export function ViewportProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewMode] = useState<ViewMode>("desktop");
   return (
-    <ViewportContext.Provider value={{ viewMode, setViewMode }}>
+    <ViewportContext.Provider value={{ viewMode: "desktop" }}>
       {children}
     </ViewportContext.Provider>
   );

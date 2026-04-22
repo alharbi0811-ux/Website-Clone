@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, LogOut, LayoutDashboard, Monitor, Smartphone } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { useViewport } from "@/context/ViewportContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const { viewMode, setViewMode } = useViewport();
   const accountRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
@@ -25,9 +23,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -40,9 +36,7 @@ export function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
-        isScrolled
-          ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3"
-          : "py-5"
+        isScrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3" : "py-5"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,7 +60,7 @@ export function Navbar() {
                   className="text-foreground hover:text-primary font-medium transition-colors relative group text-center text-[25px]"
                 >
                   {link.name}
-                  <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
                 </button>
               ))}
             </nav>
@@ -84,7 +78,6 @@ export function Navbar() {
                     </a>
                   </Link>
                 )}
-                {/* Account button + dropdown */}
                 <div className="relative" ref={accountRef}>
                   <button
                     onClick={() => setAccountMenuOpen((o) => !o)}
@@ -129,32 +122,6 @@ export function Navbar() {
             >
               إنشاء لعبة
             </button>
-
-            {/* Viewport size toggle */}
-            <div className="flex items-center bg-gray-100 rounded-full p-1 gap-0.5">
-              <button
-                onClick={() => setViewMode("desktop")}
-                title="حجم كمبيوتر"
-                className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
-                  viewMode === "desktop"
-                    ? "bg-[#7B2FBE] text-white shadow-[0_0_10px_rgba(123,47,190,0.4)]"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                <Monitor size={17} />
-              </button>
-              <button
-                onClick={() => setViewMode("mobile")}
-                title="حجم آيفون"
-                className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
-                  viewMode === "mobile"
-                    ? "bg-[#7B2FBE] text-white shadow-[0_0_10px_rgba(123,47,190,0.4)]"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                <Smartphone size={17} />
-              </button>
-            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -166,6 +133,7 @@ export function Navbar() {
           </button>
         </div>
       </div>
+
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -198,6 +166,15 @@ export function Navbar() {
                       <User size={18} />
                       <span>{user.displayName || user.username}</span>
                     </div>
+                    {user.isAdmin && (
+                      <button
+                        onClick={() => { navigate("/admin"); setMobileMenuOpen(false); }}
+                        className="flex items-center justify-center gap-2 text-[#7B2FBE] py-2 font-medium"
+                      >
+                        <LayoutDashboard size={18} />
+                        <span>لوحة الإدارة</span>
+                      </button>
+                    )}
                     <button
                       onClick={() => { logout(); setMobileMenuOpen(false); }}
                       className="flex items-center justify-center gap-2 text-red-500 py-2 font-medium"
