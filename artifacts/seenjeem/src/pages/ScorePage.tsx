@@ -266,35 +266,38 @@ export default function ScorePage() {
 
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
-      {/* Top Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 py-3 shadow-lg border-b border-white/10 pt-[24px] pb-[24px]">
-        <div className="flex items-center justify-between relative">
-          <div className="flex items-center gap-4 shrink-0">
-            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-10 pl-[22px] pr-[22px]" />
-            <div className="bg-white/20 backdrop-blur-sm text-white px-5 py-2 rounded-full font-bold border border-white/20 text-[15px] pt-[10px] pb-[10px] pl-[25px] pr-[25px]">
+      {/* ── Top Bar: 15vh ── */}
+      <div
+        className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 shadow-lg border-b border-white/10 flex items-center"
+        style={{ height: "15vh", minHeight: 64 }}
+      >
+        <div className="flex items-center justify-between relative w-full">
+          <div className="flex items-center gap-3 shrink-0">
+            <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-9 px-2" />
+            <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-1.5 rounded-full font-bold border border-white/20 text-[14px] whitespace-nowrap">
               دور فريق: {currentTeamName}
             </div>
           </div>
           <div className="absolute inset-x-0 flex justify-center pointer-events-none">
-            <span className="text-white font-bold text-lg">{gameData.gameName}</span>
+            <span className="text-white font-bold text-base">{gameData.gameName}</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <button onClick={handleEndGame} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <Eye size={15} /><span>انتهاء اللعبة</span>
+            <button onClick={handleEndGame} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50">
+              <Eye size={14} /><span className="hidden sm:inline">انتهاء اللعبة</span>
             </button>
-            <button onClick={handleResetBoard} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <RotateCcw size={15} /><span>إعادة</span>
+            <button onClick={handleResetBoard} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50">
+              <RotateCcw size={14} /><span className="hidden sm:inline">إعادة</span>
             </button>
-            <button onClick={handleExit} className="flex items-center justify-center gap-2 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 w-36">
-              <LogOut size={14} /><span>الخروج</span>
+            <button onClick={handleExit} className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50">
+              <LogOut size={14} /><span className="hidden sm:inline">الخروج</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Game Board */}
-      <div className="flex-1 min-h-0 p-4 flex flex-col gap-4">
-        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+      {/* ── Game Board: 70vh ── */}
+      <div className="flex flex-col gap-3 overflow-hidden px-3" style={{ height: "70vh", paddingTop: "1vh", paddingBottom: "1vh" }}>
+        <div className="grid grid-cols-3 gap-3" style={{ height: "calc(50% - 6px)" }}>
           {gameData.team1Categories.map((cat, catIdx) => (
             <CategoryCard
               key={cat.id} category={cat} catIdx={catIdx} playedCells={playedCells}
@@ -304,7 +307,7 @@ export default function ScorePage() {
             />
           ))}
         </div>
-        <div className="flex-1 min-h-0 grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3" style={{ height: "calc(50% - 6px)" }}>
           {gameData.team2Categories.map((cat, catIdx) => (
             <CategoryCard
               key={cat.id} category={cat} catIdx={catIdx + 3} playedCells={playedCells}
@@ -316,8 +319,11 @@ export default function ScorePage() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-6 border-t border-white/10 py-4 flex items-center justify-between gap-4 relative">
+      {/* ── Bottom Bar: 15vh ── */}
+      <div
+        className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 border-t border-white/10 flex items-center justify-between gap-2 relative overflow-hidden"
+        style={{ height: "15vh", minHeight: 60 }}
+      >
         {/* Team 1 */}
         <div className="flex items-center gap-2 flex-1">
           <div className="h-10 flex items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
@@ -367,8 +373,8 @@ export default function ScorePage() {
           <motion.img
             src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
-            className="h-48 w-auto object-contain"
-            style={{ mixBlendMode: "screen" }}
+            className="w-auto object-contain"
+            style={{ mixBlendMode: "screen", height: "11vh", maxHeight: 80 }}
             animate={{
               filter: [
                 "drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
@@ -497,7 +503,7 @@ function CategoryCard({
   const lockMsg = catStatus.lockMessage || statusLabel;
 
   return (
-    <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 min-h-0 relative">
+    <div className="flex flex-col bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/50 h-full min-h-0 relative">
       {/* Admin badge for locked categories */}
       {isAdmin && isLocked && (
         <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"

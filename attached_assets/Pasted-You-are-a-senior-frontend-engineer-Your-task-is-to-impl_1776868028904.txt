@@ -1,0 +1,101 @@
+You are a senior frontend engineer.
+
+Your task is to implement PRECISE LAYOUT HEIGHT DISTRIBUTION for different pages of my website using viewport height (vh units).
+
+IMPORTANT:
+- Do NOT redesign UI
+- Do NOT change colors or theme
+- ONLY control layout heights and structure
+
+REQUIREMENTS:
+
+----------------------------------
+1) GAME PAGE + QUESTION PAGE:
+----------------------------------
+
+The layout must be vertically divided into 3 sections:
+
+- Top Bar (Header): 15% of viewport height
+- Main Content (Categories / Question Area): 70%
+- Bottom Bar (Footer / Controls): 15%
+
+Implementation details:
+- Use height: 100vh on the main container
+- Use Flexbox with flex-direction: column
+- Assign:
+
+.header {
+  height: 15vh;
+}
+
+.main-content {
+  height: 70vh;
+  overflow: auto;
+}
+
+.footer {
+  height: 15vh;
+}
+
+- Ensure no overlapping
+- Ensure content inside main-content scrolls if needed
+
+----------------------------------
+2) ALL OTHER PAGES (EXCEPT WINNER PAGE):
+----------------------------------
+
+- Top Bar: 30% of viewport height
+- Remaining Content: 70%
+
+Structure:
+
+.header {
+  height: 30vh;
+}
+
+.main-content {
+  height: 70vh;
+}
+
+----------------------------------
+3) EXCEPTION:
+----------------------------------
+
+- Do NOT apply these rules to the "Winner Selection Page"
+
+----------------------------------
+4) RESPONSIVE BEHAVIOR:
+----------------------------------
+
+- Ensure layout works on:
+  • iPhone portrait
+  • iPhone landscape
+  • Desktop
+
+- Prevent overflow issues
+- Ensure content is centered and not cut off
+
+----------------------------------
+5) FLEX STRUCTURE:
+----------------------------------
+
+Use:
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+----------------------------------
+6) FINAL OUTPUT:
+----------------------------------
+
+- Return full updated HTML + CSS
+- Keep code clean and structured
+- Add comments explaining layout sections
+
+GOAL:
+Precise vertical layout control using vh units,
+with consistent proportions across devices,
+especially optimized for mobile gameplay experience.
