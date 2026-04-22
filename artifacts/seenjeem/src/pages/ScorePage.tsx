@@ -265,7 +265,10 @@ export default function ScorePage() {
   const currentTeamName = currentTeam === 1 ? gameData.team1Name : gameData.team2Name;
 
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
+    /* ── Outer centering shell — fills the whole screen on desktop ── */
+    <div className="min-h-screen w-full flex justify-center bg-[#120824]" dir="rtl">
+    {/* ── Inner game container — max 420px, always full height ── */}
+    <div className="h-screen w-full max-w-[420px] overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col">
       {/* ── Top Bar: 15vh ── */}
       <div
         className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 shadow-lg border-b border-white/10 flex items-center"
@@ -475,6 +478,7 @@ export default function ScorePage() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
     </div>
   );
 }

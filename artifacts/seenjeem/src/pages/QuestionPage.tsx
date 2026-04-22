@@ -608,8 +608,11 @@ export default function QuestionPage() {
   );
 
   return (
+    /* ── Outer centering shell ── */
+    <div className="min-h-screen w-full flex justify-center" style={{ background: "#120824" }}>
+    {/* ── Inner game container — max 420px ── */}
     <div
-      className="h-screen overflow-hidden flex flex-col" dir="rtl"
+      className="h-screen w-full max-w-[420px] overflow-hidden flex flex-col" dir="rtl"
       style={{ background: design.bgColor }}
       onClick={() => { if (editMode) { setEditSelected(null); setEditToolbarPos(null); } }}
     >
@@ -1256,6 +1259,7 @@ export default function QuestionPage() {
         </button>
       )}
 
+    </div>
     </div>
   );
 }
