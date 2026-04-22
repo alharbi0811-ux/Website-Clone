@@ -224,7 +224,7 @@ export default function StudyModeGame() {
                   <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white font-black text-xs flex items-center justify-center flex-shrink-0">
                     {currentIndex + 1}
                   </div>
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
+                  <span className="font-bold text-gray-400 uppercase tracking-wider text-[48px]">سؤال</span>
                 </div>
                 <p className="text-gray-900 text-[70px] font-black text-center">{currentQ.questionText}</p>
                 {currentQ.questionImage && (
