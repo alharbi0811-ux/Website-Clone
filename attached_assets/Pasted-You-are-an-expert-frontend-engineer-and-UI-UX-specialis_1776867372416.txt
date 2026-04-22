@@ -1,0 +1,92 @@
+You are an expert frontend engineer and UI/UX specialist.
+
+Your task is to FIX and POLISH an already partially responsive website.
+
+IMPORTANT CONTEXT:
+- The website is already responsive but has issues:
+  • Some elements are too big or too small
+  • Some elements are misaligned or moved from their original position
+  • Some elements are not visible or are cut off
+- Your job is to PERFECT the responsiveness, not just implement it
+
+CRITICAL RULES:
+- DO NOT redesign the UI
+- DO NOT change colors, branding, or theme
+- DO NOT remove existing features
+- KEEP the desktop layout visually identical
+
+GOAL:
+Make the website look CLEAN, BALANCED, and PROFESSIONAL on:
+- Desktop
+- iPhone Portrait
+- iPhone Landscape
+
+TASK REQUIREMENTS:
+
+1) FIX ELEMENT SIZING:
+- Replace bad scaling (vw abuse) with:
+  clamp(min, preferred, max)
+- Ensure text, buttons, and containers are never too small or too large
+- Add max-width where needed to prevent over-scaling
+
+2) FIX LAYOUT BREAKING:
+- Ensure elements stay in correct visual order
+- Fix alignment issues using Flexbox or Grid
+- Prevent overlapping elements
+- Maintain consistent spacing between sections
+
+3) FIX INVISIBLE / CUT ELEMENTS:
+- Detect and fix any element hidden بسبب:
+  overflow: hidden
+  fixed heights
+  position issues
+- Ensure all content is visible and scrollable properly
+
+4) IMPROVE SPACING & CONSISTENCY:
+- Normalize padding and margins across all sections
+- Ensure consistent spacing in mobile and desktop
+
+5) MOBILE PORTRAIT (max-width: 768px):
+- Stack elements vertically
+- Center or align content properly
+- Ensure touch-friendly sizing
+- Prevent horizontal scrolling completely
+
+6) MOBILE LANDSCAPE:
+@media (orientation: landscape)
+- Optimize layout for wide but short screens
+- Reduce vertical spacing
+- Use horizontal space effectively (2 columns if needed)
+
+7) FLEX & GRID IMPROVEMENTS:
+- Add flex-wrap where needed
+- Avoid rigid layouts
+- Ensure smooth wrapping instead of squishing
+
+8) GLOBAL FIXES:
+- Apply:
+  * { box-sizing: border-box; }
+- Ensure:
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+9) TYPOGRAPHY:
+- Use clamp() for font sizes
+- Maintain readability across all screen sizes
+
+10) FINAL POLISH:
+- Ensure smooth resizing behavior
+- No jumping or breaking layout
+- Clean, professional spacing and alignment
+
+OUTPUT:
+- Return FULL updated HTML + CSS
+- Keep code clean and well-structured
+- Add comments explaining key fixes
+
+FINAL RESULT:
+The website should feel like a professionally designed responsive product,
+with perfect balance, alignment, and visibility across all devices,
+especially iPhone portrait and landscape.

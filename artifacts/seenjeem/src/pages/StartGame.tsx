@@ -93,8 +93,8 @@ export default function StartGame() {
     <div className="min-h-screen bg-background text-foreground" dir="rtl">
       <Navbar />
 
-      <main className="pt-28 pb-28">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <main className="pt-20 sm:pt-24 md:pt-28 pb-16 sm:pb-20 md:pb-28">
+        <div className="container mx-auto px-3 sm:px-4 max-w-7xl">
 
           {/* Header */}
           <motion.div
@@ -102,8 +102,8 @@ export default function StartGame() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl md:text-5xl font-black text-foreground mb-3">إنشاء لعبة</h1>
-            <p className="text-foreground/60 text-lg">لعبة جماعية تفاعلية نختبر فيها معرفتكم وثقافتكم</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground mb-3">إنشاء لعبة</h1>
+            <p className="text-foreground/60 text-base sm:text-lg">لعبة جماعية تفاعلية نختبر فيها معرفتكم وثقافتكم</p>
           </motion.div>
 
           {/* Search Bar */}
@@ -217,7 +217,7 @@ export default function StartGame() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: sIdx * 0.05 }}
-                className="border-2 border-[#7B2FBE] rounded-3xl p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
+                className="border-2 border-[#7B2FBE] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-[0_0_24px_rgba(123,47,190,0.3)]"
               >
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-5">
@@ -234,7 +234,7 @@ export default function StartGame() {
                 </div>
 
                 {/* Cards grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
                   {section.categories.map((cat, idx) => {
                     const selected = selectedIds.includes(cat.id);
                     const teamIdx = selectedIds.indexOf(cat.id);

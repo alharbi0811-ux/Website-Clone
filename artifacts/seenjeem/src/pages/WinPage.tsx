@@ -145,7 +145,7 @@ export default function WinPage() {
       </div>
 
       {/* المحتوى */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 gap-8 px-6 text-center pt-10 pb-16">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 gap-5 sm:gap-8 px-4 sm:px-6 text-center pt-6 sm:pt-10 pb-10 sm:pb-16">
 
         {/* تأثير الفوز — نبضة دائرية خلف العنوان */}
         {!isTie && show && (
@@ -176,12 +176,15 @@ export default function WinPage() {
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="text-7xl select-none"
+                className="text-5xl sm:text-7xl select-none"
                 style={{ filter: "drop-shadow(0 0 16px rgba(234,179,8,0.8))" }}
               >
                 🏆
               </motion.div>
-              <h1 className="text-5xl font-black text-[#5a1f8e] drop-shadow-sm mt-2">
+              <h1
+                className="font-black text-[#5a1f8e] drop-shadow-sm mt-2"
+                style={{ fontSize: "clamp(1.75rem, 6vw, 3rem)" }}
+              >
                 {isTie ? "مبروك للجميع" : "مبروك الفوز"}
               </h1>
             </motion.div>
@@ -206,8 +209,8 @@ export default function WinPage() {
               scale: { delay: 0.35, type: "spring" },
               boxShadow: { delay: 0.8, duration: 1.8, repeat: Infinity },
             }}
-            className="bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 text-black font-black text-4xl px-12 py-5 rounded-3xl border-4 border-yellow-200"
-            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}
+            className="bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 text-black font-black px-8 sm:px-12 py-4 sm:py-5 rounded-3xl border-4 border-yellow-200 max-w-xs sm:max-w-none w-full sm:w-auto text-center"
+            style={{ fontSize: "clamp(1.5rem, 5vw, 2.25rem)", textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}
           >
             {winner}
           </motion.div>
@@ -219,7 +222,7 @@ export default function WinPage() {
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.55, type: "spring", bounce: 0.35 }}
-            className="flex gap-5 justify-center w-full max-w-md"
+            className="flex gap-3 sm:gap-5 justify-center w-full max-w-xs sm:max-w-md"
           >
             {/* الفريق الأول */}
             <motion.div
@@ -235,7 +238,7 @@ export default function WinPage() {
               <div className={`px-4 py-3 text-white font-black text-center text-sm ${
                 isTie ? "bg-yellow-500" : team1Score >= team2Score ? "bg-gradient-to-l from-yellow-500 to-yellow-400" : "bg-[#7B2FBE]"
               }`}>{team1Name}</div>
-              <div className={`px-4 py-6 flex items-center justify-center font-black text-4xl ${
+              <div className={`px-3 py-4 sm:py-6 flex items-center justify-center font-black text-2xl sm:text-4xl ${
                 isTie ? "bg-yellow-50 text-yellow-700" :
                 team1Score >= team2Score ? "bg-yellow-50 text-yellow-700" : "bg-gray-50 text-gray-500"
               }`}>
@@ -245,7 +248,7 @@ export default function WinPage() {
 
             {/* VS */}
             <div className="flex items-center justify-center">
-              <span className="text-gray-300 font-black text-2xl">VS</span>
+              <span className="text-gray-300 font-black text-xl sm:text-2xl">VS</span>
             </div>
 
             {/* الفريق الثاني */}
@@ -259,10 +262,10 @@ export default function WinPage() {
               } : {}}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <div className={`px-4 py-3 text-white font-black text-center text-sm ${
+              <div className={`px-3 py-3 text-white font-black text-center text-xs sm:text-sm ${
                 isTie ? "bg-yellow-500" : team2Score >= team1Score ? "bg-gradient-to-l from-yellow-500 to-yellow-400" : "bg-[#7B2FBE]"
               }`}>{team2Name}</div>
-              <div className={`px-4 py-6 flex items-center justify-center font-black text-4xl ${
+              <div className={`px-3 py-4 sm:py-6 flex items-center justify-center font-black text-2xl sm:text-4xl ${
                 isTie ? "bg-yellow-50 text-yellow-700" :
                 team2Score >= team1Score ? "bg-yellow-50 text-yellow-700" : "bg-gray-50 text-gray-500"
               }`}>
@@ -281,7 +284,7 @@ export default function WinPage() {
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.94 }}
             onClick={handlePlayAgain}
-            className="bg-[#7B2FBE] text-white font-black text-xl px-14 py-4 rounded-full shadow-xl hover:bg-[#6a22a8] transition-colors border-4 border-[#7B2FBE]/30 mt-2"
+            className="bg-[#7B2FBE] text-white font-black text-lg sm:text-xl px-10 sm:px-14 py-3.5 sm:py-4 rounded-full shadow-xl hover:bg-[#6a22a8] transition-colors border-4 border-[#7B2FBE]/30 mt-2 w-full max-w-xs sm:w-auto"
           >
             العب مرة ثانية
           </motion.button>
