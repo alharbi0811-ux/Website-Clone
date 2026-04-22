@@ -197,6 +197,48 @@
     bottom: 72px;
   }
 
+  /* ── Game Page — Question Button columns (mobile) ── */
+  .score-btn-col {
+    align-items: center;
+    gap: 5px !important;
+    padding: 4px 2px !important;
+    flex: 1;
+  }
+
+  /* ── Game Page — Question Buttons (mobile square redesign) ── */
+  .score-btn {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px;
+    min-height: 50px;
+    flex: none !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    padding: 0 !important;
+    line-height: 1;
+  }
+
+  /* ── Game Page — Category Image (mobile larger + modern) ── */
+  .score-img-wrap {
+    width: 44% !important;
+    min-width: 80px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+
+  .score-cat-img {
+    width: 110px !important;
+    height: 110px !important;
+    object-fit: cover !important;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
   /* ── Question Page ── */
 
   /* Question area: full width when sidebar is hidden */
