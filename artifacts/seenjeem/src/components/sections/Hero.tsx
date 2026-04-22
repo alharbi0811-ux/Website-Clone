@@ -56,7 +56,7 @@ export function Hero() {
         >
           <button
             onClick={() => navigate("/start-game")}
-            className="group relative w-full sm:w-auto bg-[#7B2FBE] text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_28px_rgba(123,47,190,0.5)] hover:shadow-[0_0_45px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-1 transition-all overflow-hidden"
+            className="group relative w-full sm:w-auto bg-gradient-to-l from-[#9b59f5] to-[#7B2FBE] text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_28px_rgba(123,47,190,0.5)] hover:shadow-[0_0_45px_rgba(123,47,190,0.8)] hover:-translate-y-1 transition-all overflow-hidden"
           >
             <span className="relative z-10">إنشاء لعبة</span>
             <div className="absolute inset-0 bg-white/15 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
