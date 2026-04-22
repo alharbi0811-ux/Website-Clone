@@ -99,6 +99,55 @@ function ScreenFlash({ color, active }: { color: string; active: boolean }) {
   );
 }
 
+/* ─────────────────── Round Splash ──────────────────────────── */
+function RoundSplash({ show, round, total }: { show: boolean; round: number; total: number }) {
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          style={{ background: "rgba(30,0,60,0.82)", backdropFilter: "blur(6px)" }}
+        >
+          <div className="text-center">
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              exit={{ scaleX: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <motion.p
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 0.6, repeat: Infinity }}
+                className="text-[#a855f7] font-black tracking-[0.4em] text-sm mb-2"
+              >
+                ROUND
+              </motion.p>
+              <div className="flex items-center justify-center gap-3">
+                <motion.div initial={{ x: -30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
+                  className="h-[3px] w-12 rounded-full" style={{ background: "linear-gradient(90deg,transparent,#a855f7)" }} />
+                <motion.p
+                  initial={{ scale: 0.2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 600, damping: 18, delay: 0.05 }}
+                  className="font-black text-white"
+                  style={{ fontSize: 80, lineHeight: 1, textShadow: "0 0 40px rgba(168,85,247,0.8), 0 0 80px rgba(123,47,190,0.5)" }}
+                >
+                  {round}
+                </motion.p>
+                <motion.div initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
+                  className="h-[3px] w-12 rounded-full" style={{ background: "linear-gradient(90deg,#a855f7,transparent)" }} />
+              </div>
+              <p className="text-white/30 font-black tracking-widest text-xs mt-2">OF {total}</p>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ─────────────────── Main Component ────────────────────────── */
 export default function StudyModeGame() {
   const [, navigate] = useLocation();
@@ -110,6 +159,7 @@ export default function StudyModeGame() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [comment, setComment]       = useState<string | null>(null);
   const [showEndModal, setShowEndModal] = useState(false);
+  const [roundSplash, setRoundSplash]   = useState(true);
 
   /* gaming states */
   const [lastScorer, setLastScorer]           = useState<Team | null>(null);
@@ -136,11 +186,13 @@ export default function StudyModeGame() {
     if (i) setCurrentIndex(Number(i));
   }, []);
 
-  /* ── Reset per question ── */
+  /* ── Reset per question + Round splash ── */
   useEffect(() => {
     if (!gameData) return;
-    setTimer(0); setRunning(true); setShowAnswer(false); setComment(null); setLastScorer(null);
-    return () => { commentTimeouts.current.forEach(clearTimeout); commentTimeouts.current = []; };
+    setTimer(0); setRunning(false); setShowAnswer(false); setComment(null); setLastScorer(null);
+    setRoundSplash(true);
+    const t = setTimeout(() => { setRoundSplash(false); setRunning(true); }, 850);
+    return () => { clearTimeout(t); commentTimeouts.current.forEach(clearTimeout); commentTimeouts.current = []; };
   }, [currentIndex, gameData]);
 
   /* ── Timer ── */
@@ -256,6 +308,9 @@ export default function StudyModeGame() {
   return (
     <div className="min-h-screen bg-white flex flex-col overflow-hidden" dir="rtl"
       style={{ fontFamily: "'Lalezar', 'Cairo', sans-serif" }}>
+
+      {/* Round splash */}
+      <RoundSplash show={roundSplash} round={currentIndex + 1} total={total} />
 
       {/* Screen flashes */}
       <ScreenFlash color="rgba(123,47,190,0.25)" active={correctFlash} />
