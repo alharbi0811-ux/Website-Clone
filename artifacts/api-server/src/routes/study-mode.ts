@@ -76,18 +76,28 @@ router.get("/study/lessons", async (req, res) => {
 });
 
 router.get("/study/questions", async (req, res) => {
-  const { unitId, lessonIds } = req.query;
+  const { unitId, lessonIds, gradeId } = req.query;
   if (!unitId) return res.status(400).json({ error: "unitId required" });
   try {
+    // Build base filter: always scope to unit + optionally scope to grade
+    const { and } = await import("drizzle-orm");
     let questions;
+
     if (lessonIds) {
       const ids = String(lessonIds).split(",").map(Number).filter(Boolean);
-      questions = ids.length
-        ? await db.select().from(studyQuestionsTable).where(inArray(studyQuestionsTable.lessonId, ids))
-        : [];
-    } else {
+      if (!ids.length) return res.json([]);
+      const cond = gradeId
+        ? and(inArray(studyQuestionsTable.lessonId, ids), eq(studyQuestionsTable.gradeId, Number(gradeId)))
+        : inArray(studyQuestionsTable.lessonId, ids);
       questions = await db.select().from(studyQuestionsTable)
-        .where(eq(studyQuestionsTable.unitId, Number(unitId)))
+        .where(cond)
+        .orderBy(sql`RANDOM()`);
+    } else {
+      const cond = gradeId
+        ? and(eq(studyQuestionsTable.unitId, Number(unitId)), eq(studyQuestionsTable.gradeId, Number(gradeId)))
+        : eq(studyQuestionsTable.unitId, Number(unitId));
+      questions = await db.select().from(studyQuestionsTable)
+        .where(cond)
         .orderBy(sql`RANDOM()`);
     }
     res.json(questions);
@@ -261,6 +271,15 @@ router.delete("/admin/study/lessons/:id", requireAuth, requireAdmin, async (req,
 });
 
 // ── Questions ──
+
+// Helper: resolve gradeId + stageId from subjectId
+async function resolveGradeStage(subjectId: number) {
+  const [subject] = await db.select().from(studySubjectsTable).where(eq(studySubjectsTable.id, subjectId));
+  if (!subject?.gradeId) return { gradeId: null, stageId: null };
+  const [grade] = await db.select().from(studyGradesTable).where(eq(studyGradesTable.id, subject.gradeId));
+  return { gradeId: subject.gradeId, stageId: grade?.stageId ?? null };
+}
+
 router.get("/admin/study/questions", requireAuth, requireAdmin, async (_req, res) => {
   try { res.json(await db.select().from(studyQuestionsTable).orderBy(asc(studyQuestionsTable.id))); }
   catch { res.status(500).json({ error: "Server error" }); }
@@ -271,9 +290,11 @@ router.post("/admin/study/questions", requireAuth, requireAdmin, async (req, res
   if (!subjectId || !unitId || !questionText?.trim() || !answerText?.trim())
     return res.status(400).json({ error: "subjectId, unitId, questionText, answerText required" });
   try {
+    const { gradeId, stageId } = await resolveGradeStage(Number(subjectId));
     const [row] = await db.insert(studyQuestionsTable).values({
       subjectId: Number(subjectId), unitId: Number(unitId),
       lessonId: lessonId ? Number(lessonId) : null,
+      gradeId, stageId,
       questionText: questionText.trim(), questionImage: questionImage || null,
       answerText: answerText.trim(), answerImage: answerImage || null,
     }).returning();
@@ -284,9 +305,11 @@ router.post("/admin/study/questions", requireAuth, requireAdmin, async (req, res
 router.put("/admin/study/questions/:id", requireAuth, requireAdmin, async (req, res) => {
   const { subjectId, unitId, lessonId, questionText, questionImage, answerText, answerImage } = req.body;
   try {
+    const { gradeId, stageId } = await resolveGradeStage(Number(subjectId));
     const [row] = await db.update(studyQuestionsTable).set({
       subjectId: Number(subjectId), unitId: Number(unitId),
       lessonId: lessonId ? Number(lessonId) : null,
+      gradeId, stageId,
       questionText: questionText?.trim(), questionImage: questionImage || null,
       answerText: answerText?.trim(), answerImage: answerImage || null,
     }).where(eq(studyQuestionsTable.id, Number(req.params.id))).returning();

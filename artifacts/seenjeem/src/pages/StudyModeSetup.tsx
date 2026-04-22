@@ -17,14 +17,6 @@ type Lesson = { id: number; name: string; unitId: number };
 const STEPS = ["الإعداد", "المرحلة", "الصف", "المادة", "الفصل", "الوحدة", "الدروس"];
 const STEP_ICONS = [Users, GraduationCap, GraduationCap, BookOpen, BookMarked, Layers, Target];
 
-// التعليقات الذكية حسب الجنس
-const COMMENTS: Record<string, { male: string[]; female: string[] }> = {
-  "5":  { male: ["يلا ركّز 👀", "قريبة منك يا بطل!"], female: ["يلا ركّزي 👀", "قريبة منك يا بطلة!"] },
-  "10": { male: ["فكّر شوي 🤔", "مو صعبة ترى يابطل!"], female: ["فكري شوي 🤔", "مو صعبة ترى يابطلة!"] },
-  "15": { male: ["شد حيلك 🔥", "ركز أكثر يا وحش!"], female: ["شدّي حيلك 🔥", "ركزي أكثر!"] },
-  "20": { male: ["أسرع شوي 😏", "قاعد تفكر زيادة!"], female: ["أسرعي شوي 😏", "قاعدة تفكرين زيادة!"] },
-};
-export { COMMENTS };
 
 export default function StudyModeSetup() {
   const [, navigate] = useLocation();
@@ -113,7 +105,8 @@ export default function StudyModeSetup() {
       const lessonParam = focusMode && selectedLessons.length > 0
         ? `&lessonIds=${selectedLessons.join(",")}`
         : "";
-      const res = await fetch(`${API}/study/questions?unitId=${selectedUnit.id}${lessonParam}`);
+      const gradeParam = selectedGrade ? `&gradeId=${selectedGrade.id}` : "";
+      const res = await fetch(`${API}/study/questions?unitId=${selectedUnit.id}${gradeParam}${lessonParam}`);
       const questions = await res.json();
       if (!Array.isArray(questions) || questions.length === 0) {
         alert("لا توجد أسئلة في هذه الوحدة. يرجى إضافة أسئلة من لوحة التحكم.");

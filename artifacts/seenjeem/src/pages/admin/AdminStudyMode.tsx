@@ -11,7 +11,8 @@ type Subject  = { id: number; gradeId: number | null; name: string };
 type Unit     = { id: number; subjectId: number; term: number; name: string };
 type Lesson   = { id: number; unitId: number; name: string };
 type Question = {
-  id: number; subjectId: number; unitId: number; lessonId: number | null;
+  id: number; stageId: number | null; gradeId: number | null;
+  subjectId: number; unitId: number; lessonId: number | null;
   questionText: string; questionImage?: string; answerText: string; answerImage?: string;
 };
 
@@ -287,6 +288,7 @@ export default function AdminStudyMode() {
     if (tab === "questions") return (
       <table className="w-full">
         <thead style={thead}><tr>
+          <th className={th} style={{ color: "#555577" }}>الصف</th>
           <th className={th} style={{ color: "#555577" }}>المادة</th>
           <th className={th} style={{ color: "#555577" }}>الوحدة</th>
           <th className={th} style={{ color: "#555577" }}>الدرس</th>
@@ -297,15 +299,19 @@ export default function AdminStudyMode() {
         <tbody>
           {questions.map((q, i) => (
             <tr key={q.id} style={rowStyle(i)}>
+              <td className={cell}>
+                <div style={{ color: "#c084fc" }} className="font-bold text-xs">{q.gradeId ? gradeName(q.gradeId) : <span className="text-red-400">بدون صف ⚠️</span>}</div>
+                <div style={{ color: "#555577" }} className="text-[10px]">{q.stageId ? stageName(q.stageId) : ""}</div>
+              </td>
               <td className={cell} style={{ color: "#c084fc" }}>{subjectName(q.subjectId)}</td>
               <td className={cell} style={{ color: "#8888aa" }}>{unitName(q.unitId)}</td>
               <td className={cell} style={{ color: "#8888aa" }}>{lessonName(q.lessonId)}</td>
-              <td className={`${cell} max-w-[160px]`} style={{ color: "#e2e2f0" }}><span className="block truncate" title={q.questionText}>{q.questionText}</span></td>
-              <td className={`${cell} max-w-[160px]`} style={{ color: "#8888aa" }}><span className="block truncate" title={q.answerText}>{q.answerText}</span></td>
+              <td className={`${cell} max-w-[140px]`} style={{ color: "#e2e2f0" }}><span className="block truncate" title={q.questionText}>{q.questionText}</span></td>
+              <td className={`${cell} max-w-[140px]`} style={{ color: "#8888aa" }}><span className="block truncate" title={q.answerText}>{q.answerText}</span></td>
               <td className={cell}><Actions onEdit={() => openEdit(q)} onDelete={() => handleDelete(q.id)} /></td>
             </tr>
           ))}
-          {questions.length === 0 && <EmptyRow cols={6} msg="لا توجد أسئلة — أضف مواد ووحدات ودروساً أولاً" />}
+          {questions.length === 0 && <EmptyRow cols={7} msg="لا توجد أسئلة — أضف مواد ووحدات ودروساً أولاً" />}
         </tbody>
       </table>
     );

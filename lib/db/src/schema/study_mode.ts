@@ -50,6 +50,12 @@ export const studyLessonsTable = pgTable("study_lessons", {
 // الأسئلة
 export const studyQuestionsTable = pgTable("study_questions", {
   id: serial("id").primaryKey(),
+  stageId: integer("stage_id").references(() => studyStagesTable.id, {
+    onDelete: "set null",
+  }),
+  gradeId: integer("grade_id").references(() => studyGradesTable.id, {
+    onDelete: "set null",
+  }),
   subjectId: integer("subject_id")
     .notNull()
     .references(() => studySubjectsTable.id, { onDelete: "cascade" }),
