@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/sections/Navbar";
-import { Check, Info, X, Search } from "lucide-react";
+import { Check, Info, X, Search, Lock } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 
@@ -240,56 +240,74 @@ export default function StartGame() {
                     const teamIdx = selectedIds.indexOf(cat.id);
                     const isTeam1 = teamIdx >= 0 && teamIdx < 3;
                     const disabled = !selected && selectedIds.length >= MAX;
-                    const isLocked = cat.status && cat.status !== "open";
+                    const isLocked = cat.status === "in_progress" || cat.status === "closed";
 
                     return (
                       <motion.div
                         key={cat.id}
                         initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: disabled ? 0.45 : 1, scale: 1 }}
+                        animate={{ opacity: disabled && !isLocked ? 0.45 : 1, scale: 1 }}
                         transition={{ delay: idx * 0.02 }}
-                        className={`relative rounded-2xl overflow-hidden cursor-pointer transition-all group border-2 ${
-                          selected
-                            ? isTeam1
-                              ? "border-[#7B2FBE] shadow-[0_0_18px_rgba(123,47,190,0.5)] scale-[1.03]"
-                              : "border-violet-400 shadow-[0_0_18px_rgba(167,139,250,0.45)] scale-[1.03]"
-                            : "border-transparent hover:border-[#7B2FBE]/50 hover:shadow-lg hover:scale-[1.02]"
-                        } ${disabled ? "cursor-not-allowed" : ""}`}
-                        onClick={() => !disabled && toggleCategory(cat)}
+                        className={`relative rounded-2xl overflow-hidden transition-all group border-2 ${
+                          isLocked
+                            ? "cursor-not-allowed border-transparent"
+                            : selected
+                              ? isTeam1
+                                ? "cursor-pointer border-[#7B2FBE] shadow-[0_0_18px_rgba(123,47,190,0.5)] scale-[1.03]"
+                                : "cursor-pointer border-violet-400 shadow-[0_0_18px_rgba(167,139,250,0.45)] scale-[1.03]"
+                              : disabled
+                                ? "cursor-not-allowed border-transparent"
+                                : "cursor-pointer border-transparent hover:border-[#7B2FBE]/50 hover:shadow-lg hover:scale-[1.02]"
+                        }`}
+                        onClick={() => !disabled && !isLocked && toggleCategory(cat)}
                       >
                         {/* Card image */}
                         <div className="relative aspect-[4/5] bg-purple-100">
                           <img
                             src={cat.img}
                             alt={cat.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className={`w-full h-full object-cover transition-transform duration-300 ${isLocked ? "" : "group-hover:scale-105"}`}
                           />
 
                           {/* Dark gradient overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
+                          {/* Lock overlay for in_progress / closed */}
+                          {isLocked && (
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-20 gap-1.5">
+                              <div className="w-9 h-9 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
+                                <Lock size={16} className="text-white" />
+                              </div>
+                              <span className="text-white text-[10px] font-bold text-center px-2 leading-tight opacity-80">
+                                {cat.lockMessage || "قيد العمل"}
+                              </span>
+                            </div>
+                          )}
+
                           {/* Selected color overlay */}
-                          {selected && (
+                          {selected && !isLocked && (
                             <div className={`absolute inset-0 ${isTeam1 ? "bg-[#7B2FBE]/35" : "bg-violet-400/35"}`} />
                           )}
 
-                          {/* Info button - top left */}
-                          <button
-                            className="absolute top-2 left-2 w-7 h-7 rounded-full bg-[#3193e9] hover:bg-[#2280d0] flex items-center justify-center transition-colors z-10 shadow"
-                            onClick={(e) => { e.stopPropagation(); setInfoCard(cat); }}
-                          >
-                            <Info size={12} className="text-white" />
-                          </button>
+                          {/* Info button - top left (hide for locked) */}
+                          {!isLocked && (
+                            <button
+                              className="absolute top-2 left-2 w-7 h-7 rounded-full bg-[#3193e9] hover:bg-[#2280d0] flex items-center justify-center transition-colors z-10 shadow"
+                              onClick={(e) => { e.stopPropagation(); setInfoCard(cat); }}
+                            >
+                              <Info size={12} className="text-white" />
+                            </button>
+                          )}
 
                           {/* Check badge - top right */}
-                          {selected && (
+                          {selected && !isLocked && (
                             <div className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center z-10 ${isTeam1 ? "bg-[#7B2FBE]" : "bg-violet-400"}`}>
                               <Check size={14} className="text-white" />
                             </div>
                           )}
 
                           {/* Country flag badge */}
-                          {cat.flag && (
+                          {cat.flag && !isLocked && (
                             <div className="absolute bottom-10 right-2 z-10">
                               <img src={cat.flag} alt="flag" className="h-5 w-7 object-cover rounded shadow" />
                             </div>
