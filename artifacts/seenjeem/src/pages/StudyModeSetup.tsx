@@ -32,8 +32,8 @@ export default function StudyModeSetup() {
   useEffect(() => {
     fetch(`${API_BASE}/study/subjects`)
       .then((r) => r.json())
-      .then(setSubjects)
-      .catch(() => {});
+      .then((data) => setSubjects(Array.isArray(data) ? data : []))
+      .catch(() => setSubjects([]));
   }, []);
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export default function StudyModeSetup() {
     setLoading(true);
     fetch(`${API_BASE}/study/units?subjectId=${selectedSubject.id}&term=${term}`)
       .then((r) => r.json())
-      .then((data) => { setUnits(data); setSelectedUnit(null); })
-      .catch(() => {})
+      .then((data) => { setUnits(Array.isArray(data) ? data : []); setSelectedUnit(null); })
+      .catch(() => setUnits([]))
       .finally(() => setLoading(false));
   }, [selectedSubject, term]);
 
@@ -51,8 +51,8 @@ export default function StudyModeSetup() {
     setLoading(true);
     fetch(`${API_BASE}/study/lessons?unitId=${selectedUnit.id}`)
       .then((r) => r.json())
-      .then((data) => { setLessons(data); setSelectedLessons([]); })
-      .catch(() => {})
+      .then((data) => { setLessons(Array.isArray(data) ? data : []); setSelectedLessons([]); })
+      .catch(() => setLessons([]))
       .finally(() => setLoading(false));
   }, [selectedUnit]);
 
