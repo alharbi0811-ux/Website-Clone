@@ -36,7 +36,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="tracking-wide mt-2 text-[#ffffff] font-black text-[38px]"
             dir="rtl"
-          >فكر بسرعة… جاوب بدقة</motion.p>
+          >فكر بسرعة...  جاوب بدقة</motion.p>
         </motion.div>
 
         <motion.p
