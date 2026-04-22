@@ -2,89 +2,175 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import {
-  ChevronRight, BookOpen, Layers, BookMarked, Target,
-  ArrowLeft, Check, GraduationCap, User, Users,
+  ChevronLeft, BookOpen, Layers, BookMarked, Target,
+  Check, GraduationCap, Users, Zap, Sword, Shield,
+  ChevronRight, Star
 } from "lucide-react";
 
 const API = "/api";
 
-type Stage = { id: number; name: string; order: number };
-type Grade = { id: number; stageId: number; name: string; order: number };
+type Stage   = { id: number; name: string; order: number };
+type Grade   = { id: number; stageId: number; name: string; order: number };
 type Subject = { id: number; gradeId: number | null; name: string };
-type Unit = { id: number; name: string; subjectId: number; term: number };
-type Lesson = { id: number; name: string; unitId: number };
+type Unit    = { id: number; name: string; subjectId: number; term: number };
+type Lesson  = { id: number; name: string; unitId: number };
 
-const STEPS = ["الإعداد", "المرحلة", "الصف", "المادة", "الفصل", "الوحدة", "الدروس"];
-const STEP_ICONS = [Users, GraduationCap, GraduationCap, BookOpen, BookMarked, Layers, Target];
+const STEP_LABELS = ["الفريق", "المرحلة", "الصف", "المادة", "الفصل", "الوحدة", "الدروس"];
+const SUBJECT_ICONS = ["📐", "🔬", "🌍", "📖", "🎨", "🏃", "💻", "🎵"];
 
+/* ── Gaming card button ── */
+function GCard({
+  selected, onClick, children, fullWidth = false, tall = false,
+}: {
+  selected: boolean; onClick: () => void; children: React.ReactNode;
+  fullWidth?: boolean; tall?: boolean;
+}) {
+  return (
+    <motion.button
+      onClick={onClick}
+      whileTap={{ scale: 0.95 }}
+      whileHover={!selected ? { y: -2 } : {}}
+      className={`relative rounded-2xl border-2 transition-all text-right overflow-hidden ${fullWidth ? "w-full" : ""} ${tall ? "py-7" : "p-4"}`}
+      style={selected ? {
+        borderColor: "#7B2FBE",
+        background: "linear-gradient(135deg, rgba(123,47,190,0.12) 0%, rgba(123,47,190,0.04) 100%)",
+        boxShadow: "0 0 0 3px rgba(123,47,190,0.18), 0 4px 20px rgba(123,47,190,0.2)",
+      } : {
+        borderColor: "rgba(0,0,0,0.1)",
+        background: "white",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+      }}
+    >
+      {selected && (
+        <motion.div
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          className="absolute top-2 left-2 w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ background: "#7B2FBE" }}
+        >
+          <Check size={11} className="text-white" />
+        </motion.div>
+      )}
+      {children}
+    </motion.button>
+  );
+}
 
+/* ── Step nodes progress ── */
+function StepProgress({ step, total }: { step: number; total: number }) {
+  return (
+    <div className="flex items-center justify-center gap-1 py-3">
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} className="flex items-center gap-1">
+          <motion.div
+            animate={i < step ? { background: "#7B2FBE", scale: 1 }
+              : i === step ? { background: "#7B2FBE", scale: 1.2 }
+              : { background: "#e5e7eb", scale: 1 }}
+            className="w-2 h-2 rounded-full"
+            style={{ boxShadow: i === step ? "0 0 6px rgba(123,47,190,0.6)" : "none" }}
+          />
+          {i < total - 1 && (
+            <motion.div
+              animate={{ background: i < step ? "#7B2FBE" : "#e5e7eb" }}
+              className="w-4 h-0.5 rounded-full"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── Loading spinner ── */
+const Spinner = () => (
+  <div className="flex justify-center py-14">
+    <div className="w-8 h-8 border-3 border-[#7B2FBE]/20 border-t-[#7B2FBE] rounded-full animate-spin" />
+  </div>
+);
+
+/* ── Empty state ── */
+const Empty = ({ icon, msg }: { icon: string; msg: string }) => (
+  <div className="flex flex-col items-center py-14 text-gray-400 gap-2">
+    <span className="text-4xl opacity-50">{icon}</span>
+    <p className="font-bold text-sm">{msg}</p>
+    <p className="text-xs">أضف بيانات من لوحة التحكم</p>
+  </div>
+);
+
+/* ── Game input ── */
+function GInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+  return (
+    <input
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full px-4 py-3 rounded-xl font-black text-gray-800 text-sm focus:outline-none transition-all"
+      style={{
+        border: "2px solid rgba(123,47,190,0.2)",
+        background: "white",
+        boxShadow: "inset 0 2px 6px rgba(0,0,0,0.03)",
+      }}
+      onFocus={e => { e.target.style.borderColor = "#7B2FBE"; e.target.style.boxShadow = "0 0 0 3px rgba(123,47,190,0.12)"; }}
+      onBlur={e => { e.target.style.borderColor = "rgba(123,47,190,0.2)"; e.target.style.boxShadow = "inset 0 2px 6px rgba(0,0,0,0.03)"; }}
+    />
+  );
+}
+
+/* ════════════════════ MAIN ════════════════════ */
 export default function StudyModeSetup() {
   const [, navigate] = useLocation();
   const [step, setStep] = useState(0);
 
-  // Step 0
-  const [gender, setGender] = useState<"male" | "female" | null>(null);
-  const [gameName, setGameName] = useState("");
+  const [gender, setGender]       = useState<"male" | "female" | null>(null);
+  const [gameName, setGameName]   = useState("");
   const [team1Name, setTeam1Name] = useState("الفريق الأول");
   const [team2Name, setTeam2Name] = useState("الفريق الثاني");
 
-  // Step 1-3
-  const [stages, setStages] = useState<Stage[]>([]);
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [stages,   setStages]   = useState<Stage[]>([]);
+  const [grades,   setGrades]   = useState<Grade[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
-  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+  const [selectedStage,   setSelectedStage]   = useState<Stage | null>(null);
+  const [selectedGrade,   setSelectedGrade]   = useState<Grade | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
 
-  // Step 4-6
-  const [term, setTerm] = useState<1 | 2 | null>(null);
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [focusMode, setFocusMode] = useState(false);
+  const [term, setTerm]                     = useState<1 | 2 | null>(null);
+  const [units, setUnits]                   = useState<Unit[]>([]);
+  const [selectedUnit, setSelectedUnit]     = useState<Unit | null>(null);
+  const [lessons, setLessons]               = useState<Lesson[]>([]);
+  const [focusMode, setFocusMode]           = useState(false);
   const [selectedLessons, setSelectedLessons] = useState<number[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]               = useState(false);
 
-  // Load stages
   useEffect(() => {
     fetch(`${API}/study/stages`).then(r => r.json())
-      .then(d => setStages(Array.isArray(d) ? d : [])).catch(() => setStages([]));
+      .then(d => setStages(Array.isArray(d) ? d : [])).catch(() => {});
   }, []);
-
-  // Load grades when stage selected
   useEffect(() => {
     if (!selectedStage) return;
     setLoading(true);
     fetch(`${API}/study/grades?stageId=${selectedStage.id}`).then(r => r.json())
       .then(d => { setGrades(Array.isArray(d) ? d : []); setSelectedGrade(null); setSelectedSubject(null); })
-      .catch(() => setGrades([])).finally(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, [selectedStage]);
-
-  // Load subjects when grade selected
   useEffect(() => {
     if (!selectedGrade) return;
     setLoading(true);
     fetch(`${API}/study/subjects?gradeId=${selectedGrade.id}`).then(r => r.json())
       .then(d => { setSubjects(Array.isArray(d) ? d : []); setSelectedSubject(null); })
-      .catch(() => setSubjects([])).finally(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, [selectedGrade]);
-
-  // Load units when subject + term selected
   useEffect(() => {
     if (!selectedSubject || !term) return;
     setLoading(true);
     fetch(`${API}/study/units?subjectId=${selectedSubject.id}&term=${term}`).then(r => r.json())
       .then(d => { setUnits(Array.isArray(d) ? d : []); setSelectedUnit(null); })
-      .catch(() => setUnits([])).finally(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, [selectedSubject, term]);
-
-  // Load lessons when unit selected
   useEffect(() => {
     if (!selectedUnit) return;
     setLoading(true);
     fetch(`${API}/study/lessons?unitId=${selectedUnit.id}`).then(r => r.json())
       .then(d => { setLessons(Array.isArray(d) ? d : []); setSelectedLessons([]); })
-      .catch(() => setLessons([])).finally(() => setLoading(false));
+      .finally(() => setLoading(false));
   }, [selectedUnit]);
 
   const canProceed = () => {
@@ -102,384 +188,440 @@ export default function StudyModeSetup() {
     if (!selectedSubject || !selectedUnit || !term || !gender) return;
     setLoading(true);
     try {
-      const lessonParam = focusMode && selectedLessons.length > 0
-        ? `&lessonIds=${selectedLessons.join(",")}`
-        : "";
-      const gradeParam = selectedGrade ? `&gradeId=${selectedGrade.id}` : "";
+      const lessonParam = focusMode && selectedLessons.length > 0 ? `&lessonIds=${selectedLessons.join(",")}` : "";
+      const gradeParam  = selectedGrade ? `&gradeId=${selectedGrade.id}` : "";
       const res = await fetch(`${API}/study/questions?unitId=${selectedUnit.id}${gradeParam}${lessonParam}`);
       const questions = await res.json();
       if (!Array.isArray(questions) || questions.length === 0) {
-        alert("لا توجد أسئلة في هذه الوحدة. يرجى إضافة أسئلة من لوحة التحكم.");
-        setLoading(false);
-        return;
+        alert("لا توجد أسئلة في هذه الوحدة."); setLoading(false); return;
       }
-      const gameData = {
-        gameName: gameName.trim() || `${selectedSubject.name} - ${selectedUnit.name}`,
-        gender,
-        team1Name,
-        team2Name,
-        subject: selectedSubject,
-        unit: selectedUnit,
-        grade: selectedGrade,
-        stage: selectedStage,
-        term,
+      localStorage.setItem("rakez-study-game", JSON.stringify({
+        gameName: gameName.trim() || `${selectedSubject.name} — ${selectedUnit.name}`,
+        gender, team1Name, team2Name, subject: selectedSubject, unit: selectedUnit,
+        grade: selectedGrade, stage: selectedStage, term,
         questions: [...questions].sort(() => Math.random() - 0.5),
-      };
-      localStorage.setItem("rakez-study-game", JSON.stringify(gameData));
+      }));
       localStorage.setItem("rakez-study-scores", JSON.stringify({ team1: 0, team2: 0 }));
       localStorage.setItem("rakez-study-index", "0");
       navigate("/study-game");
-    } catch {
-      alert("حدث خطأ في تحميل الأسئلة. تأكد من الاتصال.");
-    } finally {
-      setLoading(false);
-    }
+    } catch { alert("خطأ في التحميل."); }
+    finally { setLoading(false); }
   };
 
   const toggleLesson = (id: number) =>
-    setSelectedLessons(prev => prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id]);
-  const selectAllLessons = () =>
-    setSelectedLessons(selectedLessons.length === lessons.length ? [] : lessons.map(l => l.id));
+    setSelectedLessons(p => p.includes(id) ? p.filter(l => l !== id) : [...p, id]);
 
-  const Icon = STEP_ICONS[step];
-
-  const cardBtn = (selected: boolean, onClick: () => void, children: React.ReactNode) => (
-    <motion.button
-      whileTap={{ scale: 0.96 }}
-      onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 text-right transition-all flex items-center gap-3 ${
-        selected ? "border-[#7B2FBE] bg-[#7B2FBE]/8 shadow-[0_0_0_3px_rgba(123,47,190,0.12)]"
-                 : "border-gray-200 hover:border-[#7B2FBE]/40 bg-white"
-      }`}
-    >
-      {children}
-      {selected && <Check size={16} className="text-[#7B2FBE] mr-auto flex-shrink-0" />}
-    </motion.button>
-  );
-
-  const emptyState = (icon: React.ReactNode, msg: string, sub?: string) => (
-    <div className="flex flex-col items-center py-14 text-gray-400">
-      <div className="mb-3 opacity-40">{icon}</div>
-      <p className="font-bold text-sm">{msg}</p>
-      {sub && <p className="text-xs mt-1 text-gray-400">{sub}</p>}
-    </div>
-  );
-
+  /* ════ RENDER ════ */
   return (
-    <div className="min-h-screen bg-white flex flex-col" dir="rtl">
-      {/* Header */}
-      <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 py-4 flex items-center gap-3 shadow-lg flex-shrink-0">
-        <button
-          onClick={() => step === 0 ? navigate("/") : setStep(s => s - 1)}
-          className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors flex-shrink-0"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-white font-black text-lg">وضع الدراسة 🔥</h1>
-          <p className="text-white/70 text-xs">{STEPS[step]} • الخطوة {step + 1} من {STEPS.length}</p>
+    <div className="min-h-screen bg-white flex flex-col" dir="rtl"
+      style={{ fontFamily: "'Lalezar', 'Cairo', sans-serif" }}>
+
+      {/* ── HUD Header ── */}
+      <div className="flex-shrink-0"
+        style={{ background: "linear-gradient(135deg,#7B2FBE 0%,#4a1a7e 100%)", boxShadow: "0 4px 24px rgba(123,47,190,0.45)" }}>
+        <div className="px-4 py-3 flex items-center justify-between">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => step === 0 ? navigate("/") : setStep(s => s - 1)}
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-white flex-shrink-0"
+            style={{ background: "rgba(255,255,255,0.12)" }}
+          >
+            <ChevronRight size={20} />
+          </motion.button>
+
+          <div className="text-center flex-1 px-2">
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-white font-black text-base">⚔️ وضع الدراسة</span>
+            </div>
+            <p className="text-white/60 text-xs mt-0.5">{STEP_LABELS[step]} • الخطوة {step + 1} من {STEP_LABELS.length}</p>
+          </div>
+
+          <div className="w-10 flex-shrink-0 flex items-center justify-end">
+            <span className="text-white/70 font-black text-sm">{step + 1}<span className="text-white/30">/{STEP_LABELS.length}</span></span>
+          </div>
         </div>
-        <Icon size={20} className="text-white/50 flex-shrink-0" />
+
+        {/* Step dots */}
+        <StepProgress step={step} total={STEP_LABELS.length} />
       </div>
 
-      {/* Progress */}
-      <div className="h-1.5 bg-gray-100 flex-shrink-0">
-        <motion.div
-          className="h-full bg-gradient-to-l from-[#7B2FBE] to-[#9b59f5]"
-          animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
-          transition={{ duration: 0.4 }}
-        />
-      </div>
-
-      {/* Content */}
+      {/* ── Content ── */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-xl mx-auto px-4 py-6">
           <AnimatePresence mode="wait">
 
-            {/* ── STEP 0: الإعداد ── */}
+            {/* ══ STEP 0 — TEAM SETUP ══ */}
             {step === 0 && (
-              <motion.div key="s0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
-                <div className="flex items-center gap-2 mb-1">
-                  <Users size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">إعداد اللعبة</h2>
+              <motion.div key="s0"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
+                className="space-y-6"
+              >
+                {/* Section label */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <Users size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">إعداد الفريقين</h2>
+                    <p className="text-xs text-gray-400">اختر جنس اللاعبين وسمّ الفريقين</p>
+                  </div>
                 </div>
 
                 {/* Gender */}
                 <div>
-                  <p className="text-sm font-bold text-gray-600 mb-3">الجنس</p>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">اختر الجنس</p>
                   <div className="grid grid-cols-2 gap-3">
-                    {([["male", "ذكر", "👦"], ["female", "أنثى", "👧"]] as const).map(([g, label, emoji]) => (
-                      <motion.button
-                        key={g} whileTap={{ scale: 0.96 }}
-                        onClick={() => setGender(g)}
-                        className={`py-5 rounded-2xl border-2 font-black text-lg transition-all ${
-                          gender === g ? "border-[#7B2FBE] bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30"
-                                      : "border-gray-200 text-gray-700 hover:border-[#7B2FBE]/40"
-                        }`}
-                      >
-                        <div className="text-3xl mb-1">{emoji}</div>
-                        {label}
-                      </motion.button>
+                    {([["male", "ذكر", "👦", "Blue Team"], ["female", "أنثى", "👧", "Pink Team"]] as const).map(([g, label, emoji, tag]) => (
+                      <GCard key={g} selected={gender === g} onClick={() => setGender(g)} tall>
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">{emoji}</div>
+                          <div className={`font-black text-lg ${gender === g ? "text-[#7B2FBE]" : "text-gray-800"}`}>{label}</div>
+                          <div className="text-[10px] font-bold text-gray-400 mt-0.5">{tag}</div>
+                        </div>
+                      </GCard>
                     ))}
                   </div>
                 </div>
 
                 {/* Team names */}
                 <div>
-                  <p className="text-sm font-bold text-gray-600 mb-3">أسماء الفرق</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { val: team1Name, set: setTeam1Name, label: "الفريق الأول" },
-                      { val: team2Name, set: setTeam2Name, label: "الفريق الثاني" },
-                    ].map(({ val, set, label }) => (
-                      <input
-                        key={label}
-                        value={val}
-                        onChange={e => set(e.target.value)}
-                        placeholder={label}
-                        className="border-2 border-gray-200 rounded-xl px-3 py-3 text-gray-800 font-bold text-sm focus:outline-none focus:border-[#7B2FBE] transition-colors"
-                      />
-                    ))}
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">أسماء الفريقين</p>
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: "rgba(123,47,190,0.12)" }}>
+                        <Shield size={14} style={{ color: "#7B2FBE" }} />
+                      </div>
+                      <GInput value={team1Name} onChange={setTeam1Name} placeholder="الفريق الأول" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: "rgba(123,47,190,0.12)" }}>
+                        <Sword size={14} style={{ color: "#7B2FBE" }} />
+                      </div>
+                      <GInput value={team2Name} onChange={setTeam2Name} placeholder="الفريق الثاني" />
+                    </div>
                   </div>
                 </div>
 
-                {/* Game name (optional) */}
+                {/* Game name */}
                 <div>
-                  <p className="text-sm font-bold text-gray-600 mb-2">اسم الجلسة <span className="text-gray-400 font-normal">(اختياري)</span></p>
-                  <input
-                    value={gameName}
-                    onChange={e => setGameName(e.target.value)}
-                    placeholder="مثال: مراجعة اختبار العلوم"
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-medium text-sm focus:outline-none focus:border-[#7B2FBE] transition-colors"
-                  />
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">اسم الجلسة <span className="normal-case font-normal">(اختياري)</span></p>
+                  <GInput value={gameName} onChange={setGameName} placeholder="مثال: مراجعة اختبار العلوم" />
                 </div>
               </motion.div>
             )}
 
-            {/* ── STEP 1: المرحلة ── */}
+            {/* ══ STEP 1 — STAGE ══ */}
             {step === 1 && (
-              <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <GraduationCap size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">اختر المرحلة الدراسية</h2>
+              <motion.div key="s1"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <GraduationCap size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر المرحلة</h2>
+                    <p className="text-xs text-gray-400">ما هي مرحلتك الدراسية؟</p>
+                  </div>
                 </div>
-                {stages.length === 0
-                  ? emptyState(<GraduationCap size={40} />, "لا توجد مراحل دراسية", "أضف مراحل من لوحة التحكم")
+                {stages.length === 0 ? <Empty icon="🏫" msg="لا توجد مراحل دراسية" />
                   : (
                     <div className="grid grid-cols-1 gap-3">
-                      {stages.map(s => (
-                        <motion.button
-                          key={s.id} whileTap={{ scale: 0.97 }}
-                          onClick={() => setSelectedStage(s)}
-                          className={`py-6 rounded-2xl border-2 font-black text-xl transition-all ${
-                            selectedStage?.id === s.id
-                              ? "border-[#7B2FBE] bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30"
-                              : "border-gray-200 text-gray-800 hover:border-[#7B2FBE]/40"
-                          }`}
-                        >
-                          {s.name}
-                        </motion.button>
-                      ))}
-                    </div>
-                  )}
-              </motion.div>
-            )}
-
-            {/* ── STEP 2: الصف ── */}
-            {step === 2 && (
-              <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <GraduationCap size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">اختر الصف</h2>
-                </div>
-                {loading ? <div className="flex justify-center py-12"><div className="w-8 h-8 border-3 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" /></div>
-                  : grades.length === 0
-                  ? emptyState(<GraduationCap size={40} />, "لا توجد صفوف لهذه المرحلة", "أضف صفوفاً من لوحة التحكم")
-                  : (
-                    <div className="grid grid-cols-2 gap-3">
-                      {grades.map(g => (
-                        <motion.button
-                          key={g.id} whileTap={{ scale: 0.96 }}
-                          onClick={() => setSelectedGrade(g)}
-                          className={`py-5 rounded-2xl border-2 font-black text-lg transition-all ${
-                            selectedGrade?.id === g.id
-                              ? "border-[#7B2FBE] bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30"
-                              : "border-gray-200 text-gray-800 hover:border-[#7B2FBE]/40"
-                          }`}
-                        >
-                          {g.name}
-                        </motion.button>
-                      ))}
-                    </div>
-                  )}
-              </motion.div>
-            )}
-
-            {/* ── STEP 3: المادة ── */}
-            {step === 3 && (
-              <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <BookOpen size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">اختر المادة</h2>
-                </div>
-                {loading ? <div className="flex justify-center py-12"><div className="w-8 h-8 border-3 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" /></div>
-                  : subjects.length === 0
-                  ? emptyState(<BookOpen size={40} />, "لا توجد مواد لهذا الصف", "أضف مواد من لوحة التحكم")
-                  : (
-                    <div className="grid grid-cols-2 gap-3">
-                      {subjects.map(s => (
-                        <motion.button
-                          key={s.id} whileTap={{ scale: 0.96 }}
-                          onClick={() => setSelectedSubject(s)}
-                          className={`p-5 rounded-2xl border-2 text-right transition-all font-bold ${
-                            selectedSubject?.id === s.id
-                              ? "border-[#7B2FBE] bg-[#7B2FBE]/8 shadow-[0_0_0_3px_rgba(123,47,190,0.12)]"
-                              : "border-gray-200 hover:border-[#7B2FBE]/40 bg-white"
-                          }`}
-                        >
-                          <div className="w-10 h-10 rounded-xl bg-[#7B2FBE]/10 flex items-center justify-center mb-3">
-                            <BookOpen size={20} className="text-[#7B2FBE]" />
+                      {stages.map((s, i) => (
+                        <GCard key={s.id} selected={selectedStage?.id === s.id} onClick={() => setSelectedStage(s)} fullWidth tall>
+                          <div className="flex items-center gap-4 px-2">
+                            <div className="text-3xl">{["🌱", "🔥", "⚡"][i] ?? "📚"}</div>
+                            <div>
+                              <div className={`font-black text-xl ${selectedStage?.id === s.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{s.name}</div>
+                              <div className="text-xs text-gray-400 mt-0.5">Zone {i + 1}</div>
+                            </div>
                           </div>
-                          <span className={`text-base ${selectedSubject?.id === s.id ? "text-[#7B2FBE]" : "text-gray-800"}`}>{s.name}</span>
-                        </motion.button>
+                        </GCard>
                       ))}
                     </div>
                   )}
               </motion.div>
             )}
 
-            {/* ── STEP 4: الفصل ── */}
+            {/* ══ STEP 2 — GRADE ══ */}
+            {step === 2 && (
+              <motion.div key="s2"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <Star size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر الصف</h2>
+                    <p className="text-xs text-gray-400">{selectedStage?.name}</p>
+                  </div>
+                </div>
+                {loading ? <Spinner /> : grades.length === 0 ? <Empty icon="📋" msg="لا توجد صفوف لهذه المرحلة" />
+                  : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {grades.map((g, i) => (
+                        <GCard key={g.id} selected={selectedGrade?.id === g.id} onClick={() => setSelectedGrade(g)} tall>
+                          <div className="text-center">
+                            <div className="text-2xl mb-1">{"🥇🥈🥉🏅🎖️🏆🌟⭐🔥💥🚀"[i] ?? "📚"}</div>
+                            <div className={`font-black text-base ${selectedGrade?.id === g.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{g.name}</div>
+                            <div className="text-[10px] text-gray-400 mt-0.5">Level {g.order}</div>
+                          </div>
+                        </GCard>
+                      ))}
+                    </div>
+                  )}
+              </motion.div>
+            )}
+
+            {/* ══ STEP 3 — SUBJECT ══ */}
+            {step === 3 && (
+              <motion.div key="s3"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <BookOpen size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر المادة</h2>
+                    <p className="text-xs text-gray-400">{selectedGrade?.name}</p>
+                  </div>
+                </div>
+                {loading ? <Spinner /> : subjects.length === 0 ? <Empty icon="📖" msg="لا توجد مواد لهذا الصف" />
+                  : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {subjects.map((s, i) => (
+                        <GCard key={s.id} selected={selectedSubject?.id === s.id} onClick={() => setSelectedSubject(s)}>
+                          <div className="text-center py-2">
+                            <div className="text-3xl mb-2">{SUBJECT_ICONS[i % SUBJECT_ICONS.length]}</div>
+                            <div className={`font-black text-sm leading-tight ${selectedSubject?.id === s.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{s.name}</div>
+                          </div>
+                        </GCard>
+                      ))}
+                    </div>
+                  )}
+              </motion.div>
+            )}
+
+            {/* ══ STEP 4 — TERM ══ */}
             {step === 4 && (
-              <motion.div key="s4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <BookMarked size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">اختر الفصل الدراسي</h2>
+              <motion.div key="s4"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <BookMarked size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر الفصل</h2>
+                    <p className="text-xs text-gray-400">{selectedSubject?.name}</p>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {([1, 2] as const).map(t => (
-                    <motion.button key={t} whileTap={{ scale: 0.96 }}
-                      onClick={() => setTerm(t)}
-                      className={`py-8 rounded-2xl border-2 font-black text-xl transition-all ${
-                        term === t ? "border-[#7B2FBE] bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30"
-                                  : "border-gray-200 text-gray-700 hover:border-[#7B2FBE]/40"
-                      }`}
-                    >
-                      {t === 1 ? "الفصل الأول" : "الفصل الثاني"}
-                    </motion.button>
+                    <GCard key={t} selected={term === t} onClick={() => setTerm(t)} tall>
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">{t === 1 ? "🌞" : "🌙"}</div>
+                        <div className={`font-black text-lg ${term === t ? "text-[#7B2FBE]" : "text-gray-900"}`}>
+                          {t === 1 ? "الفصل الأول" : "الفصل الثاني"}
+                        </div>
+                        <div className="text-[11px] text-gray-400 mt-0.5">Season {t}</div>
+                      </div>
+                    </GCard>
                   ))}
                 </div>
               </motion.div>
             )}
 
-            {/* ── STEP 5: الوحدة ── */}
+            {/* ══ STEP 5 — UNIT ══ */}
             {step === 5 && (
-              <motion.div key="s5" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <Layers size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">اختر الوحدة</h2>
+              <motion.div key="s5"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <Layers size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر الوحدة</h2>
+                    <p className="text-xs text-gray-400">{selectedSubject?.name} • ف{term}</p>
+                  </div>
                 </div>
-                {loading ? <div className="flex justify-center py-12"><div className="w-8 h-8 border-3 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" /></div>
-                  : units.length === 0
-                  ? emptyState(<Layers size={40} />, "لا توجد وحدات لهذا الفصل", "أضف وحدات من لوحة التحكم")
+                {loading ? <Spinner /> : units.length === 0 ? <Empty icon="📦" msg="لا توجد وحدات لهذا الفصل" />
                   : (
-                    <div className="space-y-3">
-                      {units.map(u => cardBtn(selectedUnit?.id === u.id, () => setSelectedUnit(u),
-                        <>
-                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${selectedUnit?.id === u.id ? "bg-[#7B2FBE] text-white" : "bg-gray-100 text-gray-400"}`}>
-                            <Layers size={16} />
+                    <div className="space-y-2.5">
+                      {units.map((u, i) => (
+                        <GCard key={u.id} selected={selectedUnit?.id === u.id} onClick={() => setSelectedUnit(u)} fullWidth>
+                          <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-lg"
+                              style={selectedUnit?.id === u.id
+                                ? { background: "#7B2FBE", color: "white" }
+                                : { background: "rgba(123,47,190,0.08)", color: "#7B2FBE" }}>
+                              {i + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`font-black text-base ${selectedUnit?.id === u.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{u.name}</div>
+                              <div className="text-[11px] text-gray-400">Mission {i + 1}</div>
+                            </div>
+                            <ChevronLeft size={16} style={{ color: selectedUnit?.id === u.id ? "#7B2FBE" : "#d1d5db" }} />
                           </div>
-                          <span className={`font-bold ${selectedUnit?.id === u.id ? "text-[#7B2FBE]" : "text-gray-800"}`}>{u.name}</span>
-                        </>
+                        </GCard>
                       ))}
                     </div>
                   )}
               </motion.div>
             )}
 
-            {/* ── STEP 6: الدروس + التركيز ── */}
+            {/* ══ STEP 6 — LESSONS ══ */}
             {step === 6 && (
-              <motion.div key="s6" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Target size={20} className="text-[#7B2FBE]" />
-                  <h2 className="text-xl font-black text-gray-900">وضع التركيز</h2>
+              <motion.div key="s6"
+                initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)" }}>
+                    <Target size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 text-xl">اختر التحدي</h2>
+                    <p className="text-xs text-gray-400">{selectedUnit?.name}</p>
+                  </div>
                 </div>
 
                 {/* Focus toggle */}
-                <div
-                  className={`p-4 rounded-2xl border-2 mb-5 cursor-pointer transition-all flex items-center justify-between ${focusMode ? "border-[#7B2FBE] bg-[#7B2FBE]/5" : "border-gray-200"}`}
+                <motion.div
                   onClick={() => setFocusMode(v => !v)}
+                  className="p-4 rounded-2xl border-2 mb-5 cursor-pointer flex items-center justify-between gap-3"
+                  style={focusMode ? {
+                    borderColor: "#7B2FBE",
+                    background: "rgba(123,47,190,0.06)",
+                    boxShadow: "0 0 0 3px rgba(123,47,190,0.1)",
+                  } : { borderColor: "rgba(0,0,0,0.08)", background: "white" }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <div>
-                    <p className="font-black text-gray-800">وضع التركيز 🎯</p>
-                    <p className="text-xs text-gray-500 mt-0.5">اختر دروساً محددة فقط</p>
+                    <p className="font-black text-gray-900">وضع التركيز 🎯</p>
+                    <p className="text-xs text-gray-400 mt-0.5">اختر دروساً محددة فقط</p>
                   </div>
-                  <div className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${focusMode ? "bg-[#7B2FBE] justify-end" : "bg-gray-200 justify-start"}`}>
-                    <div className="w-4 h-4 rounded-full bg-white shadow" />
-                  </div>
-                </div>
+                  <motion.div
+                    animate={{ background: focusMode ? "#7B2FBE" : "#e5e7eb" }}
+                    className="w-12 h-6 rounded-full flex items-center px-1 flex-shrink-0"
+                  >
+                    <motion.div
+                      animate={{ x: focusMode ? 24 : 0 }}
+                      className="w-4 h-4 rounded-full bg-white shadow-sm"
+                    />
+                  </motion.div>
+                </motion.div>
 
                 <AnimatePresence>
                   {focusMode && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                      {loading ? <div className="flex justify-center py-6"><div className="w-6 h-6 border-2 border-[#7B2FBE]/30 border-t-[#7B2FBE] rounded-full animate-spin" /></div>
-                        : lessons.length === 0
-                        ? <p className="text-gray-400 text-center py-4 text-sm">لا توجد دروس لهذه الوحدة</p>
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }} className="overflow-hidden space-y-2"
+                    >
+                      {loading ? <Spinner /> : lessons.length === 0
+                        ? <Empty icon="📝" msg="لا توجد دروس لهذه الوحدة" />
                         : (
-                          <div className="space-y-2">
-                            {/* Select all */}
-                            <button onClick={selectAllLessons}
-                              className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#7B2FBE]/30 text-[#7B2FBE] text-sm font-bold hover:bg-[#7B2FBE]/5 transition-colors">
-                              {selectedLessons.length === lessons.length ? "إلغاء تحديد الكل" : "تحديد الكل"}
-                            </button>
-                            {lessons.map(l => (
-                              <motion.button key={l.id} whileTap={{ scale: 0.98 }}
-                                onClick={() => toggleLesson(l.id)}
-                                className={`w-full p-3.5 rounded-xl border-2 text-right flex items-center gap-3 transition-all ${selectedLessons.includes(l.id) ? "border-[#7B2FBE] bg-[#7B2FBE]/5" : "border-gray-200 hover:border-[#7B2FBE]/30"}`}
-                              >
-                                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${selectedLessons.includes(l.id) ? "border-[#7B2FBE] bg-[#7B2FBE]" : "border-gray-300"}`}>
-                                  {selectedLessons.includes(l.id) && <Check size={12} className="text-white" />}
-                                </div>
-                                <span className={`font-medium text-sm ${selectedLessons.includes(l.id) ? "text-[#7B2FBE]" : "text-gray-700"}`}>{l.name}</span>
-                              </motion.button>
-                            ))}
-                          </div>
+                          <>
+                            <motion.button onClick={() => setSelectedLessons(selectedLessons.length === lessons.length ? [] : lessons.map(l => l.id))}
+                              className="w-full py-2.5 rounded-xl text-sm font-black transition-all"
+                              style={{ border: "2px dashed rgba(123,47,190,0.3)", color: "#7B2FBE" }}
+                              whileTap={{ scale: 0.97 }}>
+                              {selectedLessons.length === lessons.length ? "إلغاء الكل" : "تحديد الكل"}
+                            </motion.button>
+                            {lessons.map(l => {
+                              const sel = selectedLessons.includes(l.id);
+                              return (
+                                <motion.button key={l.id} whileTap={{ scale: 0.97 }}
+                                  onClick={() => toggleLesson(l.id)}
+                                  className="w-full p-3.5 rounded-xl border-2 text-right flex items-center gap-3 transition-all"
+                                  style={sel ? {
+                                    borderColor: "#7B2FBE", background: "rgba(123,47,190,0.06)",
+                                    boxShadow: "0 0 0 2px rgba(123,47,190,0.12)",
+                                  } : { borderColor: "rgba(0,0,0,0.08)", background: "white" }}>
+                                  <motion.div
+                                    animate={{ background: sel ? "#7B2FBE" : "white", borderColor: sel ? "#7B2FBE" : "#d1d5db" }}
+                                    className="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0"
+                                  >
+                                    {sel && <Check size={11} className="text-white" />}
+                                  </motion.div>
+                                  <span className={`font-bold text-sm ${sel ? "text-[#7B2FBE]" : "text-gray-700"}`}>{l.name}</span>
+                                </motion.button>
+                              );
+                            })}
+                          </>
                         )}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 {!focusMode && (
-                  <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                    <p className="text-sm text-[#7B2FBE] font-medium">⚡ أسئلة عشوائية من كامل الوحدة</p>
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    className="rounded-2xl p-4 flex items-center gap-3"
+                    style={{ background: "rgba(123,47,190,0.06)", border: "2px solid rgba(123,47,190,0.15)" }}>
+                    <Zap size={18} style={{ color: "#7B2FBE", flexShrink: 0 }} />
+                    <p className="text-sm font-black" style={{ color: "#7B2FBE" }}>أسئلة عشوائية من كامل الوحدة</p>
+                  </motion.div>
                 )}
               </motion.div>
             )}
 
           </AnimatePresence>
-
-          {/* Action */}
-          <div className="mt-8 pb-6">
-            {step < 6 ? (
-              <motion.button whileTap={{ scale: 0.97 }}
-                onClick={() => canProceed() && setStep(s => s + 1)}
-                disabled={!canProceed()}
-                className={`w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all ${canProceed() ? "bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30 hover:bg-[#8B35D6]" : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
-              >
-                التالي <ChevronRight size={20} />
-              </motion.button>
-            ) : (
-              <motion.button whileTap={{ scale: 0.97 }}
-                onClick={handleStart}
-                disabled={!canProceed() || loading}
-                className={`w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all ${canProceed() && !loading ? "bg-[#7B2FBE] text-white shadow-lg shadow-[#7B2FBE]/30 hover:bg-[#8B35D6]" : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
-              >
-                {loading ? <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
-                         : <> ابدأ التحدي 🔥 <Target size={20} /> </>}
-              </motion.button>
-            )}
-          </div>
         </div>
+      </div>
+
+      {/* ── Action Button ── */}
+      <div className="flex-shrink-0 px-4 pb-6 pt-3"
+        style={{ background: "linear-gradient(to top, white 80%, transparent)" }}>
+        {step < 6 ? (
+          <motion.button
+            onClick={() => canProceed() && setStep(s => s + 1)}
+            disabled={!canProceed()}
+            whileTap={canProceed() ? { scale: 0.96 } : {}}
+            whileHover={canProceed() ? { scale: 1.02 } : {}}
+            className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all"
+            style={canProceed() ? {
+              background: "linear-gradient(135deg,#7B2FBE,#4a1a7e)",
+              color: "white",
+              boxShadow: "0 6px 24px rgba(123,47,190,0.45)",
+            } : {
+              background: "#f1f5f9",
+              color: "#94a3b8",
+              cursor: "not-allowed",
+            }}
+          >
+            <span>التالي</span>
+            <ChevronLeft size={20} />
+          </motion.button>
+        ) : (
+          <motion.button
+            onClick={handleStart}
+            disabled={loading || !canProceed()}
+            whileTap={!loading ? { scale: 0.96 } : {}}
+            whileHover={!loading ? { scale: 1.02 } : {}}
+            className="w-full py-5 rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all"
+            style={{
+              background: loading ? "#f1f5f9"
+                : "linear-gradient(135deg,#7B2FBE,#4a1a7e)",
+              color: loading ? "#94a3b8" : "white",
+              boxShadow: loading ? "none" : "0 8px 32px rgba(123,47,190,0.5)",
+            }}
+          >
+            {loading ? (
+              <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Zap size={22} />
+                <span>ابدأ التحدي!</span>
+              </>
+            )}
+          </motion.button>
+        )}
       </div>
     </div>
   );
