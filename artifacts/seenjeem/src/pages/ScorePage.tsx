@@ -293,7 +293,7 @@ export default function ScorePage() {
       </div>
 
       {/* Game Board */}
-      <div className="flex-1 min-h-0 p-2 md:p-4 flex flex-col gap-2 md:gap-4">
+      <div className="score-gameboard flex-1 min-h-0 p-2 md:p-4 flex flex-col gap-2 md:gap-4">
         <div className="flex-1 min-h-0 grid grid-cols-3 gap-1.5 md:gap-4">
           {gameData.team1Categories.map((cat, catIdx) => (
             <CategoryCard
@@ -317,7 +317,7 @@ export default function ScorePage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-2 md:px-6 border-t border-white/10 py-2 md:py-4 flex items-center justify-between gap-1 md:gap-4 relative">
+      <div className="score-bottombar shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-2 md:px-6 border-t border-white/10 py-2 md:py-4 flex items-center justify-between gap-1 md:gap-4 relative">
         {/* Team 1 */}
         <div className="flex items-center gap-1 md:gap-2 flex-1">
           <div className="hidden md:flex h-10 items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
@@ -367,7 +367,7 @@ export default function ScorePage() {
           <motion.img
             src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
             alt="ديوان الدارع"
-            className="h-16 md:h-48 w-auto object-contain"
+            className="h-9 md:h-48 w-auto object-contain"
             style={{ mixBlendMode: "screen" }}
             animate={{
               filter: [

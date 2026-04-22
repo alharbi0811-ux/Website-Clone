@@ -180,7 +180,6 @@
 
   /* ── Score Page — Top Bar (mobile compact) ── */
 
-  /* Top bar: fixed compact height on mobile, content always centered */
   .score-topbar {
     min-height: 52px !important;
     height: 52px !important;
@@ -195,7 +194,7 @@
     align-items: center;
   }
 
-  /* Icon-only action buttons: square, touch-friendly 44px */
+  /* Icon-only action buttons: touch-friendly circles */
   .topbar-icon-btn {
     width: 40px !important;
     height: 40px !important;
@@ -206,6 +205,49 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+  }
+
+  /* ── Score Page — Bottom Bar (mobile compact) ── */
+
+  .score-bottombar {
+    min-height: 52px !important;
+    height: 52px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    align-items: center;
+    gap: 4px !important;
+  }
+
+  /* Inner flex groups inside bottom bar */
+  .score-bottombar > div {
+    align-items: center;
+    gap: 4px !important;
+  }
+
+  /* Score badge: slightly smaller on mobile */
+  .score-bottombar .h-8 {
+    height: 32px !important;
+    min-width: 36px !important;
+    font-size: 13px;
+  }
+
+  /* ── Score Page — Game Board (maximize space) ── */
+
+  .score-gameboard {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    overflow-y: auto;
+    padding: 6px !important;
+    gap: 6px !important;
+    /* Allow content to breathe */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Each team row: equal split of available height */
+  .score-gameboard > div {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    gap: 6px !important;
   }
 
   /* ── Score Page ── */
