@@ -4,7 +4,10 @@ import { useLocation } from "wouter";
 import {
   ChevronLeft, BookOpen, Layers, BookMarked, Target,
   Check, GraduationCap, Users, Zap, Sword, Shield,
-  ChevronRight, Star
+  ChevronRight, Star, Sprout, Flame, Sun, Moon,
+  Calculator, FlaskConical, Globe, Palette, Activity,
+  Monitor, Music, TrendingUp, School, Package, FileText,
+  Award, Hash
 } from "lucide-react";
 
 const API = "/api";
@@ -16,7 +19,9 @@ type Unit    = { id: number; name: string; subjectId: number; term: number };
 type Lesson  = { id: number; name: string; unitId: number };
 
 const STEP_LABELS = ["الفريق", "المرحلة", "الصف", "المادة", "الفصل", "الوحدة", "الدروس"];
-const SUBJECT_ICONS = ["📐", "🔬", "🌍", "📖", "🎨", "🏃", "💻", "🎵"];
+
+const SUBJECT_ICONS_CMP = [Calculator, FlaskConical, Globe, BookOpen, Palette, Activity, Monitor, Music];
+const STAGE_ICONS_CMP   = [Sprout, Flame, Zap];
 
 /* ── Gaming card button ── */
 function GCard({
@@ -88,9 +93,9 @@ const Spinner = () => (
 );
 
 /* ── Empty state ── */
-const Empty = ({ icon, msg }: { icon: string; msg: string }) => (
+const Empty = ({ icon: Icon, msg }: { icon: React.ElementType; msg: string }) => (
   <div className="flex flex-col items-center py-14 text-gray-400 gap-2">
-    <span className="text-4xl opacity-50">{icon}</span>
+    <div className="opacity-30"><Icon size={44} /></div>
     <p className="font-bold text-sm">{msg}</p>
     <p className="text-xs">أضف بيانات من لوحة التحكم</p>
   </div>
@@ -231,7 +236,8 @@ export default function StudyModeSetup() {
 
           <div className="text-center flex-1 px-2">
             <div className="flex items-center justify-center gap-2">
-              <span className="text-white font-black text-base">⚔️ وضع الدراسة</span>
+              <Sword size={15} className="text-white/80" />
+              <span className="text-white font-black text-base">وضع الدراسة</span>
             </div>
             <p className="text-white/60 text-xs mt-0.5">{STEP_LABELS[step]} • الخطوة {step + 1} من {STEP_LABELS.length}</p>
           </div>
@@ -272,10 +278,12 @@ export default function StudyModeSetup() {
                 <div>
                   <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">اختر الجنس</p>
                   <div className="grid grid-cols-2 gap-3">
-                    {([["male", "ذكر", "👦", "Blue Team"], ["female", "أنثى", "👧", "Pink Team"]] as const).map(([g, label, emoji, tag]) => (
-                      <GCard key={g} selected={gender === g} onClick={() => setGender(g)} tall>
+                    {([["male", "ذكر", "Blue Team", Shield], ["female", "أنثى", "Pink Team", Star]] as const).map(([g, label, tag, Ic]) => (
+                      <GCard key={g} selected={gender === g} onClick={() => setGender(g as "male"|"female")} tall>
                         <div className="text-center">
-                          <div className="text-4xl mb-2">{emoji}</div>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 ${gender === g ? "bg-[#7B2FBE]" : "bg-gray-100"}`}>
+                            <Ic size={22} className={gender === g ? "text-white" : "text-gray-400"} />
+                          </div>
                           <div className={`font-black text-lg ${gender === g ? "text-[#7B2FBE]" : "text-gray-800"}`}>{label}</div>
                           <div className="text-[10px] font-bold text-gray-400 mt-0.5">{tag}</div>
                         </div>
@@ -327,20 +335,23 @@ export default function StudyModeSetup() {
                     <p className="text-xs text-gray-400">ما هي مرحلتك الدراسية؟</p>
                   </div>
                 </div>
-                {stages.length === 0 ? <Empty icon="🏫" msg="لا توجد مراحل دراسية" />
+                {stages.length === 0 ? <Empty icon={School} msg="لا توجد مراحل دراسية" />
                   : (
                     <div className="grid grid-cols-1 gap-3">
-                      {stages.map((s, i) => (
+                      {stages.map((s, i) => {
+                        const StageIcon = STAGE_ICONS_CMP[i] ?? BookOpen;
+                        return (
                         <GCard key={s.id} selected={selectedStage?.id === s.id} onClick={() => setSelectedStage(s)} fullWidth tall>
                           <div className="flex items-center gap-4 px-2">
-                            <div className="text-3xl">{["🌱", "🔥", "⚡"][i] ?? "📚"}</div>
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${selectedStage?.id === s.id ? "bg-[#7B2FBE]" : "bg-gray-100"}`}>
+                              <StageIcon size={22} className={selectedStage?.id === s.id ? "text-white" : "text-gray-500"} /></div>
                             <div>
                               <div className={`font-black text-xl ${selectedStage?.id === s.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{s.name}</div>
                               <div className="text-xs text-gray-400 mt-0.5">Zone {i + 1}</div>
                             </div>
                           </div>
                         </GCard>
-                      ))}
+                      );})}
                     </div>
                   )}
               </motion.div>
@@ -360,13 +371,15 @@ export default function StudyModeSetup() {
                     <p className="text-xs text-gray-400">{selectedStage?.name}</p>
                   </div>
                 </div>
-                {loading ? <Spinner /> : grades.length === 0 ? <Empty icon="📋" msg="لا توجد صفوف لهذه المرحلة" />
+                {loading ? <Spinner /> : grades.length === 0 ? <Empty icon={GraduationCap} msg="لا توجد صفوف لهذه المرحلة" />
                   : (
                     <div className="grid grid-cols-2 gap-3">
                       {grades.map((g, i) => (
                         <GCard key={g.id} selected={selectedGrade?.id === g.id} onClick={() => setSelectedGrade(g)} tall>
                           <div className="text-center">
-                            <div className="text-2xl mb-1">{"🥇🥈🥉🏅🎖️🏆🌟⭐🔥💥🚀"[i] ?? "📚"}</div>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 font-black text-base ${selectedGrade?.id === g.id ? "bg-[#7B2FBE] text-white" : "bg-gray-100 text-gray-500"}`}>
+                              {g.order}
+                            </div>
                             <div className={`font-black text-base ${selectedGrade?.id === g.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{g.name}</div>
                             <div className="text-[10px] text-gray-400 mt-0.5">Level {g.order}</div>
                           </div>
@@ -391,17 +404,21 @@ export default function StudyModeSetup() {
                     <p className="text-xs text-gray-400">{selectedGrade?.name}</p>
                   </div>
                 </div>
-                {loading ? <Spinner /> : subjects.length === 0 ? <Empty icon="📖" msg="لا توجد مواد لهذا الصف" />
+                {loading ? <Spinner /> : subjects.length === 0 ? <Empty icon={BookOpen} msg="لا توجد مواد لهذا الصف" />
                   : (
                     <div className="grid grid-cols-2 gap-3">
-                      {subjects.map((s, i) => (
+                      {subjects.map((s, i) => {
+                        const SubIcon = SUBJECT_ICONS_CMP[i % SUBJECT_ICONS_CMP.length];
+                        return (
                         <GCard key={s.id} selected={selectedSubject?.id === s.id} onClick={() => setSelectedSubject(s)}>
                           <div className="text-center py-2">
-                            <div className="text-3xl mb-2">{SUBJECT_ICONS[i % SUBJECT_ICONS.length]}</div>
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-2 ${selectedSubject?.id === s.id ? "bg-[#7B2FBE]" : "bg-gray-100"}`}>
+                              <SubIcon size={20} className={selectedSubject?.id === s.id ? "text-white" : "text-gray-500"} />
+                            </div>
                             <div className={`font-black text-sm leading-tight ${selectedSubject?.id === s.id ? "text-[#7B2FBE]" : "text-gray-900"}`}>{s.name}</div>
                           </div>
                         </GCard>
-                      ))}
+                      );})}
                     </div>
                   )}
               </motion.div>
@@ -425,7 +442,11 @@ export default function StudyModeSetup() {
                   {([1, 2] as const).map(t => (
                     <GCard key={t} selected={term === t} onClick={() => setTerm(t)} tall>
                       <div className="text-center">
-                        <div className="text-4xl mb-2">{t === 1 ? "🌞" : "🌙"}</div>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2 ${term === t ? "bg-[#7B2FBE]" : "bg-gray-100"}`}>
+                          {t === 1
+                            ? <Sun size={24} className={term === t ? "text-white" : "text-gray-500"} />
+                            : <Moon size={24} className={term === t ? "text-white" : "text-gray-500"} />}
+                        </div>
                         <div className={`font-black text-lg ${term === t ? "text-[#7B2FBE]" : "text-gray-900"}`}>
                           {t === 1 ? "الفصل الأول" : "الفصل الثاني"}
                         </div>
@@ -451,7 +472,7 @@ export default function StudyModeSetup() {
                     <p className="text-xs text-gray-400">{selectedSubject?.name} • ف{term}</p>
                   </div>
                 </div>
-                {loading ? <Spinner /> : units.length === 0 ? <Empty icon="📦" msg="لا توجد وحدات لهذا الفصل" />
+                {loading ? <Spinner /> : units.length === 0 ? <Empty icon={Package} msg="لا توجد وحدات لهذا الفصل" />
                   : (
                     <div className="space-y-2.5">
                       {units.map((u, i) => (
@@ -503,7 +524,10 @@ export default function StudyModeSetup() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <div>
-                    <p className="font-black text-gray-900">وضع التركيز 🎯</p>
+                    <div className="flex items-center gap-2">
+                      <Target size={15} style={{ color: "#7B2FBE" }} />
+                      <p className="font-black text-gray-900">وضع التركيز</p>
+                    </div>
                     <p className="text-xs text-gray-400 mt-0.5">اختر دروساً محددة فقط</p>
                   </div>
                   <motion.div
@@ -524,7 +548,7 @@ export default function StudyModeSetup() {
                       exit={{ opacity: 0, height: 0 }} className="overflow-hidden space-y-2"
                     >
                       {loading ? <Spinner /> : lessons.length === 0
-                        ? <Empty icon="📝" msg="لا توجد دروس لهذه الوحدة" />
+                        ? <Empty icon={FileText} msg="لا توجد دروس لهذه الوحدة" />
                         : (
                           <>
                             <motion.button onClick={() => setSelectedLessons(selectedLessons.length === lessons.length ? [] : lessons.map(l => l.id))}
