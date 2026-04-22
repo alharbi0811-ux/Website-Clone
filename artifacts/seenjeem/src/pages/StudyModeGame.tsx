@@ -200,7 +200,15 @@ export default function StudyModeGame() {
         {/* Center – Question + answer */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 gap-5 overflow-y-auto">
 
-          {/* Timer – above question */}
+          {/* Question number – very top */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white font-black text-sm flex items-center justify-center flex-shrink-0">
+              {currentIndex + 1}
+            </div>
+            <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
+          </div>
+
+          {/* Timer */}
           <div
             onClick={() => setRunning(r => !r)}
             className={`flex items-center gap-2 px-5 py-2 rounded-2xl cursor-pointer transition-all font-black text-lg select-none ${
@@ -220,12 +228,6 @@ export default function StudyModeGame() {
             >
               {/* Question – no card frame */}
               <div className="px-2 py-2 text-center">
-                <div className="flex items-center justify-center gap-2 mb-4 text-[48px]">
-                  <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white font-black flex items-center justify-center flex-shrink-0 text-[48px]">
-                    {currentIndex + 1}
-                  </div>
-                  <span className="font-bold text-gray-400 uppercase tracking-wider text-[48px]">سؤال</span>
-                </div>
                 <p className="text-gray-900 text-[70px] font-black text-center">{currentQ.questionText}</p>
                 {currentQ.questionImage && (
                   <img src={currentQ.questionImage} alt="" className="w-full rounded-xl object-contain max-h-48 mt-4 border border-gray-100" />
