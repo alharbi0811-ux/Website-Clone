@@ -231,6 +231,18 @@
     font-size: 13px;
   }
 
+  /* ── Bottom Bar — Mobile vertical divider (replaces Diwan logo panel) ── */
+  .bottombar-divider {
+    width: 1.5px;
+    height: 32px;          /* shorter than full bar for a refined look */
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 999px;
+    box-shadow:
+      0 0 4px rgba(255, 255, 255, 0.9),
+      0 0 10px rgba(255, 255, 255, 0.5),
+      0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
   /* ── Score Page — Game Board (maximize space) ── */
 
   .score-gameboard {
