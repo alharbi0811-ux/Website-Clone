@@ -220,7 +220,7 @@ export default function StudyModeGame() {
             >
               {/* Question – no card frame */}
               <div className="px-2 py-2 text-center">
-                <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-4 text-[48px]">
                   <div className="w-7 h-7 rounded-full bg-[#7B2FBE] text-white font-black flex items-center justify-center flex-shrink-0 text-[48px]">
                     {currentIndex + 1}
                   </div>
