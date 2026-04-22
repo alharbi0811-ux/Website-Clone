@@ -15,6 +15,7 @@ export const categoriesTable = pgTable("categories", {
   isActive: boolean("is_active").notNull().default(true),
   status: text("status").notNull().default("open"),
   lockMessage: text("lock_message"),
+  isDefaultOpen: boolean("is_default_open").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
