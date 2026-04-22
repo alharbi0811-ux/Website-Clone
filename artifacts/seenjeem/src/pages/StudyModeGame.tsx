@@ -161,9 +161,14 @@ export default function StudyModeGame() {
         </button>
         <div className="text-center flex-1">
           <p className="text-white font-black text-sm truncate px-2">{gameData.gameName}</p>
-          <p className="text-white/70 text-xs">{currentIndex + 1} / {total}</p>
         </div>
-        <div className="w-9 flex-shrink-0" />
+        {/* Question number badge */}
+        <div className="flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-xl flex-shrink-0">
+          <div className="w-5 h-5 rounded-full bg-white text-[#7B2FBE] font-black text-xs flex items-center justify-center">
+            {currentIndex + 1}
+          </div>
+          <span className="text-white font-bold text-xs">{currentIndex + 1} / {total}</span>
+        </div>
       </div>
       {/* Progress bar */}
       <div className="h-1.5 bg-gray-100 flex-shrink-0">
@@ -199,14 +204,6 @@ export default function StudyModeGame() {
 
         {/* Center – Question + answer */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 gap-5 overflow-y-auto">
-
-          {/* Question number – very top */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#7B2FBE] text-white font-black text-sm flex items-center justify-center flex-shrink-0">
-              {currentIndex + 1}
-            </div>
-            <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
-          </div>
 
           {/* Timer */}
           <div
