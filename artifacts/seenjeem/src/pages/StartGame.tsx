@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navbar } from "@/components/sections/Navbar";
-import { Check, Info, X, Search, Lock } from "lucide-react";
+import { Check, Info, X, Search, Lock, ArrowRight, Play } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 
@@ -89,39 +88,79 @@ export default function StartGame() {
 
   const totalFiltered = filteredSections.reduce((acc, s) => acc + s.categories.length, 0);
 
+  const handleStartGame = async () => {
+    const allCats = sections.flatMap((s) => s.categories);
+    const t1Cats = team1.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
+    const t2Cats = team2.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
+    const gData = {
+      team1Name: team1Name || "الفريق الأول",
+      team2Name: team2Name || "الفريق الثاني",
+      gameName: gameName || "ركز",
+      team1Categories: t1Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
+      team2Categories: t2Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
+      team1Tools,
+      team2Tools,
+    };
+    localStorage.setItem("rakez-game-data", JSON.stringify(gData));
+    localStorage.removeItem("rakez-played-cells");
+    localStorage.removeItem("rakez-used-tools");
+    localStorage.removeItem("rakez-used-question-ids");
+    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: 0, team2Score: 0 }));
+    localStorage.setItem("rakez-current-team", JSON.stringify(1));
+    localStorage.removeItem("rakez-session-id");
+    if (user && token) {
+      try {
+        const res = await fetch(`${API_BASE}/history`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ gameName: gData.gameName, gameData: gData }),
+        });
+        if (res.ok) { const session = await res.json(); localStorage.setItem("rakez-session-id", String(session.id)); }
+      } catch {}
+    }
+    navigate("/score-page");
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground" dir="rtl">
-      <Navbar />
+    /* ── Outer centering shell ── */
+    <div className="min-h-screen w-full flex justify-center bg-[#120824]" dir="rtl">
+    {/* ── Inner game container — max 420px, 15/70/15 layout ── */}
+    <div className="h-screen w-full max-w-[420px] bg-background text-foreground flex flex-col overflow-hidden">
 
-      <main className="pt-20 sm:pt-24 md:pt-28 pb-16 sm:pb-20 md:pb-28">
-        <div className="container mx-auto px-3 sm:px-4 max-w-7xl">
+      {/* ── TOP BAR: 15vh ── */}
+      <div
+        className="shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-4 flex items-center justify-between shadow-lg"
+        style={{ height: "15vh", minHeight: 64 }}
+      >
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-3 py-2 rounded-full text-sm font-bold transition-all border border-white/25 shrink-0"
+        >
+          <ArrowRight size={15} />
+          <span className="hidden sm:inline">الرئيسية</span>
+        </button>
+        <div className="flex flex-col items-center">
+          <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-8 mb-0.5" />
+          <span className="text-white font-black text-xs tracking-wide opacity-80">إنشاء لعبة</span>
+        </div>
+        <div className="w-[68px]" />
+      </div>
 
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground mb-3">إنشاء لعبة</h1>
-            <p className="text-foreground/60 text-base sm:text-lg">لعبة جماعية تفاعلية نختبر فيها معرفتكم وثقافتكم</p>
-          </motion.div>
+      {/* ── MIDDLE: 70vh — scrollable ── */}
+      <div className="overflow-y-auto overflow-x-hidden" style={{ height: "70vh", minHeight: 0 }}>
+        <div className="px-3 pt-4 pb-4">
 
           {/* Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 }}
-            className="mb-8 flex justify-center"
-          >
-            <div className="relative w-full max-w-lg">
-              <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#7B2FBE" }} />
+          <div className="mb-4 flex justify-center">
+            <div className="relative w-full">
+              <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "#7B2FBE" }} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن فئة..."
                 dir="rtl"
-                className="w-full py-3 pr-12 pl-5 rounded-full text-base font-medium outline-none transition-all"
+                className="w-full py-2.5 pr-10 pl-4 rounded-full text-sm font-medium outline-none transition-all"
                 style={{
                   background: "#fff",
                   border: "2px solid",
@@ -133,19 +172,19 @@ export default function StartGame() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center"
                   style={{ background: "#e9d5ff", color: "#7B2FBE" }}
                 >
                   <X size={11} />
                 </button>
               )}
               {searchQuery && totalFiltered > 0 && (
-                <span className="absolute -bottom-6 right-2 text-xs font-medium" style={{ color: "#7B2FBE" }}>
+                <span className="absolute -bottom-5 right-2 text-xs font-medium" style={{ color: "#7B2FBE" }}>
                   {totalFiltered} فئة
                 </span>
               )}
             </div>
-          </motion.div>
+          </div>
 
           {/* Selection Status */}
           <motion.div
@@ -411,61 +450,75 @@ export default function StartGame() {
                 </div>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex justify-center"
-              >
-                <button
-                  onClick={async () => {
-                    const allCats = sections.flatMap((s) => s.categories);
-                    const t1Cats = team1.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
-                    const t2Cats = team2.map((id) => allCats.find((c) => c.id === id)!).filter(Boolean);
-                    const gData = {
-                      team1Name: team1Name || "الفريق الأول",
-                      team2Name: team2Name || "الفريق الثاني",
-                      gameName: gameName || "ركز",
-                      team1Categories: t1Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
-                      team2Categories: t2Cats.map((c) => ({ id: c.id, name: c.name, img: c.img })),
-                      team1Tools,
-                      team2Tools,
-                    };
-                    localStorage.setItem("rakez-game-data", JSON.stringify(gData));
-                    localStorage.removeItem("rakez-played-cells");
-                    localStorage.removeItem("rakez-used-tools");
-                    localStorage.removeItem("rakez-used-question-ids");
-                    localStorage.setItem("rakez-scores", JSON.stringify({ team1Score: 0, team2Score: 0 }));
-                    localStorage.setItem("rakez-current-team", JSON.stringify(1));
-                    localStorage.removeItem("rakez-session-id");
-
-                    if (user && token) {
-                      try {
-                        const res = await fetch(`${API_BASE}/history`, {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                          body: JSON.stringify({ gameName: gData.gameName, gameData: gData }),
-                        });
-                        if (res.ok) {
-                          const session = await res.json();
-                          localStorage.setItem("rakez-session-id", String(session.id));
-                        }
-                      } catch {}
-                    }
-                    navigate("/score-page");
-                  }}
-                  className="bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-xl py-4 px-16 rounded-full shadow-[0_0_40px_rgba(123,47,190,0.6)] transition-all hover:shadow-[0_0_60px_rgba(123,47,190,0.8)] hover:-translate-y-1"
-                >
-                  ابدأ اللعب
-                </button>
-              </motion.div>
             </motion.div>
           )}
 
         </div>
-      </main>
+      </div>
 
-      {/* Info Modal */}
+      {/* ── BOTTOM BAR: 15vh — always visible ── */}
+      <div
+        className="shrink-0 bg-white border-t-2 border-purple-100 flex items-center justify-between px-4 gap-3"
+        style={{ height: "15vh", minHeight: 60 }}
+      >
+        {/* Team 1 slots */}
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          <span className="text-[10px] text-foreground/40 font-bold">فريقك</span>
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs transition-all ${
+                  team1[i]
+                    ? "bg-[#7B2FBE] border-[#7B2FBE] text-white scale-110"
+                    : "border-purple-200 bg-white text-foreground/30"
+                }`}
+              >
+                {team1[i] ? <Check size={13} /> : i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Start button — center */}
+        <motion.button
+          onClick={handleStartGame}
+          disabled={selectedIds.length < MAX}
+          whileHover={selectedIds.length >= MAX ? { scale: 1.05 } : {}}
+          whileTap={selectedIds.length >= MAX ? { scale: 0.95 } : {}}
+          className={`flex items-center gap-2 font-black text-base py-3 px-6 rounded-full transition-all ${
+            selectedIds.length >= MAX
+              ? "bg-[#7B2FBE] text-white shadow-[0_0_30px_rgba(123,47,190,0.5)] hover:shadow-[0_0_45px_rgba(123,47,190,0.7)]"
+              : "bg-gray-100 text-gray-300 cursor-not-allowed"
+          }`}
+        >
+          <Play size={16} />
+          ابدأ
+        </motion.button>
+
+        {/* Team 2 slots */}
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          <span className="text-[10px] text-foreground/40 font-bold">المنافس</span>
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs transition-all ${
+                  team2[i]
+                    ? "bg-violet-400 border-violet-400 text-white scale-110"
+                    : "border-purple-200 bg-white text-foreground/30"
+                }`}
+              >
+                {team2[i] ? <Check size={13} /> : i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+      {/* Info Modal — fixed overlay, outside the scrollable containers */}
       <AnimatePresence>
         {infoCard && (
           <motion.div

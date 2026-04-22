@@ -1,0 +1,114 @@
+You are a senior frontend engineer specializing in mobile-first UI design and responsive game interfaces.
+
+Your task is to FIX layout issues and IMPROVE mobile usability for the following pages:
+- Game Page
+- Create Game Page
+
+CRITICAL ISSUES TO FIX:
+- Overlapping elements
+- Broken 15% / 70% / 15% layout structure
+- Content overflowing outside containers
+- Poor spacing on iPhone screens
+
+DO NOT redesign the UI.
+DO NOT change colors or branding.
+ONLY fix layout stability and mobile usability.
+
+----------------------------------
+LAYOUT STRUCTURE (IMPORTANT)
+----------------------------------
+
+For GAME + CREATE GAME pages:
+
+Page layout must be:
+
+- Top Bar: 15vh
+- Middle Content: 70vh
+- Bottom Bar: 15vh
+
+Implementation rules:
+- Use flex-direction: column
+- Page height must be 100vh
+- Middle section must use:
+  min-height: 0
+  overflow-y: auto
+
+Example structure:
+
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.middle {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+----------------------------------
+MOBILE OPTIMIZATION (iPhone ONLY)
+----------------------------------
+
+For screens max-width: 768px:
+
+1) Replace bottom bar TEXT BUTTONS with ICON BUTTONS ONLY.
+
+- Convert all text buttons into icons
+- Reduce space usage in bottom bar
+- Keep functionality identical
+
+2) Suggested behavior:
+- Use icons for actions (e.g. home, settings, start, answer, etc.)
+- Keep labels hidden on mobile
+- Ensure touch-friendly size (minimum 44px height)
+
+3) Bottom bar layout:
+- Use flexbox
+- Distribute icons evenly
+- Keep clean spacing
+
+Example:
+.bottom-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.button-text {
+  display: none;
+}
+
+.button-icon {
+  display: block;
+}
+
+----------------------------------
+OVERFLOW FIXES
+----------------------------------
+
+- Add box-sizing: border-box globally
+- Ensure no element exceeds container width
+- Prevent horizontal scrolling completely
+- Ensure images and media are responsive
+
+----------------------------------
+DESKTOP BEHAVIOR
+----------------------------------
+
+- Desktop must remain EXACTLY the same
+- Do NOT convert buttons into icons on desktop
+- Only mobile gets icon mode
+
+----------------------------------
+FINAL OUTPUT:
+----------------------------------
+
+- Return full updated HTML + CSS
+- Keep code clean and structured
+- Add comments for mobile icon conversion and layout fix
+
+GOAL:
+Fix broken layout issues AND optimize mobile experience by converting bottom controls into a compact icon-based UI while maintaining full desktop design.
