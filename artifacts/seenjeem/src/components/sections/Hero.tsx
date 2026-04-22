@@ -63,9 +63,12 @@ export function Hero() {
           </button>
           <button
             onClick={() => navigate("/study-setup")}
-            className="group relative w-full sm:w-auto bg-white/10 border-2 border-white/40 text-white font-bold text-xl py-4 px-10 rounded-2xl hover:bg-white/20 hover:border-white/70 hover:-translate-y-1 transition-all overflow-hidden backdrop-blur-sm"
+            className="group relative w-full sm:w-auto bg-gradient-to-l from-[#9b59f5] to-[#7B2FBE] text-white font-bold text-xl py-4 px-10 rounded-2xl shadow-[0_0_28px_rgba(123,47,190,0.6)] hover:shadow-[0_0_45px_rgba(123,47,190,0.9)] hover:-translate-y-1 transition-all overflow-hidden"
           >
-            <span className="relative z-10">وضع الدراسة</span>
+            <span className="relative z-10 flex flex-col items-center gap-0.5">
+              <span>وضع الدراسة 🔥</span>
+              <span className="text-xs font-medium text-white/70">حوّل المذاكرة إلى تحدي</span>
+            </span>
             <div className="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out skew-x-12"></div>
           </button>
         </motion.div>
