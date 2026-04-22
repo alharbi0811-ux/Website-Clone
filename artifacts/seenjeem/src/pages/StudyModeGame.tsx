@@ -165,7 +165,6 @@ export default function StudyModeGame() {
         </div>
         <div className="w-9 flex-shrink-0" />
       </div>
-
       {/* Progress bar */}
       <div className="h-1.5 bg-gray-100 flex-shrink-0">
         <motion.div className="h-full bg-[#7B2FBE]"
@@ -173,7 +172,6 @@ export default function StudyModeGame() {
           transition={{ duration: 0.5 }}
         />
       </div>
-
       {/* Smart comment toast */}
       <AnimatePresence>
         {comment && (
@@ -187,7 +185,6 @@ export default function StudyModeGame() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Main 3-column layout */}
       <div className="flex flex-1 overflow-hidden">
 
@@ -229,7 +226,7 @@ export default function StudyModeGame() {
                   </div>
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">سؤال</span>
                 </div>
-                <p className="text-5xl font-black text-gray-900 leading-relaxed">{currentQ.questionText}</p>
+                <p className="text-gray-900 text-[70px] font-black text-center">{currentQ.questionText}</p>
                 {currentQ.questionImage && (
                   <img src={currentQ.questionImage} alt="" className="w-full rounded-xl object-contain max-h-48 mt-4 border border-gray-100" />
                 )}
@@ -286,7 +283,6 @@ export default function StudyModeGame() {
           <div className="text-[11px] font-bold text-gray-500 mt-2 text-center leading-tight">{gameData.team2Name}</div>
         </div>
       </div>
-
       {/* End Game Modal */}
       <AnimatePresence>
         {showEndModal && (
