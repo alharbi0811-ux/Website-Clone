@@ -1,0 +1,58 @@
+You are a senior frontend engineer and UI/UX specialist.
+
+TASK:
+Perform a FINAL MOBILE UI REFINEMENT for the GAME PAGE only, combining layout optimization and bottom bar redesign.
+
+IMPORTANT RULES:
+- Do NOT change desktop design at all
+- Do NOT redesign the UI or change colors/theme
+- ONLY apply changes inside:
+  @media (max-width: 768px)
+
+----------------------------------
+MOBILE GAME LAYOUT OPTIMIZATION
+----------------------------------
+
+1) LAYOUT BALANCE:
+- Reduce TOP BAR height to a compact size (10vh–12vh)
+- Reduce BOTTOM BAR height to a compact size (10vh–12vh)
+- Increase focus on the MIDDLE CONTENT area (game area / categories / questions)
+- Middle section must take maximum available space and remain scrollable if needed
+- Ensure no overlapping or hidden elements
+
+2) REMOVE CENTER PANEL (BOTTOM BAR ELEMENT):
+- Remove any central "game board / panel / section" inside the bottom bar on mobile ONLY
+
+3) ADD VISUAL DIVIDER:
+- Replace removed center panel with a vertical divider line in the bottom bar
+- Divider must be:
+  - Centered vertically and horizontally
+  - Full height of bottom bar
+  - White color
+  - Slight glow effect (soft, subtle, modern)
+  - 1px–2px thickness
+
+4) MOBILE UX IMPROVEMENTS:
+- Ensure all elements are touch-friendly
+- Maintain proper spacing and alignment
+- Prevent overflow and horizontal scrolling
+- Keep UI clean and readable
+
+----------------------------------
+DESKTOP RULE (CRITICAL):
+----------------------------------
+- Desktop layout must remain EXACTLY unchanged
+- No modifications outside mobile media queries
+
+----------------------------------
+OUTPUT:
+----------------------------------
+- Return full updated HTML + CSS
+- Clean, structured, production-ready code
+- Include comments explaining:
+  • layout adjustments
+  • bottom bar modification
+  • divider implementation
+
+GOAL:
+Create a clean, modern mobile game interface with reduced top/bottom bars, maximized gameplay area, and a minimal glowing vertical divider replacing the removed bottom center panel.
