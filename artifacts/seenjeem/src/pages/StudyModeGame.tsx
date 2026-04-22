@@ -199,7 +199,7 @@ export default function StudyModeGame() {
           style={{ background: "rgba(123,47,190,0.03)" }}
         >
           <div className="text-5xl font-black text-[#7B2FBE] leading-none">{scores.team1}</div>
-          <div className="text-[11px] font-bold text-gray-500 mt-2 text-center leading-tight">{gameData.team1Name}</div>
+          <div className="text-[52px] font-bold text-gray-500 mt-2 text-center leading-tight">{gameData.team1Name}</div>
         </div>
 
         {/* Center – Question + answer */}
@@ -279,7 +279,7 @@ export default function StudyModeGame() {
           style={{ background: "rgba(123,47,190,0.03)" }}
         >
           <div className="text-5xl font-black text-[#7B2FBE] leading-none">{scores.team2}</div>
-          <div className="text-[11px] font-bold text-gray-500 mt-2 text-center leading-tight">{gameData.team2Name}</div>
+          <div className="text-[52px] font-bold text-gray-500 mt-2 text-center leading-tight">{gameData.team2Name}</div>
         </div>
       </div>
       {/* End Game Modal */}
