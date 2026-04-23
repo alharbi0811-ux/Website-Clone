@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { ArrowRight, LogOut, Eye, Minus, Plus, RotateCcw, Trophy, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { IconBtn } from "@/components/IconBtn";
 
 const API_BASE = "/api";
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
@@ -280,16 +281,13 @@ export default function ScorePage() {
           <div className="absolute inset-x-0 flex justify-center pointer-events-none">
             <span className="text-white font-bold text-xs md:text-lg">{gameData.gameName}</span>
           </div>
-          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
-            <button onClick={handleEndGame} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
-              <Eye size={16} /><span className="hidden md:inline">انتهاء اللعبة</span>
-            </button>
-            <button onClick={handleResetBoard} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
-              <RotateCcw size={16} /><span className="hidden md:inline">إعادة</span>
-            </button>
-            <button onClick={handleExit} className="topbar-icon-btn flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white rounded-full text-sm font-bold transition-all border-2 border-white/25 hover:border-white/50 px-2 py-2 md:px-5 md:py-2.5 md:w-36">
-              <LogOut size={16} /><span className="hidden md:inline">الخروج</span>
-            </button>
+          <div className="flex items-center gap-1 md:gap-1.5 shrink-0">
+            <IconBtn icon={<Eye size={16} />} label="انتهاء اللعبة" onClick={handleEndGame} tooltipPos="bottom"
+              className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
+            <IconBtn icon={<RotateCcw size={16} />} label="إعادة" onClick={handleResetBoard} tooltipPos="bottom"
+              className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
+            <IconBtn icon={<LogOut size={16} />} label="الخروج" onClick={handleExit} tooltipPos="bottom"
+              className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
           </div>
         </div>
       </div>

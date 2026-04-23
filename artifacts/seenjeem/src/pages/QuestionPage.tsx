@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { LogOut, Eye, Pause, Play, RotateCw, ArrowRight } from "lucide-react";
+import { IconBtn } from "@/components/IconBtn";
 import LogoQR from "@/components/LogoQR";
 
 const CDN = "https://d442zbpa1tgal.cloudfront.net";
@@ -588,16 +589,15 @@ export default function QuestionPage() {
       <div className="absolute inset-x-0 flex justify-center pointer-events-none">
         <span className="text-white font-bold text-sm md:text-lg">{gameData!.gameName}</span>
       </div>
-      <div className="flex items-center gap-1 md:gap-2 shrink-0">
-        <button onClick={handleBackToBoard} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <Eye size={14} /><span className="hidden md:inline">انتهاء اللعبة</span>
-        </button>
-        <button onClick={handleBackToBoard} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <ArrowRight size={14} /><span className="hidden md:inline">الرجوع</span>
-        </button>
-        <button onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }} className="flex items-center gap-1 md:gap-1.5 bg-white/15 hover:bg-white/30 active:scale-95 text-white px-2 py-2 md:px-4 md:py-2 rounded-full text-sm font-bold transition-all border-2 border-white/25">
-          <LogOut size={14} /><span className="hidden md:inline">الخروج</span>
-        </button>
+      <div className="flex items-center gap-1 md:gap-1.5 shrink-0">
+        <IconBtn icon={<Eye size={14} />} label="انتهاء اللعبة" onClick={handleBackToBoard} tooltipPos="bottom"
+          className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
+        <IconBtn icon={<ArrowRight size={14} />} label="الرجوع" onClick={handleBackToBoard} tooltipPos="bottom"
+          className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
+        <IconBtn icon={<LogOut size={14} />} label="الخروج"
+          onClick={() => { localStorage.removeItem("rakez-game-data"); navigate("/start-game"); }}
+          tooltipPos="bottom"
+          className="bg-white/15 hover:bg-white/30 border-2 border-white/25 hover:border-white/45 text-white" />
       </div>
     </div>
   );
