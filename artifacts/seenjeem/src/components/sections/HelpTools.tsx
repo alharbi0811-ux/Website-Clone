@@ -17,7 +17,8 @@ const tools = [
     title: "جاوب جوابين",
     desc: "متردد بجوابين؟ هذه لك. جاوب بالآثنين عشان تضمن النقاط",
     timing: "تستخدمها بعد ما تشوف السؤال",
-    icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg",
+    icon: "/hand-icon.png",
+    colored: true,
   },
   {
     title: "استريح",
@@ -117,9 +118,11 @@ export function HelpTools() {
                       src={tool.icon}
                       alt={tool.title}
                       className="w-full h-full object-contain"
-                      style={{
-                        filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15) drop-shadow(0 4px 16px rgba(123,47,190,0.4))",
-                      }}
+                      style={
+                        (tool as any).colored
+                          ? { filter: "drop-shadow(0 4px 16px rgba(123,47,190,0.4))" }
+                          : { filter: "brightness(0) saturate(100%) invert(18%) sepia(89%) saturate(1200%) hue-rotate(255deg) brightness(1.15) drop-shadow(0 4px 16px rgba(123,47,190,0.4))" }
+                      }
                     />
                   </motion.div>
 
