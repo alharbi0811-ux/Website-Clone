@@ -855,7 +855,7 @@ export default function QuestionPage() {
                       src={questionData.answerImage || questionData.image}
                       alt="صورة الإجابة"
                       onClick={() => setLightboxImage((questionData.answerImage || questionData.image)!)}
-                      className="max-h-[480px] max-w-2xl object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+                      className="max-h-[700px] max-w-5xl object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
                     />
                   </div>
                 ) : <div className="flex-1" />}
