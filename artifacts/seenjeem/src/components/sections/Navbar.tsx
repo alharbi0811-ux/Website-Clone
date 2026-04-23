@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Moon, Sun } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,6 +12,8 @@ export function Navbar() {
   const accountRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -35,8 +38,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
-        isScrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3" : "py-5"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isDark
+          ? `bg-[#0a0010]/90 backdrop-blur-md border-b border-white/5 ${isScrolled ? "shadow-[0_4px_24px_rgba(123,47,190,0.18)] py-3" : "py-5"}`
+          : `bg-white/95 backdrop-blur-md ${isScrolled ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)] py-3" : "py-5"}`
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,11 +73,36 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <motion.button
+              onClick={toggleTheme}
+              whileTap={{ scale: 0.88 }}
+              whileHover={{ scale: 1.08 }}
+              className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ${
+                isDark
+                  ? "bg-white/10 hover:bg-white/18 text-yellow-300"
+                  : "bg-foreground/5 hover:bg-foreground/10 text-foreground/70"
+              }`}
+              title={isDark ? "الوضع الفاتح" : "الوضع الداكن"}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isDark ? "moon" : "sun"}
+                  initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {isDark ? <Sun size={19} /> : <Moon size={19} />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
+
             {user ? (
               <div className="flex items-center gap-3">
                 {user.isAdmin && (
                   <Link href="/admin">
-                    <a className="flex items-center gap-1.5 text-[#7B2FBE] font-semibold text-sm px-3 py-2 rounded-full bg-violet-50 hover:bg-violet-100 transition-colors">
+                    <a className={`flex items-center gap-1.5 text-[#7B2FBE] font-semibold text-sm px-3 py-2 rounded-full transition-colors ${isDark ? "bg-violet-500/10 hover:bg-violet-500/20" : "bg-violet-50 hover:bg-violet-100"}`}>
                       <LayoutDashboard size={15} />
                       <span className="text-[20px]">الإدارة</span>
                     </a>
@@ -93,11 +123,13 @@ export function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -6, scale: 0.96 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute left-0 mt-2 w-44 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                        className={`absolute left-0 mt-2 w-44 rounded-2xl shadow-xl overflow-hidden z-50 border ${
+                          isDark ? "bg-[#120820] border-white/10" : "bg-white border-gray-100"
+                        }`}
                       >
                         <button
                           onClick={() => { logout(); setAccountMenuOpen(false); }}
-                          className="flex items-center gap-2 w-full px-4 py-3 text-red-500 hover:bg-red-50 transition-colors text-sm"
+                          className={`flex items-center gap-2 w-full px-4 py-3 text-red-500 transition-colors text-sm ${isDark ? "hover:bg-red-500/10" : "hover:bg-red-50"}`}
                         >
                           <LogOut size={16} />
                           تسجيل الخروج
@@ -124,13 +156,34 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-foreground z-10 p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Mobile: theme toggle + hamburger */}
+          <div className="md:hidden flex items-center gap-2 z-10">
+            <motion.button
+              onClick={toggleTheme}
+              whileTap={{ scale: 0.85 }}
+              className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${
+                isDark ? "bg-white/10 text-yellow-300" : "bg-foreground/5 text-foreground/70"
+              }`}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={isDark ? "moon" : "sun"}
+                  initial={{ opacity: 0, rotate: -30, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 30, scale: 0.7 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {isDark ? <Sun size={17} /> : <Moon size={17} />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
+            <button
+              className="text-foreground p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
       </div>
 

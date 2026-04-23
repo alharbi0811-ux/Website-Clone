@@ -382,3 +382,49 @@
 .game-float-1 { animation: gameFloat 5.0s ease-in-out 0.75s infinite; }
 .game-float-2 { animation: gameFloat 3.8s ease-in-out 1.5s  infinite; }
 .game-float-3 { animation: gameFloat 4.6s ease-in-out 0.35s infinite; }
+
+/* ── Gaming Micro-interaction: button press pulse ── */
+@keyframes btnPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(123,47,190,0.55); }
+  70%  { box-shadow: 0 0 0 10px rgba(123,47,190,0); }
+  100% { box-shadow: 0 0 0 0 rgba(123,47,190,0); }
+}
+.game-pulse:active { animation: btnPulse 0.38s ease-out; }
+
+/* ── Gaming Card Lift: hover effect ── */
+.game-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(123,47,190,0.22), 0 2px 8px rgba(0,0,0,0.12);
+  border-color: rgba(123,47,190,0.45);
+}
+
+/* ── Dark mode: stronger glow on cards (when .light is NOT present) ── */
+#app-root:not(.light) .glass-panel {
+  box-shadow: 0 4px 32px rgba(123,47,190,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+#app-root:not(.light) .glass-panel:hover {
+  box-shadow: 0 8px 50px rgba(123,47,190,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  border-color: rgba(138,43,226,0.65);
+}
+
+/* ── Ripple effect ── */
+@keyframes ripple {
+  to { transform: scale(3); opacity: 0; }
+}
+.ripple-container { position: relative; overflow: hidden; }
+.ripple-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.25);
+  transform: scale(0);
+  pointer-events: none;
+}
+.ripple-container:active::after {
+  animation: ripple 0.5s ease-out;
+}

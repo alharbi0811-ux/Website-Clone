@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ViewportProvider } from "@/context/ViewportContext";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -116,19 +117,32 @@ function Router() {
   );
 }
 
+function AppShell() {
+  const { theme } = useTheme();
+  return (
+    <div
+      id="app-root"
+      dir="rtl"
+      className={`${theme === "light" ? "light" : ""} w-full min-h-screen transition-colors duration-300`}
+    >
+      <Router />
+      <FeedbackModal />
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <ViewportProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <div id="app-root" dir="rtl" className="light w-full min-h-screen">
-                <Router />
-                <FeedbackModal />
-              </div>
-            </WouterRouter>
-            <Toaster />
+            <ThemeProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <AppShell />
+              </WouterRouter>
+              <Toaster />
+            </ThemeProvider>
           </ViewportProvider>
         </TooltipProvider>
       </AuthProvider>
