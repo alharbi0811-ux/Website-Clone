@@ -1,0 +1,71 @@
+You are a senior frontend engineer specializing in Progressive Web Apps (PWA).
+
+TASK:
+Convert my existing website into a fully functional PWA (Progressive Web App) so it behaves like a native mobile application when added to the home screen.
+
+I already have:
+- App name
+- App logo (icon)
+
+DO NOT redesign the website.
+DO NOT change UI, colors, or layout.
+ONLY add PWA functionality.
+
+----------------------------------
+PWA REQUIREMENTS
+----------------------------------
+
+1) MANIFEST FILE (REQUIRED):
+Create a manifest.json file with:
+- App name and short name (use provided site name)
+- Proper start_url "/"
+- display: "standalone" (IMPORTANT)
+- theme_color and background_color matching the website design
+- App icons using my provided logo in:
+  • 192x192
+  • 512x512
+
+2) HTML INTEGRATION:
+Add the following inside <head>:
+
+- Link to manifest.json
+- Apple mobile web app support:
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+
+3) SERVICE WORKER:
+Implement a basic service worker that:
+- Enables offline caching of core files
+- Improves app-like performance
+- Does not break existing functionality
+
+4) MOBILE APP BEHAVIOR:
+When added to home screen:
+- App must open in FULL SCREEN (no browser UI)
+- Must behave like a native app
+- Must not show Safari address bar
+- Must feel like a real application
+
+5) ICON SYSTEM:
+- Use my provided logo as the main app icon
+- Ensure correct sizing and placement
+- Make it compatible with iOS home screen icons
+
+----------------------------------
+DESKTOP RULE:
+----------------------------------
+- Do NOT change desktop layout or behavior at all
+- PWA changes must not affect desktop experience
+
+----------------------------------
+OUTPUT:
+----------------------------------
+- Full updated project code
+- manifest.json
+- service worker file (sw.js)
+- updated HTML head section
+- clean and structured implementation
+
+GOAL:
+Transform the website into a fully installable Progressive Web App (PWA) with proper branding, app icon, and standalone mobile experience identical to a native app when installed on iOS home screen.
