@@ -148,12 +148,6 @@ export function Navbar() {
                 <span>تسجيل الدخول</span>
               </button>
             )}
-            <button
-              onClick={() => navigate("/start-game")}
-              className="bg-[#7B2FBE] text-white font-bold py-2.5 px-6 rounded-full shadow-[0_0_18px_rgba(123,47,190,0.5)] hover:shadow-[0_0_28px_rgba(123,47,190,0.8)] hover:bg-[#8B35D6] hover:-translate-y-0.5 transition-all text-[20px]"
-            >
-              إنشاء لعبة
-            </button>
           </div>
 
           {/* Mobile: theme toggle + hamburger */}
@@ -207,12 +201,6 @@ export function Navbar() {
                 </button>
               ))}
               <div className="flex flex-col gap-4 pt-4">
-                <button
-                  onClick={() => { navigate("/start-game"); setMobileMenuOpen(false); }}
-                  className="bg-[#7B2FBE] text-white font-bold py-3 px-6 rounded-xl w-full text-center shadow-[0_0_18px_rgba(123,47,190,0.6)]"
-                >
-                  إنشاء لعبة
-                </button>
                 {user ? (
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-foreground/70 py-2 font-medium justify-center">
