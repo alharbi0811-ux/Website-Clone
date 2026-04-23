@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { HelpTools } from "@/components/sections/HelpTools";
 import { Faq } from "@/components/sections/Faq";
+import { FeedbackModal } from "@/components/FeedbackModal";
 
 /* ─────────────────── Game Modes ─────────────────── */
 
@@ -233,6 +234,7 @@ export default function Home() {
         <Faq />
         <div className="h-16" />
       </main>
+      <FeedbackModal />
     </div>
   );
 }

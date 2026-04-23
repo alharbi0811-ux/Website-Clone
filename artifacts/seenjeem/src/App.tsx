@@ -33,7 +33,7 @@ import AdminSiteSettings from "@/pages/admin/AdminSiteSettings";
 import AdminStudyMode from "@/pages/admin/AdminStudyMode";
 import AdminFeedback from "@/pages/admin/AdminFeedback";
 import ExternalPage from "@/pages/ExternalPage";
-import { FeedbackModal } from "@/components/FeedbackModal";
+
 
 const queryClient = new QueryClient();
 
@@ -126,7 +126,6 @@ function AppShell() {
       className={`${theme === "light" ? "light" : ""} w-full min-h-screen transition-colors duration-300`}
     >
       <Router />
-      <FeedbackModal />
     </div>
   );
 }
