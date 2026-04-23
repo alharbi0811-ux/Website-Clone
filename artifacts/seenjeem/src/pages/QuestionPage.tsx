@@ -102,7 +102,7 @@ export default function QuestionPage() {
   const DEFAULT_DESIGN = {
     bgColor: "#ffffff", accentColor: "#7B2FBE", textColor: "#111827", cardBgColor: "#ffffff",
     showQr: true, showImage: true, showCategoryBadge: true, showTimer: true,
-    questionTextSize: 38, answerTextSize: 100, bgImageUrl: null as string | null,
+    questionTextSize: 38, answerTextSize: 52, bgImageUrl: null as string | null,
     questionFontWeight: "extrabold" as string,
     cardBorderRadius: 24, cardBorderWidth: 4,
     positions: {} as Record<string, { x: number; y: number }>,
