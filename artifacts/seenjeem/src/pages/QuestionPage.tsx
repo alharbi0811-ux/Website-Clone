@@ -209,13 +209,15 @@ export default function QuestionPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionData?.categoryId, editMode, editCatId]);
 
-  // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط)
+  // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط) ثم إعادة المؤقت
   useEffect(() => {
     if (timer === 90 && questionData && gameData) {
       const other = questionData.currentTeam === 1 ? 2 : 1;
       const otherName = questionData.currentTeam === 1 ? gameData.team2Name : gameData.team1Name;
       setActiveTurnTeam(other);
       setTurnFlash({ teamName: otherName, key: Date.now() });
+      setTimer(0);
+      setIsTimerRunning(true);
     }
   }, [timer]);
 
