@@ -22,10 +22,10 @@ type QuestionData = {
 };
 
 const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
-  double: { name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg" },
-  call:   { name: "اتصال بصديق", icon: `${TOOLS_CDN}/circle-call.png` },
-  pit:    { name: "الحفرة",       icon: `${TOOLS_CDN}/circle-replace.png` },
-  rest:   { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
+  double:      { name: "جاوب جوابين",  icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg" },
+  double_pts:  { name: "دبل نقاطك ⚡", icon: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E" },
+  pit:         { name: "الحفرة",       icon: `${TOOLS_CDN}/circle-replace.png` },
+  rest:        { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
 };
 
 const CIRCULAR_TIMER_CONFIG: Record<number, { color: string; bg: string; duration: number }> = {
@@ -87,7 +87,8 @@ export default function QuestionPage() {
   const [team2Score, setTeam2Score] = useState(0);
   const [usedTools, setUsedTools] = useState<{ team1: string[]; team2: string[] }>({ team1: [], team2: [] });
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [flashTool, setFlashTool] = useState<{ name: string; key: number; color: "blue" | "white" } | null>(null);
+  const [flashTool, setFlashTool] = useState<{ name: string; key: number; color: "blue" | "white" | "gold" } | null>(null);
+  const [doubleActive, setDoubleActive] = useState(false);
   const [activeTurnTeam, setActiveTurnTeam] = useState<1 | 2 | null>(null);
   const [turnFlash, setTurnFlash] = useState<{ teamName: string; key: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -372,7 +373,8 @@ export default function QuestionPage() {
   const handleCorrect = () => {
     if (!questionData) return;
     const { points, currentTeam, catIdx, side, pitActive } = questionData;
-    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx, points, side, correct: true, team: currentTeam, pitActive: !!pitActive }));
+    const finalPoints = doubleActive ? points * 2 : points;
+    localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx, points: finalPoints, side, correct: true, team: currentTeam, pitActive: !!pitActive }));
     navigate("/score-page");
   };
 
@@ -390,8 +392,9 @@ export default function QuestionPage() {
     const updated = { ...usedTools, [key]: [...usedTools[key], toolId] };
     setUsedTools(updated);
     localStorage.setItem("rakez-used-tools", JSON.stringify(updated));
+    if (toolId === "double_pts") setDoubleActive(true);
     const tool = HELP_TOOLS_MAP[toolId];
-    const color = toolId === "double" ? "blue" : "white";
+    const color: "blue" | "white" | "gold" = toolId === "double_pts" ? "gold" : toolId === "double" ? "blue" : "white";
     if (tool) setFlashTool({ name: tool.name, key: Date.now(), color });
   };
 
@@ -569,6 +572,15 @@ export default function QuestionPage() {
           <div className="bg-yellow-400 text-black px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-black flex items-center gap-1">
             <span>⚡</span><span className="hidden md:inline">الحفرة نشطة</span>
           </div>
+        )}
+        {doubleActive && (
+          <motion.div
+            animate={{ scale: [1, 1.07, 1], boxShadow: ["0 0 8px rgba(234,179,8,0.6)", "0 0 22px rgba(234,179,8,0.95)", "0 0 8px rgba(234,179,8,0.6)"] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
+            className="bg-yellow-400 text-black px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-black flex items-center gap-1"
+          >
+            <span>⚡</span><span>نقاطك x2</span>
+          </motion.div>
         )}
       </div>
       <div className="absolute inset-x-0 flex justify-center pointer-events-none">
@@ -874,7 +886,8 @@ export default function QuestionPage() {
                 <div className="flex gap-4">
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: true, team: 1, pitActive: !!questionData.pitActive }));
+                      const fp = doubleActive ? questionData.points * 2 : questionData.points;
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: fp, side: questionData.side, correct: true, team: 1, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
@@ -882,7 +895,8 @@ export default function QuestionPage() {
                   </motion.button>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: questionData.points, side: questionData.side, correct: true, team: 2, pitActive: !!questionData.pitActive }));
+                      const fp = doubleActive ? questionData.points * 2 : questionData.points;
+                      localStorage.setItem("rakez-answered-cell", JSON.stringify({ catIdx: questionData.catIdx, points: fp, side: questionData.side, correct: true, team: 2, pitActive: !!questionData.pitActive }));
                       navigate("/score-page");
                     }}
                     className="flex-1 bg-[#7B2FBE] hover:bg-[#8B35D6] text-white font-black text-2xl py-4 px-12 rounded-full shadow-lg transition-colors">
@@ -949,12 +963,17 @@ export default function QuestionPage() {
       <AnimatePresence>
         {flashTool && (() => {
           const isBlue = flashTool.color === "blue";
-          const overlayColor = isBlue
-            ? ["rgba(59,130,246,0.35)", "rgba(59,130,246,0.05)", "rgba(59,130,246,0.35)", "rgba(59,130,246,0)"]
-            : ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"];
-          const cardClass = isBlue
-            ? "relative bg-blue-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-blue-300"
-            : "relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300";
+          const isGold = flashTool.color === "gold";
+          const overlayColor = isGold
+            ? ["rgba(234,179,8,0.35)", "rgba(234,179,8,0.05)", "rgba(234,179,8,0.35)", "rgba(234,179,8,0)"]
+            : isBlue
+              ? ["rgba(59,130,246,0.35)", "rgba(59,130,246,0.05)", "rgba(59,130,246,0.35)", "rgba(59,130,246,0)"]
+              : ["rgba(239,68,68,0.35)", "rgba(239,68,68,0.05)", "rgba(239,68,68,0.35)", "rgba(239,68,68,0)"];
+          const cardClass = isGold
+            ? "relative bg-yellow-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-yellow-300"
+            : isBlue
+              ? "relative bg-blue-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-blue-300"
+              : "relative bg-red-500 text-white px-10 py-5 rounded-3xl font-black text-3xl shadow-2xl border-4 border-red-300";
           return (
             <motion.div
               key={flashTool.key}
@@ -1259,7 +1278,7 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
   teamName: string; score: number; tools: string[]; usedTools: string[];
   onUseTool: (toolId: string) => void; isCurrentTeam: boolean; isActiveTurn: boolean;
 }) {
-  const activeToolId = isCurrentTeam ? "double" : "rest";
+  const activeToolIds = isCurrentTeam ? ["double", "double_pts"] : ["rest"];
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -1298,7 +1317,7 @@ function TeamToolCard({ teamName, score, tools, usedTools, onUseTool, isCurrentT
               const tool = HELP_TOOLS_MAP[toolId];
               if (!tool) return null;
               const used = usedTools.includes(toolId);
-              const isAvailableThisTurn = toolId === activeToolId;
+              const isAvailableThisTurn = activeToolIds.includes(toolId);
               const isClickable = isAvailableThisTurn && !used;
 
               return (

@@ -10,7 +10,7 @@ const TOOLS_CDN = "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-pa
 
 const HELP_TOOLS_MAP: Record<string, { name: string; icon: string }> = {
   double: { name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg" },
-  call:   { name: "اتصال بصديق", icon: `${TOOLS_CDN}/circle-call.png` },
+  double_pts:  { name: "دبل نقاطك ⚡", icon: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E" },
   pit:    { name: "الحفرة",       icon: `${TOOLS_CDN}/circle-replace.png` },
   rest:   { name: "استريح",      icon: `${TOOLS_CDN}/circle-hand.png` },
 };

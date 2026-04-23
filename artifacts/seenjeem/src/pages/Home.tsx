@@ -86,10 +86,7 @@ function GameModes() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.13, type: "spring", stiffness: 260, damping: 22 }}
 
-                  /* Dim other card on hover — opacity via animate so it's smooth */
                   animate={{ opacity: dimmed ? 0.48 : 1 }}
-                  style={{ transition: "box-shadow 0.35s" }}
-
                   whileHover={{ scale: 1.03, boxShadow: `0 32px 80px ${glow}` }}
                   whileTap={{ scale: 0.96 }}
 
@@ -103,6 +100,7 @@ function GameModes() {
                     border: `1.5px solid ${border}`,
                     boxShadow: `0 10px 40px ${glow}`,
                     minHeight: 320,
+                    transition: "box-shadow 0.35s",
                   }}
                 >
                   {/* Scanline texture */}

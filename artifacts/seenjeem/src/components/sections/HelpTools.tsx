@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 
 const tools = [
   {
-    title: "اتصال بصديق",
-    desc: "صديقك اللي يعرف كل شي هذا وقته دق عليه !",
-    timing: "تستخدمها بعد ما تشوف السؤال",
-    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-call.png",
+    title: "دبل نقاطك",
+    desc: "فعّلها واضرب نقاط السؤال في ٢ — مرة واحدة بس لكل فريق في المباراة!",
+    timing: "تستخدمها أثناء دورك في السؤال",
+    icon: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E",
   },
   {
     title: "الحفرة",

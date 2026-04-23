@@ -45,7 +45,7 @@ export default function StartGame() {
 
   const HELP_TOOLS = [
     { id: "double", name: "جاوب جوابين", icon: "https://seenjeemkw.com/assets/handIconBlue-Cf6L4RSE.svg", color: "#7B2FBE" },
-    { id: "call", name: "اتصال بصديق", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-call.png", color: "#22c55e" },
+    { id: "double_pts", name: "دبل نقاطك ⚡", icon: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%237B2FBE'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E", color: "#eab308" },
     { id: "pit", name: "الحفرة", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-replace.png", color: "#22c55e" },
     { id: "rest", name: "استريح", icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-hand.png", color: "#ef4444" },
   ];
