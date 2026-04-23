@@ -102,7 +102,7 @@ export default function QuestionPage() {
   const DEFAULT_DESIGN = {
     bgColor: "#ffffff", accentColor: "#7B2FBE", textColor: "#111827", cardBgColor: "#ffffff",
     showQr: true, showImage: true, showCategoryBadge: true, showTimer: true,
-    questionTextSize: 30, answerTextSize: 100, bgImageUrl: null as string | null,
+    questionTextSize: 44, answerTextSize: 100, bgImageUrl: null as string | null,
     questionFontWeight: "extrabold" as string,
     cardBorderRadius: 24, cardBorderWidth: 4,
     positions: {} as Record<string, { x: number; y: number }>,
@@ -548,12 +548,12 @@ export default function QuestionPage() {
     }
     if (questionImage) {
       return (
-        <div className="flex justify-center px-8 pb-4">
+        <div className="flex justify-center px-8 pt-6 pb-4">
           <img
             src={questionImage}
             alt="صورة السؤال"
             onClick={() => setLightboxImage(questionImage)}
-            className="max-h-52 max-w-md object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
+            className="max-h-[380px] max-w-2xl object-contain rounded-2xl cursor-zoom-in hover:opacity-90 transition-opacity"
           />
         </div>
       );

@@ -22,7 +22,7 @@ export const DEFAULT_LAYOUT_SETTINGS = {
   showImage: true,
   showCategoryBadge: true,
   showTimer: true,
-  questionTextSize: 30,
+  questionTextSize: 44,
   answerTextSize: 100,
   bgImageUrl: null as string | null,
 };
