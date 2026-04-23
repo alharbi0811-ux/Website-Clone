@@ -564,7 +564,7 @@ export default function QuestionPage() {
 
   // ── Shared layout parts ──────────────────────────────────────────────────
   const renderHeader = () => (
-    <div className="bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-4 md:py-3 flex items-center justify-between shadow-lg relative">
+    <div className="px-3 py-2 md:px-4 md:py-3 flex items-center justify-between shadow-lg relative" style={{ background: "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)" }}>
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
         <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-7 md:h-10" />
         <div className="bg-white/20 backdrop-blur-sm text-white px-2 py-1 md:px-4 md:py-2 rounded-full font-bold text-[11px] md:text-sm border border-white/20">

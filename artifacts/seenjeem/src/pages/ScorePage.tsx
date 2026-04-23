@@ -269,7 +269,7 @@ export default function ScorePage() {
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-[#f0e8ff] via-[#e8e0f0] to-[#f0f0ff] flex flex-col" dir="rtl">
       {/* Top Bar */}
-      <div className="score-topbar shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-3 py-2 md:px-6 md:pt-[24px] md:pb-[24px] shadow-lg border-b border-white/10">
+      <div className="score-topbar shrink-0 px-3 py-2 md:px-6 md:pt-[24px] md:pb-[24px] shadow-lg border-b border-white/10" style={{ background: "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)" }}>
         <div className="flex items-center justify-between h-full relative">
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
             <img src={`${import.meta.env.BASE_URL}logo-white.png`} alt="ركز" className="h-6 md:h-10 md:pl-[22px] md:pr-[22px]" />
@@ -319,7 +319,7 @@ export default function ScorePage() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="score-bottombar shrink-0 bg-gradient-to-l from-[#7B2FBE] to-[#5a1f8e] px-2 md:px-6 border-t border-white/10 py-2 md:py-4 flex items-center justify-between gap-1 md:gap-4 relative">
+      <div className="score-bottombar shrink-0 px-2 md:px-6 border-t border-white/10 py-2 md:py-4 flex items-center justify-between gap-1 md:gap-4 relative" style={{ background: "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)" }}>
         {/* Team 1 */}
         <div className="flex items-center gap-1 md:gap-2 flex-1">
           <div className="hidden md:flex h-10 items-center bg-white/20 text-white px-4 rounded-full font-black border border-white/20 text-[14px] shrink-0 whitespace-nowrap">
