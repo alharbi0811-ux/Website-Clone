@@ -44,34 +44,44 @@
 }
 
 :root {
-  /* Black + Purple Glass Theme */
-  --background: 0 0% 4%; /* near black */
-  --foreground: 0 0% 100%;
-  
-  --card: 270 30% 8%; /* very dark purple-tinted black */
-  --card-foreground: 0 0% 100%;
-  
-  --popover: 0 0% 6%;
-  --popover-foreground: 0 0% 100%;
-  
-  --primary: 270 70% 58%; /* purple */
+  /* ── Dark Mode: Balanced Purple-Dark Theme ── */
+
+  /* Main background: deep purple-dark (not pure black) */
+  --background: 270 22% 9%;        /* #12101f – visible depth */
+  --foreground: 0 0% 96%;          /* #f5f5f5 – near white, easy on eyes */
+
+  /* Cards: clearly distinguishable from background */
+  --card: 270 26% 14%;             /* #1e1830 – layered surface */
+  --card-foreground: 0 0% 96%;
+
+  /* Popovers / dropdowns */
+  --popover: 270 24% 12%;          /* #191429 */
+  --popover-foreground: 0 0% 96%;
+
+  /* Primary purple */
+  --primary: 270 70% 60%;          /* #8b3ff2 */
   --primary-foreground: 0 0% 100%;
-  
-  --secondary: 270 60% 45%;
+
+  /* Secondary: softer purple */
+  --secondary: 270 55% 48%;
   --secondary-foreground: 0 0% 100%;
-  
-  --muted: 270 20% 15%;
-  --muted-foreground: 270 10% 65%;
-  
-  --accent: 270 70% 58%;
+
+  /* Muted surfaces: visible but subtle */
+  --muted: 270 20% 20%;            /* #2c2542 */
+  --muted-foreground: 270 12% 72%; /* #b5aed4 – readable secondary text */
+
+  /* Accent */
+  --accent: 270 70% 60%;
   --accent-foreground: 0 0% 100%;
-  
+
+  /* Destructive */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 270 30% 20%;
-  --input: 270 30% 20%;
-  --ring: 270 70% 58%;
+  /* Borders: visible separation between elements */
+  --border: 270 28% 30%;           /* #402f6b – clearly visible */
+  --input: 270 26% 24%;            /* #332851 */
+  --ring: 270 70% 60%;
 
   --radius: 1rem;
 }
@@ -148,16 +158,16 @@
 
 /* ===== Dark Glassmorphism utilities ===== */
 .glass-panel {
-  background: rgba(8, 4, 18, 0.55);
+  background: rgba(22, 16, 42, 0.72);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(138, 43, 226, 0.25);
-  box-shadow: 0 4px 32px rgba(138, 43, 226, 0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+  border: 1px solid rgba(138, 43, 226, 0.35);
+  box-shadow: 0 4px 32px rgba(123,47,190,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .glass-panel:hover {
-  border-color: rgba(138, 43, 226, 0.5);
-  box-shadow: 0 8px 40px rgba(138, 43, 226, 0.22), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: rgba(138, 43, 226, 0.55);
+  box-shadow: 0 8px 40px rgba(123,47,190,0.28), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .text-gradient {
@@ -404,11 +414,28 @@
 
 /* ── Dark mode: stronger glow on cards (when .light is NOT present) ── */
 #app-root:not(.light) .glass-panel {
-  box-shadow: 0 4px 32px rgba(123,47,190,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 4px 32px rgba(123,47,190,0.32), inset 0 1px 0 rgba(255,255,255,0.09);
 }
 #app-root:not(.light) .glass-panel:hover {
-  box-shadow: 0 8px 50px rgba(123,47,190,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-  border-color: rgba(138,43,226,0.65);
+  box-shadow: 0 8px 50px rgba(123,47,190,0.48), inset 0 1px 0 rgba(255,255,255,0.12);
+  border-color: rgba(138,43,226,0.7);
+}
+
+/* ── Dark mode: improve visibility of generic interactive elements ── */
+#app-root:not(.light) button:not([disabled]) {
+  transition: filter 0.18s ease, box-shadow 0.18s ease;
+}
+#app-root:not(.light) button:not([disabled]):hover {
+  filter: brightness(1.12);
+}
+
+/* ── Dark mode: input / textarea contrast ── */
+#app-root:not(.light) input,
+#app-root:not(.light) textarea,
+#app-root:not(.light) select {
+  background-color: hsl(var(--input));
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
 }
 
 /* ── Ripple effect ── */

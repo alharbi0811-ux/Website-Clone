@@ -1,0 +1,84 @@
+You are a senior frontend engineer and UI/UX designer specializing in dark mode systems.
+
+TASK:
+Fix and improve the DARK MODE of the website to make it visually clear, balanced, and professional.
+
+IMPORTANT RULES:
+- Do NOT redesign the UI
+- Do NOT change layout or structure
+- ONLY fix colors, contrast, and visual clarity in dark mode
+
+----------------------------------
+CORE PROBLEM TO SOLVE
+----------------------------------
+
+- Some elements are too dark (black on black)
+- Some text is not readable
+- Buttons and components lose visibility
+- Overall UI feels unbalanced in dark mode
+
+----------------------------------
+DARK MODE IMPROVEMENTS
+----------------------------------
+
+1) COLOR SYSTEM:
+- Replace pure black (#000) with softer dark tones:
+  Example:
+    background: #121212 or #1a1a1a
+
+- Use layered dark shades:
+  - Main background
+  - Card background
+  - Surface background
+
+2) TEXT VISIBILITY:
+- Ensure all text is readable:
+  - Primary text: white or near white (#f5f5f5)
+  - Secondary text: light gray (#cccccc)
+
+3) BUTTONS & COMPONENTS:
+- Ensure buttons stand out:
+  - Add contrast (lighter background or border)
+  - Avoid black buttons on dark backgrounds
+
+4) BORDERS & SEPARATION:
+- Add subtle borders or shadows to separate elements:
+  Example:
+    border: 1px solid rgba(255,255,255,0.1)
+
+5) ICONS VISIBILITY:
+- Ensure icons are visible:
+  - Use light colors
+  - Avoid dark icons on dark backgrounds
+
+6) HOVER & INTERACTION:
+- Add hover states for better feedback:
+  - Slight brightness change
+  - Subtle glow or highlight
+
+7) CONSISTENCY:
+- Use a consistent color palette across all components
+- Avoid random colors or mismatched shades
+
+----------------------------------
+TECHNICAL APPROACH
+----------------------------------
+
+- Use a class-based system:
+  .dark-mode
+
+- Apply all changes under:
+  body.dark-mode { }
+
+- Do NOT affect light mode
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Updated CSS for dark mode only
+- Clean, structured, and consistent color system
+- Comments explaining changes
+
+GOAL:
+Create a clean, modern, and readable dark mode where all elements are visible, well-balanced, and visually appealing without changing the original design.
