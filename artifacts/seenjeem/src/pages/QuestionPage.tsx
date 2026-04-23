@@ -624,7 +624,6 @@ export default function QuestionPage() {
       onClick={() => { if (editMode) { setEditSelected(null); setEditToolbarPos(null); } }}
     >
       {renderHeader()}
-
       <div className="flex-1 flex">
         {renderSidebar()}
 
@@ -703,7 +702,7 @@ export default function QuestionPage() {
             >
               {editMode && <div className="text-center text-blue-300 text-xs mb-1 select-none opacity-60">⠿ اسحب لتحريك</div>}
               <p
-                className="text-center"
+                className="text-center text-[52px]"
                 style={{
                   color: design.textColor,
                   fontSize: design.questionTextSize,
@@ -765,7 +764,6 @@ export default function QuestionPage() {
           </div>
         </div>
       </div>
-
       {/* ── Circular Timer Overlay (بدون كلام) ────────────────────────────── */}
       <AnimatePresence>
         {showCircularTimer && (
@@ -830,7 +828,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* ── Answer overlay ──────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showAnswer && !showTeamSelection && (
@@ -875,7 +872,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* ── Team selection overlay ──────────────────────────────────────────── */}
       <AnimatePresence>
         {showTeamSelection && (
@@ -917,7 +913,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Lightbox */}
       <AnimatePresence>
         {lightboxImage && (
@@ -930,7 +925,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Turn switch flash */}
       <AnimatePresence>
         {turnFlash && (
@@ -959,7 +953,6 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Tool flash animation */}
       <AnimatePresence>
         {flashTool && (() => {
@@ -1001,7 +994,6 @@ export default function QuestionPage() {
           );
         })()}
       </AnimatePresence>
-
       {/* ── Visual Edit Mode: Rich Floating Toolbar ───────────────────────────── */}
       {editMode && editSelected && editToolbarPos && (
         <div
@@ -1206,7 +1198,6 @@ export default function QuestionPage() {
           )}
         </div>
       )}
-
       {/* ── Visual Edit Mode: Smart Status Bar ─────────────────────────────────── */}
       {editMode && (
         <div
@@ -1249,7 +1240,6 @@ export default function QuestionPage() {
           </button>
         </div>
       )}
-
       {/* ── Floating Admin Edit Button (visible only to admin, only when NOT in edit mode) ── */}
       {isAdmin && !editMode && questionData && (
         <button
@@ -1270,7 +1260,6 @@ export default function QuestionPage() {
           تعديل الصفحة
         </button>
       )}
-
     </div>
   );
 }
