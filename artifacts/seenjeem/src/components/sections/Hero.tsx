@@ -56,6 +56,27 @@ export function Hero() {
           }}
         />
 
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.28, duration: 0.45 }}
+          className="mb-3 flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black"
+          style={{
+            background: "rgba(234,179,8,0.12)",
+            border: "1px solid rgba(234,179,8,0.45)",
+            color: "#fbbf24",
+            boxShadow: "0 0 18px rgba(234,179,8,0.18)",
+            letterSpacing: "0.04em",
+          }}
+        >
+          <motion.span
+            animate={{ opacity: [1, 0.4, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity }}
+            className="w-1.5 h-1.5 rounded-full bg-yellow-400"
+          />
+          إصدار تجريبي لفترة محدودة
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}

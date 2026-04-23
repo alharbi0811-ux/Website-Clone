@@ -9,6 +9,7 @@ import externalPagesRouter from "./external-pages";
 import categoryLayoutsRouter from "./category-layouts";
 import siteSettingsRouter from "./site-settings";
 import studyModeRouter from "./study-mode";
+import feedbackRouter from "./feedback";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(siteSettingsRouter);
 router.use(studyModeRouter);
 router.use(historyRouter);
 router.use(adminRouter);
+router.use(feedbackRouter);
 
 export default router;

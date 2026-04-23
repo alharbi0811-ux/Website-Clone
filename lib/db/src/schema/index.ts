@@ -7,3 +7,4 @@ export * from "./external_pages";
 export * from "./category_layouts";
 export * from "./site_settings";
 export * from "./study_mode";
+export * from "./feedback";

@@ -30,7 +30,9 @@ import AdminExternalPageDesigner from "@/pages/admin/AdminExternalPageDesigner";
 import AdminCategoryLayouts from "@/pages/admin/AdminCategoryLayouts";
 import AdminSiteSettings from "@/pages/admin/AdminSiteSettings";
 import AdminStudyMode from "@/pages/admin/AdminStudyMode";
+import AdminFeedback from "@/pages/admin/AdminFeedback";
 import ExternalPage from "@/pages/ExternalPage";
+import { FeedbackModal } from "@/components/FeedbackModal";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +105,9 @@ function Router() {
       <Route path="/admin/study-mode">
         <AdminGuard><AdminStudyMode /></AdminGuard>
       </Route>
+      <Route path="/admin/feedback">
+        <AdminGuard><AdminFeedback /></AdminGuard>
+      </Route>
 
       <Route path="/p/:slug" component={ExternalPage} />
 
@@ -120,6 +125,7 @@ function App() {
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
               <div id="app-root" dir="rtl" className="light w-full min-h-screen">
                 <Router />
+                <FeedbackModal />
               </div>
             </WouterRouter>
             <Toaster />
