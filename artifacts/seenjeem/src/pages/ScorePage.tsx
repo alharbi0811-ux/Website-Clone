@@ -363,25 +363,9 @@ export default function ScorePage() {
           </button>
         </div>
 
-        {/* Center — absolutely centered (desktop: Diwan logo / mobile: glowing divider) */}
+        {/* Center — glowing vertical divider */}
         <div className="absolute left-1/2 top-0 -translate-x-1/2 flex items-center justify-center pointer-events-none h-full">
-          {/* Diwan logo — desktop only */}
-          <motion.img
-            src={`${import.meta.env.BASE_URL}logo-diwan-white.png`}
-            alt="ديوان الدارع"
-            className="hidden md:block h-48 w-auto object-contain"
-            style={{ mixBlendMode: "screen" }}
-            animate={{
-              filter: [
-                "drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
-                "drop-shadow(0 0 14px rgba(255,255,255,0.9)) drop-shadow(0 0 35px rgba(255,255,255,0.55)) drop-shadow(0 0 60px rgba(255,255,255,0.2))",
-                "drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
-              ],
-            }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Mobile-only glowing vertical divider (replaces the logo panel) */}
-          <div className="bottombar-divider md:hidden" />
+          <div className="bottombar-divider" />
         </div>
 
         {/* Team 2 */}
