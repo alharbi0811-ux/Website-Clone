@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
@@ -40,10 +41,19 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-20 bg-background/50 relative">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <section className="py-20 relative" dir="rtl">
+      <div className="container mx-auto px-4 max-w-3xl">
 
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4"
+            style={{ background: "rgba(123,47,190,0.1)", color: "#7B2FBE", border: "1px solid rgba(123,47,190,0.18)" }}
+          >
+            مساعدة
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -54,49 +64,62 @@ export function Faq() {
           </motion.h2>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, idx) => (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.05 }}
-              key={idx}
-              className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                className="w-full px-6 py-5 flex items-center justify-between text-right hover:bg-foreground/5 transition-colors focus:outline-none"
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => {
+            const isOpen = openIndex === idx;
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.04 }}
+                key={idx}
+                className="rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                  border: `1px solid ${isOpen ? "rgba(123,47,190,0.3)" : "rgba(0,0,0,0.08)"}`,
+                  boxShadow: isOpen ? "0 4px 24px rgba(123,47,190,0.12)" : "0 1px 4px rgba(0,0,0,0.04)",
+                }}
               >
-                <span className="text-lg md:text-xl font-bold text-foreground pl-4 leading-relaxed">
-                  {faq.q}
-                </span>
-                <img
-                  src="https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/angle-arrow-icon.png"
-                  alt="Arrow"
-                  className={`w-6 h-6 object-contain transition-transform duration-300 flex-shrink-0 brightness-0 ${
-                    openIndex === idx ? "rotate-90" : "rotate-180"
-                  }`}
-                />
-              </button>
-
-              <AnimatePresence>
-                {openIndex === idx && (
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                  className="w-full px-6 py-5 flex items-center justify-between text-right transition-colors focus:outline-none"
+                  style={{ background: isOpen ? "rgba(123,47,190,0.05)" : "white" }}
+                >
+                  <span className="text-lg font-black text-foreground pl-4 leading-relaxed flex-1">
+                    {faq.q}
+                  </span>
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: isOpen ? "rgba(123,47,190,0.12)" : "rgba(0,0,0,0.05)" }}
                   >
-                    <div className="px-6 pb-6 pt-2 text-foreground font-medium text-lg leading-relaxed border-t border-border">
-                      {faq.a}
-                    </div>
+                    <ChevronDown size={16} style={{ color: isOpen ? "#7B2FBE" : "#9ca3af" }} />
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 pt-3 font-medium text-base leading-relaxed"
+                        style={{
+                          color: "rgba(0,0,0,0.65)",
+                          borderTop: "1px solid rgba(123,47,190,0.1)",
+                        }}>
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
 
       </div>
