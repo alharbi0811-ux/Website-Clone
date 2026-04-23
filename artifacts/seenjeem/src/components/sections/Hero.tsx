@@ -1,24 +1,54 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
+/* Ambient floating orbs — soft radial blobs that drift in the bg */
+const ORBS = [
+  { size: 200, left: "6%",  top: "18%", delay: 0,   dur: 8.0, opacity: 0.09 },
+  { size: 140, left: "74%", top: "12%", delay: 1.4, dur: 6.5, opacity: 0.07 },
+  { size: 100, left: "87%", top: "62%", delay: 0.6, dur: 7.5, opacity: 0.06 },
+  { size: 160, left: "32%", top: "78%", delay: 2.1, dur: 9.0, opacity: 0.08 },
+  { size: 80,  left: "52%", top: "42%", delay: 1.0, dur: 5.8, opacity: 0.05 },
+];
+
 export function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center" style={{ minHeight: "52vh" }}>
+
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden rounded-b-[4rem]">
         <img src="/hero-bg.png" alt="" className="w-full h-full object-cover object-top" />
         <div className="absolute inset-0"
           style={{ background: "linear-gradient(to bottom, rgba(8,0,26,0.15) 0%, rgba(8,0,26,0.55) 100%)" }} />
+
+        {/* Ambient orbs */}
+        {ORBS.map((o, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: o.size,
+              height: o.size,
+              left: o.left,
+              top: o.top,
+              background: "radial-gradient(circle, rgba(180,120,255,1) 0%, transparent 70%)",
+              filter: "blur(28px)",
+              opacity: o.opacity,
+            }}
+            animate={{ y: [0, -18, 0], opacity: [o.opacity, o.opacity * 1.6, o.opacity] }}
+            transition={{ duration: o.dur, delay: o.delay, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
       </div>
 
+      {/* Content — stagger on page load */}
       <div className="relative z-10 text-center flex flex-col items-center pt-24 pb-8">
-        {/* Logo */}
+
         <motion.img
           src="/logo-white.png"
           alt="ركز"
-          initial={{ opacity: 0, scale: 0.8, y: -10 }}
+          initial={{ opacity: 0, scale: 0.75, y: -16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, type: "spring", bounce: 0.4 }}
+          transition={{ duration: 0.75, type: "spring", bounce: 0.4 }}
           className="w-40 md:w-60 lg:w-80 mb-4"
           style={{
             mixBlendMode: "screen",
@@ -26,20 +56,18 @@ export function Hero() {
           }}
         />
 
-        {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.5 }}
+          transition={{ delay: 0.42, duration: 0.5 }}
           className="text-white font-black text-3xl md:text-4xl tracking-wide mb-2"
           dir="rtl"
         >
           فكر بسرعة...  جاوب بدقة
         </motion.p>
 
-        {/* Sub */}
         <motion.p
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
           className="text-white/65 font-semibold text-lg md:text-xl"
@@ -48,15 +76,15 @@ export function Hero() {
           لعبة أسئلة جماعية — فئات متنوعة لكل المناسبات
         </motion.p>
 
-        {/* Scroll hint */}
+        {/* Bouncing scroll hint — appears last */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          transition={{ delay: 1.1 }}
           className="mt-8"
         >
           <motion.div
-            animate={{ y: [0, 7, 0] }}
+            animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
           >
             <ChevronDown size={22} className="text-white/35" />

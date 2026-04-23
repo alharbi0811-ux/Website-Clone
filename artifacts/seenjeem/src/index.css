@@ -372,3 +372,13 @@
 }
 
 
+
+/* ── Game float animations ── */
+@keyframes gameFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-11px); }
+}
+.game-float-0 { animation: gameFloat 4.2s ease-in-out infinite; }
+.game-float-1 { animation: gameFloat 5.0s ease-in-out 0.75s infinite; }
+.game-float-2 { animation: gameFloat 3.8s ease-in-out 1.5s  infinite; }
+.game-float-3 { animation: gameFloat 4.6s ease-in-out 0.35s infinite; }
