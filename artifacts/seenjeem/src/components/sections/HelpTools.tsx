@@ -5,7 +5,7 @@ const tools = [
     title: "دبل نقاطك",
     desc: "فعّلها واضرب نقاط السؤال في ٢ — مرة واحدة بس لكل فريق في المباراة!",
     timing: "تستخدمها أثناء دورك في السؤال",
-    icon: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E",
+    icon: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'64'%20height%3D'64'%20viewBox%3D'0%200%2064%2064'%3E%3Ccircle%20cx%3D'32'%20cy%3D'32'%20r%3D'32'%20fill%3D'white'%2F%3E%3Cpolygon%20points%3D'36%208%2018%2036%2032%2036%2028%2056%2046%2028%2032%2028%2036%208'%20fill%3D'black'%2F%3E%3C%2Fsvg%3E",
   },
   {
     title: "الحفرة",
