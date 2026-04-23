@@ -11,7 +11,8 @@ const tools = [
     title: "الحفرة",
     desc: "احفر لهم! جاوب صح, واخصم عدد النقاط اللي فزت فيها من نقاط الفريق الثاني",
     timing: "تستخدمها قبل ما تشوف السؤال",
-    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-replace.png",
+    icon: "/replace-icon.png",
+    colored: true,
   },
   {
     title: "جاوب جوابين",
