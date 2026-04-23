@@ -50,7 +50,7 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex-shrink-0 z-10">
               <img
-                src="/logo-rakez.png"
+                src="/logo-rakez-new.png"
                 alt="ركز"
                 className="h-20 md:h-24 w-auto hover:scale-105 transition-transform"
                 style={{ filter: "drop-shadow(0 0 10px rgba(123, 47, 190, 0.5)) drop-shadow(0 0 22px rgba(123, 47, 190, 0.25))" }}
