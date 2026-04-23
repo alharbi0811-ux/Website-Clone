@@ -209,9 +209,11 @@ export default function QuestionPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionData?.categoryId, editMode, editCatId]);
 
-  // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط)
+  // تبديل الدور بعد 90 ثانية (للأسئلة العادية فقط — لا ينطبق على "ولا كلمة")
   useEffect(() => {
     if (timer === 90 && questionData && gameData) {
+      const isBk = questionData.categoryName.includes("كلام") || questionData.categoryName.includes("ولا كلمة");
+      if (isBk) return;
       const other = questionData.currentTeam === 1 ? 2 : 1;
       const otherName = questionData.currentTeam === 1 ? gameData.team2Name : gameData.team1Name;
       setActiveTurnTeam(other);
@@ -605,13 +607,13 @@ export default function QuestionPage() {
       <TeamToolCard
         teamName={gameData!.team1Name} score={team1Score} tools={team1Tools}
         usedTools={usedTools.team1} onUseTool={(t) => handleUseTool(1, t)}
-        isCurrentTeam={ct === 1} isActiveTurn={activeTurnTeam === 1}
+        isCurrentTeam={ct === 1} isActiveTurn={!isBadounKalam && activeTurnTeam === 1}
       />
       <div className="border-t-2 border-gray-200" />
       <TeamToolCard
         teamName={gameData!.team2Name} score={team2Score} tools={team2Tools}
         usedTools={usedTools.team2} onUseTool={(t) => handleUseTool(2, t)}
-        isCurrentTeam={ct === 2} isActiveTurn={activeTurnTeam === 2}
+        isCurrentTeam={ct === 2} isActiveTurn={!isBadounKalam && activeTurnTeam === 2}
       />
     </div>
   );
@@ -922,9 +924,9 @@ export default function QuestionPage() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Turn switch flash */}
+      {/* Turn switch flash — لا تظهر في فئة "ولا كلمة" */}
       <AnimatePresence>
-        {turnFlash && (
+        {turnFlash && !isBadounKalam && (
           <motion.div
             key={turnFlash.key}
             initial={{ opacity: 0 }}
