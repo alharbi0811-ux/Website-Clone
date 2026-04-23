@@ -653,11 +653,11 @@ export default function QuestionPage() {
             {/* Regular timer — مخفي في فئة بدون كلام أو لو أخفاه الأدمن */}
             {!isBadounKalam && design.showTimer && (
               <div
-                className="absolute top-4 left-1/2 -translate-x-1/2 z-10"
+                className="absolute top-0 z-10"
                 {...editProps("timer", true)}
                 style={{
                   ...editOutline("timer"),
-                  transform: `translate(calc(-50% + ${getPos("timer").x}px), ${getPos("timer").y}px)`,
+                  transform: `translate(calc(-50% + ${getPos("timer").x}px), calc(-50% + ${getPos("timer").y}px))`,
                   left: "50%",
                 }}
               >
@@ -678,13 +678,13 @@ export default function QuestionPage() {
             {/* Timer placeholder when hidden — allow clicking to show it in edit mode */}
             {editMode && !design.showTimer && (
               <div
-                className="absolute top-4 z-10"
+                className="absolute top-0 z-10"
                 {...editProps("timer", true)}
                 style={editOutline("timer", {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   width: 160, height: 46, background: "#e5e7eb", borderRadius: 16,
                   left: "50%",
-                  transform: `translate(calc(-50% + ${getPos("timer").x}px), ${getPos("timer").y}px)`,
+                  transform: `translate(calc(-50% + ${getPos("timer").x}px), calc(-50% + ${getPos("timer").y}px))`,
                 })}
               >
                 <span className="text-gray-400 text-sm font-bold">⏱ مخفي — اضغط</span>
@@ -694,7 +694,7 @@ export default function QuestionPage() {
             {/* Question text — hidden in بدون كلام mode */}
             {!isBadounKalam && (
             <div
-              className={`px-8 ${design.showTimer ? "pt-20" : "pt-8"} pb-4`}
+              className={`px-8 pt-8 pb-4`}
               {...editProps("question-text", true)}
               style={{
                 ...editOutline("question-text"),
