@@ -694,7 +694,7 @@ export default function QuestionPage() {
             {/* Question text — hidden in بدون كلام mode */}
             {!isBadounKalam && (
             <div
-              className={`px-8 pt-8 pb-4`}
+              className={`px-8 pt-20 pb-4`}
               {...editProps("question-text", true)}
               style={{
                 ...editOutline("question-text"),
