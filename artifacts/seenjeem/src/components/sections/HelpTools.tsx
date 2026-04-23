@@ -12,20 +12,18 @@ const tools = [
     desc: "احفر لهم! جاوب صح, واخصم عدد النقاط اللي فزت فيها من نقاط الفريق الثاني",
     timing: "تستخدمها قبل ما تشوف السؤال",
     icon: "/replace-icon.png",
-    colored: true,
   },
   {
     title: "جاوب جوابين",
     desc: "متردد بجوابين؟ هذه لك. جاوب بالآثنين عشان تضمن النقاط",
     timing: "تستخدمها بعد ما تشوف السؤال",
     icon: "/hand-icon.png",
-    colored: true,
   },
   {
     title: "استريح",
     desc: "اختار اكثر شخص مثقف ضدك, وخله يستريح شوي عن المشاركة في إجابة هالسؤال",
     timing: "تستخدمها بعد ما تشوف السؤال",
-    icon: "https://d2du33uhi1xfjy.cloudfront.net/static-data/new-home-page/circle-hand.png",
+    icon: "/stop-icon.png",
   },
 ];
 
