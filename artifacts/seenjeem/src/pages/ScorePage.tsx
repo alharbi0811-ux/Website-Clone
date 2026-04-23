@@ -75,22 +75,23 @@ export default function ScorePage() {
 
     const answered = localStorage.getItem("rakez-answered-cell");
     if (answered) {
-      const { catIdx, points, side, correct, team, pitActive } = JSON.parse(answered);
+      const { catIdx, points, side, correct, team, pitActive, double: isDouble } = JSON.parse(answered);
       localStorage.removeItem("rakez-answered-cell");
       const key = `${catIdx}-${points}-${side ?? "l"}`;
       setPlayedCells((prev) => { const next = new Set(prev); next.add(key); return next; });
+      const finalPoints = isDouble ? points * 2 : points;
       if (correct && team !== 0) {
         if (pitActive) {
           if (team === 1) {
-            setTeam1Score((s) => s + points);
-            setTeam2Score((s) => s - points);
+            setTeam1Score((s) => s + finalPoints);
+            setTeam2Score((s) => s - finalPoints);
           } else {
-            setTeam2Score((s) => s + points);
-            setTeam1Score((s) => s - points);
+            setTeam2Score((s) => s + finalPoints);
+            setTeam1Score((s) => s - finalPoints);
           }
         } else {
-          if (team === 1) setTeam1Score((s) => s + points);
-          else setTeam2Score((s) => s + points);
+          if (team === 1) setTeam1Score((s) => s + finalPoints);
+          else setTeam2Score((s) => s + finalPoints);
         }
       }
       setCurrentTeam((t) => (t === 1 ? 2 : 1));
