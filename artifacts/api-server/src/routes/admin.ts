@@ -206,6 +206,30 @@ router.post("/admin/questions", async (req, res) => {
   }
 });
 
+// ───── Bulk Question Import ─────
+const bulkItemSchema = z.object({
+  categoryId: z.coerce.number().int().positive(),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+  points: z.coerce.number().int(),
+  questionText: z.string().min(1),
+  answer: z.string().min(1),
+});
+
+router.post("/admin/questions/bulk", async (req, res) => {
+  const parsed = z.array(bulkItemSchema).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "بيانات غير صحيحة", details: parsed.error.issues });
+  if (parsed.data.length === 0) return res.status(400).json({ error: "لا توجد أسئلة للإدراج" });
+  try {
+    const inserted = await db
+      .insert(questionsTable)
+      .values(parsed.data.map((item) => ({ ...item, isActive: true, timeSeconds: 30 })))
+      .returning();
+    res.status(201).json({ count: inserted.length, questions: inserted });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
 router.put("/admin/questions/:id", async (req, res) => {
   const id = Number(req.params.id);
   const parsed = questionSchema.partial().safeParse(req.body);

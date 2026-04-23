@@ -1,0 +1,111 @@
+You are a senior full-stack developer and UX designer.
+
+TASK:
+Create a SMART QUESTION BANK SYSTEM inside the admin panel of my game website.
+
+GOAL:
+Allow the admin to input multiple questions and answers in bulk as plain text, and automatically convert them into structured game questions without manual entry.
+
+----------------------------------
+FEATURE: ADD QUESTION BANK BUTTON
+----------------------------------
+
+1) In the admin control panel:
+- Add a new button next to "Add Question"
+- Label: "Add Question Bank"
+
+----------------------------------
+STEP 1: CATEGORY SELECTION
+----------------------------------
+
+When clicking "Add Question Bank":
+- Show a modal or page
+- Allow admin to select a category to assign the questions to
+
+----------------------------------
+STEP 2: INPUT SYSTEM (3 LEVELS)
+----------------------------------
+
+Display 3 large text areas:
+
+1) Easy (200)
+2) Medium (400)
+3) Hard (600)
+
+Each textarea allows MULTIPLE questions input as plain text.
+
+----------------------------------
+STEP 3: INPUT FORMAT (IMPORTANT)
+----------------------------------
+
+Admin will input text like this:
+
+Q: What is the capital of France?
+A: Paris
+
+Q: 2+2?
+A: 4
+
+Q: Who discovered gravity?
+A: Isaac Newton
+
+----------------------------------
+STEP 4: SMART PARSING SYSTEM
+----------------------------------
+
+The system must:
+
+- Automatically detect each question (Q:)
+- Automatically detect each answer (A:)
+- Split them into pairs
+- Ignore empty lines
+- Handle multiple entries correctly
+- Validate that each question has an answer
+
+----------------------------------
+STEP 5: AUTO INSERT INTO DATABASE
+----------------------------------
+
+For each Q/A pair:
+- Create a new question entry
+- Assign it to the selected category
+- Assign difficulty based on the textarea (200 / 400 / 600)
+- Store question text and answer separately
+
+----------------------------------
+STEP 6: ERROR HANDLING
+----------------------------------
+
+- If a question has no answer → skip it or show warning
+- If format is incorrect → highlight error
+- Show preview before saving (optional but recommended)
+
+----------------------------------
+STEP 7: UX IMPROVEMENTS
+----------------------------------
+
+- Show how many questions were detected
+- Show success message after import
+- Clear fields after submission
+- Prevent duplicates if possible
+
+----------------------------------
+IMPORTANT RULES
+----------------------------------
+
+- Do NOT break existing question system
+- Integrate with current database structure
+- Keep UI clean and simple
+- No redesign of entire admin panel
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Full implementation (frontend + backend)
+- Clean structured code
+- Parsing logic clearly written
+- Comments explaining the smart parsing system
+
+GOAL:
+Allow bulk input of questions in a simple text format and automatically convert them into structured questions inside the game system without manual repetition.

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useRoute, Link } from "wouter";
-import { Plus, Pencil, Trash2, ArrowRight, HelpCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowRight, HelpCircle, BookOpen } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
+import AdminQuestionBank from "./AdminQuestionBank";
 
 interface Question {
   id: number;
@@ -35,8 +36,9 @@ export default function AdminCategoryQuestions() {
   const [catName, setCatName] = useState("");
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [showBank, setShowBank] = useState(false);
 
-  useEffect(() => {
+  function loadData() {
     if (!categoryId) return;
     setLoading(true);
     Promise.all([
@@ -50,7 +52,9 @@ export default function AdminCategoryQuestions() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [categoryId, adminFetch]);
+  }
+
+  useEffect(() => { loadData(); }, [categoryId, adminFetch]);
 
   async function handleDelete(id: number) {
     if (!confirm("هل أنت متأكد من حذف هذا السؤال؟")) return;
@@ -85,6 +89,21 @@ export default function AdminCategoryQuestions() {
           </h2>
           <p className="text-xs font-mono mt-0.5" style={{ color: "#555577" }}>{questions.length} سؤال</p>
         </div>
+
+        {/* ── بنك الأسئلة ── */}
+        <button
+          onClick={() => setShowBank(true)}
+          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-lg transition-all"
+          style={{
+            background: "rgba(123,47,190,0.12)",
+            border: "1px solid rgba(123,47,190,0.35)",
+            color: "#c084fc",
+          }}
+        >
+          <BookOpen size={15} />
+          بنك الأسئلة
+        </button>
+
         <Link href={`/admin/questions/new?categoryId=${categoryId}`}>
           <a
             className="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-all"
@@ -113,14 +132,23 @@ export default function AdminCategoryQuestions() {
         >
           <HelpCircle size={36} className="mx-auto mb-3" style={{ color: "#333355" }} />
           <p className="text-sm font-mono mb-4" style={{ color: "#555577" }}>لا توجد أسئلة في هذه الفئة بعد</p>
-          <Link href={`/admin/questions/new?categoryId=${categoryId}`}>
-            <a
-              className="inline-block text-white text-sm font-semibold px-4 py-2 rounded-lg"
-              style={{ background: "rgba(123,47,190,0.3)", border: "1px solid rgba(123,47,190,0.4)" }}
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={() => setShowBank(true)}
+              className="text-sm font-semibold px-4 py-2 rounded-lg"
+              style={{ background: "rgba(123,47,190,0.15)", border: "1px solid rgba(123,47,190,0.35)", color: "#c084fc" }}
             >
-              أضف أول سؤال
-            </a>
-          </Link>
+              بنك الأسئلة
+            </button>
+            <Link href={`/admin/questions/new?categoryId=${categoryId}`}>
+              <a
+                className="inline-block text-white text-sm font-semibold px-4 py-2 rounded-lg"
+                style={{ background: "rgba(123,47,190,0.3)", border: "1px solid rgba(123,47,190,0.4)" }}
+              >
+                أضف أول سؤال
+              </a>
+            </Link>
+          </div>
         </div>
       ) : (
         <div
@@ -219,6 +247,16 @@ export default function AdminCategoryQuestions() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* ── مودال بنك الأسئلة ── */}
+      {showBank && categoryId && (
+        <AdminQuestionBank
+          categoryId={Number(categoryId)}
+          categoryName={catName}
+          onClose={() => setShowBank(false)}
+          onSuccess={() => { setShowBank(false); loadData(); }}
+        />
       )}
     </div>
   );
