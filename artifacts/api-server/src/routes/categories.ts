@@ -10,7 +10,7 @@ router.get("/categories", async (_req, res) => {
     const cats = await db
       .select()
       .from(categoriesTable)
-      .where(eq(categoriesTable.isActive, true))
+      .where(and(eq(categoriesTable.isActive, true), eq(categoriesTable.isHidden, false)))
       .orderBy(asc(categoriesTable.id));
 
     const sectionOrder = [

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { FolderOpen, Plus, Pencil, Trash2, Eye, ImageIcon, Layers, Lock, Unlock, Clock, CheckCircle, ChevronDown, ChevronUp, Save, X } from "lucide-react";
+import { FolderOpen, Plus, Pencil, Trash2, Eye, EyeOff, ImageIcon, Layers, Lock, Unlock, Clock, CheckCircle, ChevronDown, ChevronUp, Save, X } from "lucide-react";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,6 +14,7 @@ interface Category {
   description: string | null;
   imageUrl: string | null;
   isActive: boolean;
+  isHidden: boolean;
   status: CategoryStatus;
   lockMessage: string | null;
   isDefaultOpen: boolean;
@@ -56,6 +57,7 @@ export default function AdminCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [togglingHiddenId, setTogglingHiddenId] = useState<number | null>(null);
   const [sectionFilter, setSectionFilter] = useState("");
   const [expandedStatusId, setExpandedStatusId] = useState<number | null>(null);
   const [pendingStatus, setPendingStatus] = useState<Record<number, { status: CategoryStatus; lockMessage: string }>>({});
@@ -81,6 +83,20 @@ export default function AdminCategories() {
       alert("فشل الحذف");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleToggleHidden(id: number, currentlyHidden: boolean) {
+    setTogglingHiddenId(id);
+    try {
+      await adminFetch(`/admin/categories/${id}/toggle-hidden`, { method: "PATCH" });
+      setCategories((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, isHidden: !currentlyHidden } : c))
+      );
+    } catch {
+      alert("فشل تغيير حالة الإخفاء");
+    } finally {
+      setTogglingHiddenId(null);
     }
   }
 
@@ -247,7 +263,10 @@ export default function AdminCategories() {
                 className="rounded-xl overflow-hidden transition-all group"
                 style={{
                   background: "#12121f",
-                  border: `1px solid ${cat.status !== "open" ? statusCfg.border : "rgba(123,47,190,0.15)"}`,
+                  border: cat.isHidden
+                    ? "1px solid rgba(234,179,8,0.3)"
+                    : `1px solid ${cat.status !== "open" ? statusCfg.border : "rgba(123,47,190,0.15)"}`,
+                  opacity: cat.isHidden ? 0.75 : 1,
                 }}
               >
                 {/* Image area */}
@@ -276,8 +295,17 @@ export default function AdminCategories() {
                           : { background: "rgba(255,255,255,0.05)", color: "#555577", border: "1px solid rgba(255,255,255,0.08)" }
                       }
                     >
-                      {cat.isActive ? "● ACTIVE" : "○ HIDDEN"}
+                      {cat.isActive ? "● ACTIVE" : "○ INACTIVE"}
                     </span>
+                    {cat.isHidden && (
+                      <span
+                        className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded"
+                        style={{ background: "rgba(234,179,8,0.18)", color: "#facc15", border: "1px solid rgba(234,179,8,0.35)" }}
+                      >
+                        <EyeOff size={8} />
+                        مخفية
+                      </span>
+                    )}
                   </div>
                   {/* Status badge top-left */}
                   <div className="absolute top-2.5 left-2.5">
@@ -485,6 +513,25 @@ export default function AdminCategories() {
                         <Pencil size={13} />
                       </a>
                     </Link>
+                    <button
+                      onClick={() => handleToggleHidden(cat.id, cat.isHidden)}
+                      disabled={togglingHiddenId === cat.id}
+                      title={cat.isHidden ? "إظهار للاعبين" : "إخفاء عن اللاعبين"}
+                      className="flex items-center justify-center w-8 h-8 rounded-lg transition-all disabled:opacity-40"
+                      style={
+                        cat.isHidden
+                          ? { background: "rgba(234,179,8,0.15)", border: "1px solid rgba(234,179,8,0.35)", color: "#facc15" }
+                          : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }
+                      }
+                    >
+                      {togglingHiddenId === cat.id ? (
+                        <span className="w-3 h-3 border border-yellow-400/40 border-t-yellow-400 rounded-full animate-spin" />
+                      ) : cat.isHidden ? (
+                        <Eye size={13} />
+                      ) : (
+                        <EyeOff size={13} />
+                      )}
+                    </button>
                     <button
                       onClick={() => handleDelete(cat.id, cat.nameAr)}
                       disabled={deletingId === cat.id}

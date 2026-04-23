@@ -123,6 +123,25 @@ router.delete("/admin/categories/:id", async (req, res) => {
   }
 });
 
+router.patch("/admin/categories/:id/toggle-hidden", async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    const [current] = await db
+      .select({ isHidden: categoriesTable.isHidden })
+      .from(categoriesTable)
+      .where(eq(categoriesTable.id, id));
+    if (!current) return res.status(404).json({ error: "الفئة غير موجودة" });
+    const [updated] = await db
+      .update(categoriesTable)
+      .set({ isHidden: !current.isHidden })
+      .where(eq(categoriesTable.id, id))
+      .returning({ id: categoriesTable.id, isHidden: categoriesTable.isHidden });
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
 router.put("/admin/categories/:id/status", async (req, res) => {
   const id = Number(req.params.id);
   const statusSchema = z.object({
