@@ -75,19 +75,19 @@ export default function AdminCategoryQuestions() {
         <button
           onClick={() => navigate("/admin/categories")}
           className="p-2 rounded-lg transition-all"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }}
+          style={{ background: "#f9f8ff", border: "1px solid rgba(255,255,255,0.07)", color: "#9ca3af" }}
         >
           <ArrowRight size={16} />
         </button>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-0.5">
             <span className="text-xs font-mono" style={{ color: "#7B2FBE" }}>~/admin/categories $</span>
-            <span className="text-xs font-mono" style={{ color: "#444466" }}>questions --cat</span>
+            <span className="text-xs font-mono" style={{ color: "#9ca3af" }}>questions --cat</span>
           </div>
-          <h2 className="text-xl font-black text-white">
+          <h2 className="text-xl font-black" style={{ color: "#1a1a2e" }}>
             أسئلة: <span style={{ color: "#c084fc" }}>{catName}</span>
           </h2>
-          <p className="text-xs font-mono mt-0.5" style={{ color: "#555577" }}>{questions.length} سؤال</p>
+          <p className="text-xs font-mono mt-0.5" style={{ color: "#9ca3af" }}>{questions.length} سؤال</p>
         </div>
 
         {/* ── بنك الأسئلة ── */}
@@ -108,9 +108,9 @@ export default function AdminCategoryQuestions() {
           <a
             className="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-all"
             style={{
-              background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)",
-              boxShadow: "0 0 14px rgba(123,47,190,0.4)",
-              border: "1px solid rgba(123,47,190,0.5)",
+              background: "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)",
+              boxShadow: "0 4px 14px rgba(106,0,244,0.3)",
+              
             }}
           >
             <Plus size={15} />
@@ -122,16 +122,16 @@ export default function AdminCategoryQuestions() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: "#12121f" }} />
+            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: "#ffffff" }} />
           ))}
         </div>
       ) : questions.length === 0 ? (
         <div
           className="rounded-xl p-14 text-center"
-          style={{ background: "#12121f", border: "1px solid rgba(255,255,255,0.05)" }}
+          style={{ background: "#ffffff", border: "1px solid rgba(123,63,242,0.1)" }}
         >
-          <HelpCircle size={36} className="mx-auto mb-3" style={{ color: "#333355" }} />
-          <p className="text-sm font-mono mb-4" style={{ color: "#555577" }}>لا توجد أسئلة في هذه الفئة بعد</p>
+          <HelpCircle size={36} className="mx-auto mb-3" style={{ color: "#d1d5db" }} />
+          <p className="text-sm font-mono mb-4" style={{ color: "#9ca3af" }}>لا توجد أسئلة في هذه الفئة بعد</p>
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => setShowBank(true)}
@@ -153,17 +153,17 @@ export default function AdminCategoryQuestions() {
       ) : (
         <div
           className="rounded-xl overflow-hidden"
-          style={{ background: "#12121f", border: "1px solid rgba(255,255,255,0.06)" }}
+          style={{ background: "#ffffff", border: "1px solid rgba(123,63,242,0.1)" }}
         >
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.02)" }}>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "#f9f8ff" }}>
                 {["#", "السؤال / الإجابة", "الصعوبة", "النقاط", "الوقت", ""].map((h, i) => (
                   <th
                     key={i}
                     className={`text-right px-5 py-2.5 ${i >= 2 && i < 5 ? "hidden md:table-cell" : ""}`}
                   >
-                    <span className="text-[10px] font-mono" style={{ color: "#333355" }}>{h}</span>
+                    <span className="text-[10px] font-mono" style={{ color: "#d1d5db" }}>{h}</span>
                   </th>
                 ))}
               </tr>
@@ -177,12 +177,12 @@ export default function AdminCategoryQuestions() {
                     style={{ borderBottom: idx < questions.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
                   >
                     <td className="px-5 py-4">
-                      <span className="text-xs font-mono" style={{ color: "#333355" }}>
+                      <span className="text-xs font-mono" style={{ color: "#d1d5db" }}>
                         {(idx + 1).toString().padStart(2, "0")}
                       </span>
                     </td>
                     <td className="px-5 py-4 max-w-xs">
-                      <p className="text-sm font-medium text-white line-clamp-2">{q.questionText}</p>
+                      <p className="text-sm font-medium line-clamp-2" style={{ color: "#1a1a2e" }}>{q.questionText}</p>
                       {q.optionA ? (
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {[q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean).map((opt, i) => {
@@ -195,7 +195,7 @@ export default function AdminCategoryQuestions() {
                                 style={
                                   isCorrect
                                     ? { background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.25)" }
-                                    : { background: "rgba(255,255,255,0.04)", color: "#444466", border: "1px solid rgba(255,255,255,0.06)" }
+                                    : { background: "#f9f8ff", color: "#9ca3af", border: "1px solid rgba(123,63,242,0.1)" }
                                 }
                               >
                                 {opt}
@@ -204,7 +204,7 @@ export default function AdminCategoryQuestions() {
                           })}
                         </div>
                       ) : (
-                        <p className="text-xs font-mono mt-0.5 line-clamp-1" style={{ color: "#555577" }}>▶ {q.answer}</p>
+                        <p className="text-xs font-mono mt-0.5 line-clamp-1" style={{ color: "#9ca3af" }}>▶ {q.answer}</p>
                       )}
                     </td>
                     <td className="px-5 py-4 hidden md:table-cell">
@@ -219,14 +219,14 @@ export default function AdminCategoryQuestions() {
                       <span className="text-sm font-mono font-bold" style={{ color: "#7B2FBE" }}>{q.points}</span>
                     </td>
                     <td className="px-5 py-4 hidden md:table-cell">
-                      <span className="text-xs font-mono" style={{ color: "#555577" }}>{q.timeSeconds}ث</span>
+                      <span className="text-xs font-mono" style={{ color: "#9ca3af" }}>{q.timeSeconds}ث</span>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1">
                         <Link href={`/admin/questions/${q.id}/edit`}>
                           <a
                             className="p-1.5 rounded-lg transition-all"
-                            style={{ color: "#444466", border: "1px solid transparent" }}
+                            style={{ color: "#9ca3af", border: "1px solid transparent" }}
                           >
                             <Pencil size={13} />
                           </a>
@@ -235,7 +235,7 @@ export default function AdminCategoryQuestions() {
                           onClick={() => handleDelete(q.id)}
                           disabled={deletingId === q.id}
                           className="p-1.5 rounded-lg transition-all disabled:opacity-40"
-                          style={{ color: "#444466", border: "1px solid transparent" }}
+                          style={{ color: "#9ca3af", border: "1px solid transparent" }}
                         >
                           <Trash2 size={13} />
                         </button>

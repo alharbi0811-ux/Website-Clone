@@ -3,7 +3,7 @@ import { useLocation, Link } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard, FolderOpen, HelpCircle, Users,
-  LogOut, Menu, X, ChevronLeft, Terminal, QrCode, Globe, Palette, Settings2, BookOpen, MessageSquare
+  LogOut, Menu, X, ChevronLeft, QrCode, Globe, Palette, Settings2, BookOpen, MessageSquare
 } from "lucide-react";
 
 interface NavItem {
@@ -26,6 +26,8 @@ const navItems: NavItem[] = [
   { icon: <MessageSquare size={16} />, label: "صندوق الشكاوى", href: "/admin/feedback" },
 ];
 
+const GRAD = "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)";
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
@@ -35,15 +37,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     item.exact ? location === item.href : location.startsWith(item.href);
 
   return (
-    <div
-      className="min-h-screen flex"
-      dir="rtl"
-      style={{ background: "#0b0b14", color: "#e2e2f0" }}
-    >
+    <div className="min-h-screen flex" dir="rtl" style={{ background: "#f5f3ff", color: "#1a1a2e" }}>
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-20 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/30 z-20 lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -53,31 +51,26 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         className={`fixed top-0 right-0 h-full w-60 z-30 flex flex-col transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"} lg:sticky lg:top-0 lg:h-screen`}
         style={{
-          background: "#0f0f1e",
-          borderLeft: "1px solid rgba(123,47,190,0.25)",
+          background: "#ffffff",
+          borderLeft: "1px solid rgba(123,63,242,0.15)",
+          boxShadow: "-4px 0 24px rgba(106,0,244,0.06)",
         }}
       >
         {/* Logo */}
-        <div className="px-5 py-5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(123,47,190,0.2)" }}>
+        <div className="px-5 py-5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(123,63,242,0.1)" }}>
           <div className="flex items-center gap-3">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black"
-              style={{
-                background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)",
-                boxShadow: "0 0 12px rgba(123,47,190,0.5)",
-              }}
+              style={{ background: GRAD, boxShadow: "0 4px 12px rgba(106,0,244,0.35)" }}
             >
               ر
             </div>
             <div>
-              <p className="font-black text-sm text-white">ركّز</p>
-              <div className="flex items-center gap-1 mt-0.5">
-                <Terminal size={9} className="text-[#7B2FBE]" />
-                <p className="text-[10px] font-mono" style={{ color: "#7B2FBE" }}>ADMIN_PANEL v1.0</p>
-              </div>
+              <p className="font-black text-sm" style={{ color: "#1a1a2e" }}>ركّز</p>
+              <p className="text-[10px] font-medium" style={{ color: "#8E63E6" }}>لوحة الإدارة</p>
             </div>
           </div>
-          <button className="lg:hidden text-gray-500 hover:text-gray-300 transition-colors" onClick={() => setSidebarOpen(false)}>
+          <button className="lg:hidden transition-colors" style={{ color: "#aaa" }} onClick={() => setSidebarOpen(false)}>
             <X size={16} />
           </button>
         </div>
@@ -90,38 +83,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <Link key={item.href + item.label} href={item.href}>
                 <a
                   onClick={() => setSidebarOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative"
                   style={
                     active
                       ? {
-                          background: "rgba(123,47,190,0.2)",
-                          color: "#c084fc",
-                          border: "1px solid rgba(123,47,190,0.4)",
-                          boxShadow: "0 0 12px rgba(123,47,190,0.15) inset",
+                          background: GRAD,
+                          color: "#ffffff",
+                          boxShadow: "0 4px 14px rgba(106,0,244,0.3)",
                         }
                       : {
-                          color: "#8888aa",
-                          border: "1px solid transparent",
+                          color: "#6b7280",
                         }
                   }
                 >
-                  {active && (
-                    <span
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-l"
-                      style={{ background: "#7B2FBE", boxShadow: "0 0 8px #7B2FBE" }}
-                    />
-                  )}
-                  <span style={{ color: active ? "#c084fc" : "#555577" }}>{item.icon}</span>
+                  <span>{item.icon}</span>
                   {item.label}
                 </a>
               </Link>
             );
           })}
 
-          <div className="pt-4 mt-4" style={{ borderTop: "1px solid rgba(123,47,190,0.15)" }}>
+          <div className="pt-4 mt-4" style={{ borderTop: "1px solid rgba(123,63,242,0.1)" }}>
             <Link href="/">
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all"
-                style={{ color: "#666688", border: "1px solid transparent" }}
+              <a
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-purple-50"
+                style={{ color: "#9ca3af" }}
               >
                 <ChevronLeft size={16} />
                 العودة للموقع
@@ -131,27 +117,27 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User */}
-        <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(123,47,190,0.2)" }}>
+        <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(123,63,242,0.1)" }}>
           <div
-            className="flex items-center gap-3 px-3 py-3 rounded-lg"
-            style={{ background: "rgba(123,47,190,0.08)", border: "1px solid rgba(123,47,190,0.2)" }}
+            className="flex items-center gap-3 px-3 py-3 rounded-xl"
+            style={{ background: "#f5f3ff", border: "1px solid rgba(123,63,242,0.15)" }}
           >
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
-              style={{ background: "rgba(123,47,190,0.3)", color: "#c084fc" }}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0 text-white"
+              style={{ background: GRAD }}
             >
               {user?.username?.charAt(0)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">{user?.username}</p>
-              <p className="text-[10px] font-mono" style={{ color: "#7B2FBE" }}>
+              <p className="text-sm font-semibold truncate" style={{ color: "#1a1a2e" }}>{user?.username}</p>
+              <p className="text-[10px] font-medium" style={{ color: "#8E63E6" }}>
                 {user?.role?.toUpperCase()}
               </p>
             </div>
             <button
               onClick={logout}
-              className="transition-colors hover:text-red-400"
-              style={{ color: "#444466" }}
+              className="transition-colors hover:text-red-500"
+              style={{ color: "#d1d5db" }}
               title="تسجيل الخروج"
             >
               <LogOut size={15} />
@@ -166,26 +152,27 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <header
           className="sticky top-0 z-10 px-6 py-3.5 flex items-center justify-between"
           style={{
-            background: "rgba(11,11,20,0.85)",
+            background: "rgba(255,255,255,0.9)",
             backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(123,47,190,0.2)",
+            borderBottom: "1px solid rgba(123,63,242,0.12)",
+            boxShadow: "0 1px 8px rgba(106,0,244,0.06)",
           }}
         >
           <div className="flex items-center gap-3">
             <button
               className="lg:hidden transition-colors"
-              style={{ color: "#666688" }}
+              style={{ color: "#9ca3af" }}
               onClick={() => setSidebarOpen(true)}
             >
               <Menu size={20} />
             </button>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style={{ boxShadow: "0 0 6px #34d399" }} />
-              <span className="text-xs font-mono" style={{ color: "#555577" }}>sys.online</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-xs font-medium" style={{ color: "#9ca3af" }}>متصل</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono hidden sm:block" style={{ color: "#444466" }}>
+            <span className="text-xs font-medium hidden sm:block" style={{ color: "#c4b5fd" }}>
               {new Date().toLocaleDateString("ar-KW", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
             </span>
           </div>

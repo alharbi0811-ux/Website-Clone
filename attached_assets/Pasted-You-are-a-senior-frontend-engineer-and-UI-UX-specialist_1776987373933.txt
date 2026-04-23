@@ -1,0 +1,83 @@
+You are a senior frontend engineer and UI/UX specialist.
+
+TASK:
+Convert all control buttons in the GAME PAGE into icon-only buttons with dynamic labels that appear on interaction (hover on desktop, tap on mobile).
+
+IMPORTANT RULES:
+- Do NOT change layout structure
+- Do NOT change functionality
+- Keep UI minimal and clean
+- Must work on BOTH desktop and mobile
+
+----------------------------------
+BUTTON BASE DESIGN
+----------------------------------
+
+- Show ONLY icons by default
+- Remove visible text labels
+- Icons must clearly represent actions
+- Ensure touch-friendly size (min 44px)
+
+----------------------------------
+DESKTOP BEHAVIOR (HOVER)
+----------------------------------
+
+- When user hovers over a button:
+  → Show label (button name)
+  → Tooltip appears smoothly
+  → Position above or below icon
+
+----------------------------------
+MOBILE BEHAVIOR (TAP)
+----------------------------------
+
+- Since mobile has no hover:
+  → On FIRST tap:
+      Show label (tooltip)
+  → On SECOND tap:
+      Execute the action
+
+- Tooltip disappears automatically after a short time (1–2 seconds)
+  OR when user taps elsewhere
+
+----------------------------------
+TOOLTIP STYLE
+----------------------------------
+
+- Rounded box
+- Clean minimal design
+- Good contrast (dark/light depending on theme)
+- Small padding
+- Subtle shadow
+- Smooth fade + slight movement animation
+
+----------------------------------
+ACCESSIBILITY
+----------------------------------
+
+- Add aria-label to each button
+- Tooltip text must match aria-label
+
+----------------------------------
+TECHNICAL IMPLEMENTATION
+----------------------------------
+
+- Use CSS for hover tooltips (desktop)
+- Use JavaScript for tap behavior (mobile)
+- Use event listeners to detect touch interaction
+- Prevent accidental double activation
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Updated HTML + CSS + minimal JS
+- Clean reusable button component
+- No layout break
+- Works smoothly on iPhone and desktop
+
+GOAL:
+Create a modern icon-only control system with smart interaction:
+- Hover reveals labels on desktop
+- Tap reveals labels on mobile
+- Keeps UI clean and app-like across all devices

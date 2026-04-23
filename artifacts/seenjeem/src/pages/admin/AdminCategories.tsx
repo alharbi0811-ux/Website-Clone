@@ -166,22 +166,17 @@ export default function AdminCategories() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono" style={{ color: "#7B2FBE" }}>~/admin/categories $</span>
-            <span className="text-xs font-mono text-gray-600">list --all</span>
-          </div>
-          <h2 className="text-2xl font-black text-white">الفئات</h2>
-          <p className="text-xs font-mono mt-0.5" style={{ color: "#555577" }}>
+          <h2 className="text-2xl font-black" style={{ color: "#1a1a2e" }}>الفئات</h2>
+          <p className="text-sm mt-0.5" style={{ color: "#9ca3af" }}>
             {filtered.length} فئة مسجلة
           </p>
         </div>
         <Link href="/admin/categories/new">
           <a
-            className="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-all"
+            className="flex items-center gap-2 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
             style={{
-              background: "linear-gradient(135deg, #7B2FBE, #5a1f8e)",
-              boxShadow: "0 0 16px rgba(123,47,190,0.4)",
-              border: "1px solid rgba(123,47,190,0.5)",
+              background: "linear-gradient(135deg, #6A00F4, #7B3FF2, #8E63E6, #A07CE0, #B89AE6)",
+              boxShadow: "0 4px 14px rgba(106,0,244,0.3)",
             }}
           >
             <Plus size={15} />
@@ -193,14 +188,14 @@ export default function AdminCategories() {
       {/* Section filter */}
       {sections.length > 0 && (
         <div className="flex items-center gap-2 mb-5 flex-wrap">
-          <Layers size={12} style={{ color: "#555577" }} />
+          <Layers size={12} style={{ color: "#9ca3af" }} />
           <button
             onClick={() => setSectionFilter("")}
-            className="px-3 py-1 rounded-md text-xs font-mono transition-all"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
             style={
               !sectionFilter
-                ? { background: "rgba(123,47,190,0.25)", color: "#c084fc", border: "1px solid rgba(123,47,190,0.4)" }
-                : { color: "#555577", border: "1px solid rgba(255,255,255,0.06)" }
+                ? { background: "linear-gradient(135deg, #6A00F4, #B89AE6)", color: "#ffffff", boxShadow: "0 2px 8px rgba(106,0,244,0.25)" }
+                : { color: "#9ca3af", background: "#ffffff", border: "1px solid rgba(123,63,242,0.15)" }
             }
           >
             الكل
@@ -209,11 +204,11 @@ export default function AdminCategories() {
             <button
               key={s}
               onClick={() => setSectionFilter(s!)}
-              className="px-3 py-1 rounded-md text-xs font-mono transition-all"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={
                 sectionFilter === s
-                  ? { background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.3)" }
-                  : { color: "#555577", border: "1px solid rgba(255,255,255,0.06)" }
+                  ? { background: "linear-gradient(135deg, #6A00F4, #B89AE6)", color: "#ffffff", boxShadow: "0 2px 8px rgba(106,0,244,0.25)" }
+                  : { color: "#9ca3af", background: "#ffffff", border: "1px solid rgba(123,63,242,0.15)" }
               }
             >
               {s}
@@ -228,17 +223,17 @@ export default function AdminCategories() {
             <div
               key={i}
               className="h-56 rounded-xl animate-pulse"
-              style={{ background: "#12121f", border: "1px solid rgba(123,47,190,0.1)" }}
+              style={{ background: "#ffffff", border: "1px solid rgba(123,47,190,0.1)" }}
             />
           ))}
         </div>
       ) : filtered.length === 0 ? (
         <div
           className="rounded-xl p-14 text-center"
-          style={{ background: "#12121f", border: "1px solid rgba(123,47,190,0.15)" }}
+          style={{ background: "#ffffff", border: "1px solid rgba(123,47,190,0.15)" }}
         >
-          <FolderOpen size={36} className="mx-auto mb-3" style={{ color: "#333355" }} />
-          <p className="text-sm font-mono" style={{ color: "#555577" }}>لا توجد فئات بعد</p>
+          <FolderOpen size={36} className="mx-auto mb-3" style={{ color: "#d1d5db" }} />
+          <p className="text-sm font-mono" style={{ color: "#9ca3af" }}>لا توجد فئات بعد</p>
           <Link href="/admin/categories/new">
             <a
               className="mt-4 inline-block text-white text-sm font-semibold px-4 py-2 rounded-lg"
@@ -262,7 +257,7 @@ export default function AdminCategories() {
                 layout
                 className="rounded-xl overflow-hidden transition-all group"
                 style={{
-                  background: "#12121f",
+                  background: "#ffffff",
                   border: cat.isHidden
                     ? "1px solid rgba(234,179,8,0.3)"
                     : `1px solid ${cat.status !== "open" ? statusCfg.border : "rgba(123,47,190,0.15)"}`,
@@ -278,12 +273,12 @@ export default function AdminCategories() {
                     <img src={cat.imageUrl} alt={cat.nameAr} className="w-full h-full object-cover opacity-80" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ImageIcon size={24} style={{ color: "#333355" }} />
+                      <ImageIcon size={24} style={{ color: "#d1d5db" }} />
                     </div>
                   )}
                   <div
                     className="absolute inset-0"
-                    style={{ background: "linear-gradient(to bottom, transparent 40%, #12121f)" }}
+                    style={{ background: "linear-gradient(to bottom, transparent 40%, #ffffff)" }}
                   />
                   {/* Badges top-right */}
                   <div className="absolute top-2.5 right-2.5 flex gap-1.5">
@@ -292,7 +287,7 @@ export default function AdminCategories() {
                       style={
                         cat.isActive
                           ? { background: "rgba(16,185,129,0.2)", color: "#34d399", border: "1px solid rgba(16,185,129,0.3)" }
-                          : { background: "rgba(255,255,255,0.05)", color: "#555577", border: "1px solid rgba(255,255,255,0.08)" }
+                          : { background: "#f9f8ff", color: "#9ca3af", border: "1px solid rgba(123,63,242,0.1)" }
                       }
                     >
                       {cat.isActive ? "● ACTIVE" : "○ INACTIVE"}
@@ -326,15 +321,15 @@ export default function AdminCategories() {
                       </span>
                     </div>
                   )}
-                  <div className="absolute bottom-2 left-2.5 font-mono text-[10px]" style={{ color: "#555577" }}>
+                  <div className="absolute bottom-2 left-2.5 font-mono text-[10px]" style={{ color: "#9ca3af" }}>
                     ID:{cat.id.toString().padStart(3, "0")}
                   </div>
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-bold text-white text-base mb-1">{cat.nameAr}</h3>
+                  <h3 className="font-bold text-base mb-1" style={{ color: "#1a1a2e" }}>{cat.nameAr}</h3>
                   {cat.description && (
-                    <p className="text-xs line-clamp-1 mb-2" style={{ color: "#555577" }}>{cat.description}</p>
+                    <p className="text-xs line-clamp-1 mb-2" style={{ color: "#9ca3af" }}>{cat.description}</p>
                   )}
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span
@@ -374,7 +369,7 @@ export default function AdminCategories() {
                           style={
                             isActive
                               ? { background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }
-                              : { background: "rgba(255,255,255,0.03)", color: "#444466", border: "1px solid rgba(255,255,255,0.06)" }
+                              : { background: "#f9f8ff", color: "#9ca3af", border: "1px solid rgba(123,63,242,0.1)" }
                           }
                         >
                           <Ic size={9} />
@@ -425,7 +420,7 @@ export default function AdminCategories() {
                                   style={
                                     isSelected
                                       ? { background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }
-                                      : { background: "rgba(255,255,255,0.03)", color: "#444466", border: "1px solid rgba(255,255,255,0.06)" }
+                                      : { background: "#f9f8ff", color: "#9ca3af", border: "1px solid rgba(123,63,242,0.1)" }
                                   }
                                 >
                                   <Ic size={12} />
@@ -436,7 +431,7 @@ export default function AdminCategories() {
                           </div>
                           {/* Lock message input */}
                           <div className="mb-3">
-                            <label className="text-[10px] font-mono mb-1 block" style={{ color: "#555577" }}>
+                            <label className="text-[10px] font-mono mb-1 block" style={{ color: "#9ca3af" }}>
                               رسالة مخصصة (اختياري)
                             </label>
                             <input
@@ -448,9 +443,9 @@ export default function AdminCategories() {
                               placeholder="مثال: قريبًا..."
                               className="w-full text-xs font-mono px-3 py-2 rounded-lg outline-none transition-all"
                               style={{
-                                background: "rgba(255,255,255,0.05)",
+                                background: "#f9f8ff",
                                 border: "1px solid rgba(123,47,190,0.2)",
-                                color: "#e2e8f0",
+                                color: "#1a1a2e",
                               }}
                               dir="rtl"
                             />
@@ -477,7 +472,7 @@ export default function AdminCategories() {
                             <button
                               onClick={() => setExpandedStatusId(null)}
                               className="w-8 flex items-center justify-center rounded-lg transition-all"
-                              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }}
+                              style={{ background: "#f9f8ff", border: "1px solid rgba(123,63,242,0.1)", color: "#9ca3af" }}
                             >
                               <X size={12} />
                             </button>
@@ -508,7 +503,7 @@ export default function AdminCategories() {
                     <Link href={`/admin/categories/${cat.id}/edit`}>
                       <a
                         className="flex items-center justify-center w-8 h-8 rounded-lg transition-all"
-                        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }}
+                        style={{ background: "#f9f8ff", border: "1px solid rgba(123,63,242,0.1)", color: "#9ca3af" }}
                       >
                         <Pencil size={13} />
                       </a>
@@ -521,7 +516,7 @@ export default function AdminCategories() {
                       style={
                         cat.isHidden
                           ? { background: "rgba(234,179,8,0.15)", border: "1px solid rgba(234,179,8,0.35)", color: "#facc15" }
-                          : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }
+                          : { background: "#f9f8ff", border: "1px solid rgba(123,63,242,0.1)", color: "#9ca3af" }
                       }
                     >
                       {togglingHiddenId === cat.id ? (
@@ -536,7 +531,7 @@ export default function AdminCategories() {
                       onClick={() => handleDelete(cat.id, cat.nameAr)}
                       disabled={deletingId === cat.id}
                       className="flex items-center justify-center w-8 h-8 rounded-lg transition-all disabled:opacity-40"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#555577" }}
+                      style={{ background: "#f9f8ff", border: "1px solid rgba(123,63,242,0.1)", color: "#9ca3af" }}
                     >
                       <Trash2 size={13} />
                     </button>
