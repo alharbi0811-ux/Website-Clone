@@ -653,7 +653,7 @@ export default function QuestionPage() {
             {/* Regular timer — مخفي في فئة بدون كلام أو لو أخفاه الأدمن */}
             {!isBadounKalam && design.showTimer && (
               <div
-                className="absolute -top-[26px] left-1/2 -translate-x-1/2 z-10"
+                className="absolute top-4 left-1/2 -translate-x-1/2 z-10"
                 {...editProps("timer", true)}
                 style={{
                   ...editOutline("timer"),
@@ -678,7 +678,7 @@ export default function QuestionPage() {
             {/* Timer placeholder when hidden — allow clicking to show it in edit mode */}
             {editMode && !design.showTimer && (
               <div
-                className="absolute -top-[26px] z-10"
+                className="absolute top-4 z-10"
                 {...editProps("timer", true)}
                 style={editOutline("timer", {
                   display: "flex", alignItems: "center", justifyContent: "center",
