@@ -5,14 +5,13 @@ import { db } from "@workspace/db";
 import { usersTable, loginSchema, registerSchema } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { generateToken, requireAuth, type AuthRequest } from "../middleware/auth";
-import { sendOtp, verifyOtp } from "../services/otp";
+import { generateOtp, verifyOtp } from "../services/otp";
 
 const router = Router();
-
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_change_me";
 
 function generateTempToken(userId: number): string {
-  return jwt.sign({ userId, purpose: "otp-pending" }, JWT_SECRET, { expiresIn: "10m" });
+  return jwt.sign({ userId, purpose: "otp-pending" }, JWT_SECRET, { expiresIn: "5m" });
 }
 
 function verifyTempToken(token: string): { userId: number } | null {
@@ -25,6 +24,7 @@ function verifyTempToken(token: string): { userId: number } | null {
   }
 }
 
+/* ─── Register — simple, no phone, no OTP ─── */
 router.post("/auth/register", async (req, res) => {
   const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -32,7 +32,6 @@ router.post("/auth/register", async (req, res) => {
   }
 
   const { username, password } = parsed.data;
-  const phone: string | undefined = typeof req.body.phone === "string" ? req.body.phone.trim() : undefined;
 
   try {
     const existing = await db
@@ -46,10 +45,9 @@ router.post("/auth/register", async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-
     const [user] = await db
       .insert(usersTable)
-      .values({ username, passwordHash, displayName: username, phone: phone || null })
+      .values({ username, passwordHash, displayName: username })
       .returning({
         id: usersTable.id,
         username: usersTable.username,
@@ -57,12 +55,6 @@ router.post("/auth/register", async (req, res) => {
         displayName: usersTable.displayName,
         role: usersTable.role,
       });
-
-    if (phone) {
-      await sendOtp(user.id, phone);
-      const tempToken = generateTempToken(user.id);
-      return res.status(201).json({ requiresOtp: true, tempToken, phone: maskPhone(phone) });
-    }
 
     const token = generateToken(user.id, user.isAdmin);
     return res.status(201).json({
@@ -75,6 +67,7 @@ router.post("/auth/register", async (req, res) => {
   }
 });
 
+/* ─── Login — OTP required unless exempt ─── */
 router.post("/auth/login", async (req, res) => {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -90,14 +83,10 @@ router.post("/auth/login", async (req, res) => {
       .where(eq(usersTable.username, username))
       .limit(1);
 
-    if (!user) {
-      return res.status(401).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
-    }
+    if (!user) return res.status(401).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
 
     const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid) {
-      return res.status(401).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
-    }
+    if (!valid) return res.status(401).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
 
     const userData = {
       id: user.id,
@@ -107,59 +96,39 @@ router.post("/auth/login", async (req, res) => {
       role: user.role,
     };
 
-    if (user.otpExempt || !user.phone) {
+    // Exempt users skip OTP entirely
+    if (user.otpExempt) {
       const token = generateToken(user.id, user.isAdmin);
       return res.json({ token, user: userData });
     }
 
+    // Generate internal OTP — returned to frontend for on-screen display
+    const plainOtp = await generateOtp(user.id);
     const tempToken = generateTempToken(user.id);
-    return res.json({ requiresOtp: true, tempToken, phone: maskPhone(user.phone) });
+
+    return res.json({
+      requiresOtp: true,
+      tempToken,
+      otp: plainOtp,                  // shown directly on /verify-otp page
+      expiresInSeconds: 180,          // 3 minutes
+    });
   } catch (err) {
-    return res.status(500).json({ error: "خطأ في الخادم" });
+    const msg = err instanceof Error ? err.message : "خطأ في الخادم";
+    return res.status(500).json({ error: msg });
   }
 });
 
-router.post("/auth/send-otp", async (req, res) => {
-  const { tempToken } = req.body;
-  if (!tempToken) return res.status(400).json({ error: "رمز مؤقت مطلوب" });
-
-  const payload = verifyTempToken(tempToken);
-  if (!payload) return res.status(401).json({ error: "الجلسة المؤقتة منتهية، يرجى تسجيل الدخول مجدداً" });
-
-  try {
-    const [user] = await db
-      .select({ id: usersTable.id, phone: usersTable.phone })
-      .from(usersTable)
-      .where(eq(usersTable.id, payload.userId))
-      .limit(1);
-
-    if (!user?.phone) return res.status(400).json({ error: "لا يوجد رقم هاتف مرتبط بهذا الحساب" });
-
-    await sendOtp(user.id, user.phone);
-    return res.json({ ok: true });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "خطأ في إرسال الرمز";
-    return res.status(429).json({ error: msg });
-  }
-});
-
+/* ─── Verify OTP ─── */
 router.post("/auth/verify-otp", async (req, res) => {
   const { tempToken, code } = req.body;
   if (!tempToken || !code) return res.status(400).json({ error: "البيانات ناقصة" });
 
   const payload = verifyTempToken(tempToken);
-  if (!payload) return res.status(401).json({ error: "الجلسة المؤقتة منتهية، يرجى تسجيل الدخول مجدداً" });
+  if (!payload) return res.status(401).json({ error: "انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجدداً" });
 
   try {
-    // Fetch phone to pass to Twilio Verify check
-    const [userRow] = await db
-      .select({ phone: usersTable.phone })
-      .from(usersTable)
-      .where(eq(usersTable.id, payload.userId))
-      .limit(1);
-
-    const ok = await verifyOtp(payload.userId, code.trim(), userRow?.phone ?? undefined);
-    if (!ok) return res.status(400).json({ error: "الرمز غير صحيح أو منتهي الصلاحية" });
+    const ok = await verifyOtp(payload.userId, code.trim());
+    if (!ok) return res.status(400).json({ error: "الرمز غير صحيح، تحقق وأعد المحاولة" });
 
     const [user] = await db
       .select({
@@ -183,6 +152,7 @@ router.post("/auth/verify-otp", async (req, res) => {
   }
 });
 
+/* ─── /auth/me ─── */
 router.get("/auth/me", requireAuth, async (req: AuthRequest, res) => {
   try {
     const [user] = await db
@@ -203,10 +173,5 @@ router.get("/auth/me", requireAuth, async (req: AuthRequest, res) => {
     return res.status(500).json({ error: "خطأ في الخادم" });
   }
 });
-
-function maskPhone(phone: string): string {
-  if (phone.length <= 4) return "****";
-  return phone.slice(0, -4).replace(/./g, "*") + phone.slice(-4);
-}
 
 export default router;

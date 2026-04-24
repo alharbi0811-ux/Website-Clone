@@ -1,0 +1,72 @@
+You are a senior full-stack engineer.
+
+TASK:
+REMOVE the existing iPhone/SMS OTP verification system completely and REPLACE it with a more secure internal OTP authentication system.
+
+----------------------------------
+STEP 1: REMOVE OLD SYSTEM
+----------------------------------
+
+- Delete all previous phone number (SMS / iPhone OTP) verification logic
+- Remove any Twilio / SMS API integration
+- Remove phone-based authentication flow from:
+  - Login page
+  - Signup page
+  - Backend verification routes
+- Ensure no remaining references to phone OTP exist in the codebase
+
+----------------------------------
+STEP 2: NEW SECURE OTP SYSTEM (INTERNAL)
+----------------------------------
+
+Replace it with a secure server-side OTP system:
+
+- OTP must be generated ONLY on the server
+- OTP must NEVER be stored in plain text
+- Store only hashed OTP (e.g., SHA-256 or bcrypt)
+- OTP is valid for 2–3 minutes only
+- OTP is linked to user session (not just email or phone)
+
+----------------------------------
+STEP 3: OTP FLOW
+----------------------------------
+
+Login flow:
+
+1) User enters credentials (username/password)
+2) System checks if account is exempt:
+   - If exempt → skip OTP
+   - Else → generate OTP
+3) OTP is displayed ONLY in internal verification page (NOT external SMS/email)
+4) User enters OTP in /verify-otp page
+5) System validates hashed OTP
+6) On success → login user
+
+----------------------------------
+STEP 4: SECURITY REQUIREMENTS
+----------------------------------
+
+- OTP must be:
+  - Random 6-digit code
+  - One-time use only
+  - Expire automatically after timeout
+- Prevent brute force attacks:
+  - Max 3–5 attempts
+- Bind OTP to:
+  - user session ID
+  - IP address (optional)
+- Invalidate OTP after successful login
+
+----------------------------------
+STEP 5: UI PAGES
+----------------------------------
+
+- /login
+- /verify-otp (new secure page)
+- No external SMS or email dependency
+
+----------------------------------
+GOAL:
+----------------------------------
+
+Create a fully internal, secure OTP authentication system with NO phone (iPhone/SMS) verification system at all, ensuring stronger security and full control within the application.

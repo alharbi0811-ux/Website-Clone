@@ -12,6 +12,7 @@ import StartGame from "@/pages/StartGame";
 import ScorePage from "@/pages/ScorePage";
 import QuestionPage from "@/pages/QuestionPage";
 import LoginPage from "@/pages/LoginPage";
+import VerifyOtpPage from "@/pages/VerifyOtpPage";
 import HistoryPage from "@/pages/HistoryPage";
 import WinPage from "@/pages/WinPage";
 import StudyModeSetup from "@/pages/StudyModeSetup";
@@ -63,6 +64,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/login" component={LoginPage} />
+      <Route path="/verify-otp" component={VerifyOtpPage} />
       <Route path="/start-game" component={StartGame} />
       <Route path="/score-page" component={ScorePage} />
       <Route path="/question" component={QuestionPage} />
