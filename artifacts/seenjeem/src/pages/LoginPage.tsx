@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, ShieldCheck, RotateCcw, ChevronRight } from "lucide-react";
+import { ShieldCheck, RotateCcw, ChevronRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const API_BASE = "/api";
@@ -140,10 +140,14 @@ function RegisterForm({ onOtp, onSwitchToLogin, register }: {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!phone.trim()) { setError("رقم الهاتف مطلوب للتحقق"); return; }
+    const localNum = phone.replace(/\D/g, "");
+    if (!localNum) { setError("رقم الهاتف مطلوب للتحقق"); return; }
+    if (localNum.length !== 8) { setError("رقم الهاتف الكويتي يجب أن يكون 8 أرقام"); return; }
+    if (!/^[569]\d{7}$/.test(localNum)) { setError("أدخل رقم هاتف كويتي صحيح يبدأ بـ 5، 6، أو 9"); return; }
     setLoading(true);
     try {
-      const result = await register(username, password, phone.trim());
+      const fullPhone = `+965${localNum}`;
+      const result = await register(username, password, fullPhone);
       if (result.requiresOtp) {
         onOtp({ tempToken: result.tempToken, maskedPhone: result.phone, purpose: "register" });
       } else {
@@ -168,15 +172,7 @@ function RegisterForm({ onOtp, onSwitchToLogin, register }: {
           <input type="password" value={password} onChange={e => setPassword(e.target.value)}
             placeholder="أدخل كلمة المرور" required autoComplete="new-password" className={inputCls} />
         </Field>
-        <Field label="رقم الهاتف">
-          <div className="relative">
-            <Phone size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
-            <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-              placeholder="+966xxxxxxxxx" required dir="ltr"
-              className={inputCls + " pr-9 text-left font-mono"} />
-          </div>
-        </Field>
-        <p className="text-white/40 text-xs text-center -mt-1">سيتم إرسال رمز تحقق إلى هذا الرقم</p>
+        <KuwaitPhoneInput value={phone} onChange={setPhone} />
         {error && <ErrorBox msg={error} />}
         <SubmitBtn loading={loading} label="إنشاء حساب وتحقق" loadingLabel="جاري الإنشاء..." />
       </form>
@@ -360,6 +356,95 @@ function OtpBoxes({ value, onChange }: { value: string; onChange: (v: string) =>
           }}
         />
       ))}
+    </div>
+  );
+}
+
+/* ─── Kuwait Phone Input ─── */
+function KuwaitPhoneInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [focused, setFocused] = useState(false);
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  const isValid = /^[569]\d{7}$/.test(digits);
+  const isDirty = digits.length > 0;
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/\D/g, "").slice(0, 8);
+    onChange(raw);
+  }
+
+  return (
+    <div>
+      <label className="block text-white/80 text-sm mb-1.5">رقم الهاتف</label>
+
+      {/* Combined row */}
+      <div
+        className="flex overflow-hidden rounded-xl transition-all"
+        style={{
+          border: focused
+            ? "1px solid rgba(123,47,190,0.9)"
+            : isDirty && !isValid
+            ? "1px solid rgba(248,113,113,0.6)"
+            : "1px solid rgba(255,255,255,0.2)",
+          boxShadow: focused ? "0 0 0 1px rgba(123,47,190,0.5)" : "none",
+        }}
+      >
+        {/* Flag + code prefix — fixed, not editable */}
+        <div className="flex items-center gap-1.5 px-3 bg-white/[0.07] border-l border-white/10 shrink-0 select-none">
+          <span className="text-base leading-none">🇰🇼</span>
+          <span className="text-white/80 text-sm font-semibold font-mono tracking-wide">+965</span>
+          {/* thin divider */}
+          <span className="text-white/20 ml-1">|</span>
+        </div>
+
+        {/* Number-only input (LTR) */}
+        <input
+          type="tel"
+          inputMode="numeric"
+          dir="ltr"
+          value={digits}
+          onChange={handleChange}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder="5XXXXXXXX"
+          maxLength={8}
+          className="flex-1 min-w-0 bg-transparent px-3 py-3 text-white placeholder:text-white/25 outline-none text-left font-mono tracking-wider text-sm"
+        />
+
+        {/* Live digit counter */}
+        <div className="flex items-center pr-3 shrink-0">
+          <span
+            className="text-xs font-mono tabular-nums transition-colors"
+            style={{ color: isValid ? "rgba(167,243,208,0.8)" : "rgba(255,255,255,0.25)" }}
+          >
+            {digits.length}/8
+          </span>
+        </div>
+      </div>
+
+      {/* Helper text */}
+      <div className="flex items-center justify-between mt-1.5 px-0.5">
+        <p className="text-white/40 text-xs">
+          سيُرسَل رمز التحقق إلى رقمك الكويتي
+        </p>
+        {isDirty && !isValid && digits.length > 0 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-300/80 text-xs"
+          >
+            {digits.length < 8 ? `${8 - digits.length} أرقام متبقية` : "رقم غير صحيح"}
+          </motion.p>
+        )}
+        {isValid && (
+          <motion.p
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-emerald-300/80 text-xs"
+          >
+            ✓ رقم صحيح
+          </motion.p>
+        )}
+      </div>
     </div>
   );
 }
