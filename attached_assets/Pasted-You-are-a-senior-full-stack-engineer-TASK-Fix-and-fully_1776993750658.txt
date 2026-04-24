@@ -1,0 +1,83 @@
+You are a senior full-stack engineer.
+
+TASK:
+Fix and fully INTEGRATE the internal OTP system with the existing authentication system.
+
+The OTP system already exists, but it is NOT connected properly to login and signup flows.
+
+----------------------------------
+CORE PROBLEM
+----------------------------------
+
+- OTP system exists separately
+- BUT login does not trigger OTP step
+- AND signup does not enforce OTP verification
+- Users can bypass OTP or login without completing flow
+
+----------------------------------
+REQUIRED FIX: LOGIN FLOW
+----------------------------------
+
+Update login process to:
+
+1) User enters username + password
+2) System validates credentials
+3) THEN immediately checks:
+   - If user is EXEMPT → skip OTP → login success
+   - If NOT exempt → generate OTP and redirect to /verify-otp
+
+4) User must complete OTP verification before accessing dashboard
+
+----------------------------------
+REQUIRED FIX: SIGNUP FLOW
+----------------------------------
+
+1) User registers account
+2) Account is created in "pending verification" state
+3) System generates OTP
+4) Redirect user to /verify-otp page
+5) ONLY after correct OTP:
+   → activate account
+   → allow login access
+
+----------------------------------
+OTP FLOW ENFORCEMENT
+----------------------------------
+
+- OTP must be REQUIRED for all non-exempt users
+- No direct access to dashboard without OTP verification
+- Prevent bypass via URL or direct navigation
+
+----------------------------------
+SESSION HANDLING
+----------------------------------
+
+- OTP must be tied to:
+  - user session ID
+- After OTP success:
+  - mark session as verified
+  - allow authenticated access
+
+----------------------------------
+SECURITY RULES
+----------------------------------
+
+- OTP expires in 2–3 minutes
+- Max 3–5 attempts allowed
+- OTP becomes invalid after success
+- Prevent reuse of OTP
+
+----------------------------------
+UI REQUIREMENTS
+----------------------------------
+
+- After login → automatically redirect to /verify-otp
+- Show clear message:
+  "We sent a verification step to secure your account"
+- Smooth transition between pages
+
+----------------------------------
+GOAL:
+----------------------------------
+
+Fully integrate OTP authentication into both login and signup flows so that NO user can access the system without completing OTP verification (except exempt accounts).
