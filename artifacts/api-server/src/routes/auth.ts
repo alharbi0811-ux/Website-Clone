@@ -32,6 +32,7 @@ router.post("/auth/register", async (req, res) => {
   }
 
   const { username, password } = parsed.data;
+  const phone: string | undefined = typeof req.body.phone === "string" ? req.body.phone.trim() : undefined;
 
   try {
     const existing = await db
@@ -48,7 +49,7 @@ router.post("/auth/register", async (req, res) => {
 
     const [user] = await db
       .insert(usersTable)
-      .values({ username, passwordHash, displayName: username })
+      .values({ username, passwordHash, displayName: username, phone: phone || null })
       .returning({
         id: usersTable.id,
         username: usersTable.username,
@@ -57,13 +58,20 @@ router.post("/auth/register", async (req, res) => {
         role: usersTable.role,
       });
 
+    if (phone) {
+      await sendOtp(user.id, phone);
+      const tempToken = generateTempToken(user.id);
+      return res.status(201).json({ requiresOtp: true, tempToken, phone: maskPhone(phone) });
+    }
+
     const token = generateToken(user.id, user.isAdmin);
     return res.status(201).json({
       token,
       user: { id: user.id, username: user.username, displayName: user.displayName, isAdmin: user.isAdmin, role: user.role },
     });
   } catch (err) {
-    return res.status(500).json({ error: "خطأ في الخادم" });
+    const msg = err instanceof Error ? err.message : "خطأ في الخادم";
+    return res.status(500).json({ error: msg });
   }
 });
 

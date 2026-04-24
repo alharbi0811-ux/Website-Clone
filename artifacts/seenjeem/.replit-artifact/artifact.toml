@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Seen Jeem - سين جيم"
+title = "RAKZ - ركز"
 version = "1.0.0"
 id = "artifacts/seenjeem"
 router = "path"
