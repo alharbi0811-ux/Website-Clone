@@ -9,6 +9,8 @@ export const usersTable = pgTable("users", {
   displayName: text("display_name"),
   isAdmin: boolean("is_admin").notNull().default(false),
   role: text("role").notNull().default("player"),
+  phone: text("phone"),
+  otpExempt: boolean("otp_exempt").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

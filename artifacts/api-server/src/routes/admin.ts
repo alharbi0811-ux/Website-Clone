@@ -385,4 +385,55 @@ router.post("/admin/roles", async (req: AuthRequest, res) => {
   }
 });
 
+/* ─── OTP Exempt Management ─── */
+
+router.get("/admin/otp-exempt", requireAuth, requireAdmin, async (_req, res) => {
+  try {
+    const users = await db
+      .select({ id: usersTable.id, username: usersTable.username, displayName: usersTable.displayName, phone: usersTable.phone, otpExempt: usersTable.otpExempt })
+      .from(usersTable)
+      .where(eq(usersTable.otpExempt, true));
+    res.json({ users });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+router.post("/admin/otp-exempt/:id", requireAuth, requireAdmin, async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ error: "معرّف غير صحيح" });
+  try {
+    const [user] = await db.update(usersTable).set({ otpExempt: true }).where(eq(usersTable.id, id)).returning({ id: usersTable.id, username: usersTable.username });
+    if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+    res.json({ ok: true, user });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+router.delete("/admin/otp-exempt/:id", requireAuth, requireAdmin, async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ error: "معرّف غير صحيح" });
+  try {
+    await db.update(usersTable).set({ otpExempt: false }).where(eq(usersTable.id, id));
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
+router.get("/admin/users-search", requireAuth, requireAdmin, async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  try {
+    const users = await db
+      .select({ id: usersTable.id, username: usersTable.username, displayName: usersTable.displayName, otpExempt: usersTable.otpExempt })
+      .from(usersTable)
+      .limit(20);
+    const filtered = q ? users.filter(u => u.username.includes(q) || (u.displayName ?? "").includes(q)) : users;
+    res.json({ users: filtered });
+  } catch {
+    res.status(500).json({ error: "خطأ في الخادم" });
+  }
+});
+
 export default router;

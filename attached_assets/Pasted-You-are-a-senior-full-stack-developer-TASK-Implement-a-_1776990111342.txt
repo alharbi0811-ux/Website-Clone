@@ -1,0 +1,105 @@
+You are a senior full-stack developer.
+
+TASK:
+Implement a COMPLETE FAVORITES SYSTEM with AUTOMATIC SORTING based on user usage behavior, and integrate it into the Create Game page.
+
+----------------------------------
+CORE SYSTEM
+----------------------------------
+
+1) USER-SPECIFIC FAVORITES:
+- Each user has their own favorites list
+- Favorites are NOT shared between accounts
+- Each favorite is linked to the logged-in user
+
+----------------------------------
+2) ADD / REMOVE FAVORITES
+----------------------------------
+
+- Users can toggle a category as favorite using a star icon
+- Clicking once → add to favorites
+- Clicking again → remove from favorites
+- UI must reflect changes instantly
+
+----------------------------------
+3) CREATE GAME PAGE INTEGRATION
+----------------------------------
+
+- Add a section called "Favorites Categories"
+- This section displays ONLY the user's favorite categories
+- It must be separated from the full category list
+- It updates automatically when favorites change
+
+----------------------------------
+4) AUTOMATIC SORTING (IMPORTANT FEATURE)
+----------------------------------
+
+Favorites must be automatically sorted based on usage:
+
+TRACK FOR EACH FAVORITE:
+- usage_count (number of times category is used)
+- last_used (timestamp of last usage)
+
+SORTING RULES:
+PRIMARY:
+- Higher usage_count appears first
+
+SECONDARY (tie-breaker):
+- More recent last_used appears first
+
+----------------------------------
+5) DATA STRUCTURE
+----------------------------------
+
+Each favorite entry must store:
+
+{
+  categoryId: string,
+  usage_count: number,
+  last_used: timestamp
+}
+
+Default values:
+- usage_count = 0
+- last_used = null
+
+----------------------------------
+6) USAGE TRACKING LOGIC
+----------------------------------
+
+Increase usage_count when:
+- User selects category in Create Game
+- User starts a game using that category
+
+Update last_used when:
+- Category is used in gameplay
+
+----------------------------------
+7) UI REQUIREMENTS
+----------------------------------
+
+- Star icon for favorite toggle
+- Favorites list always auto-sorted
+- Smooth animation when order changes
+- No manual sorting option
+
+----------------------------------
+8) EDGE CASES
+----------------------------------
+
+- Handle empty favorites list gracefully
+- Prevent duplicate entries
+- Ensure missing data does not break sorting
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Backend logic (user-based storage system)
+- Frontend favorites UI
+- Auto-sorting algorithm implementation
+- Create Game page integration
+- Clean, production-ready code
+
+GOAL:
+Create an intelligent, user-personalized favorites system that automatically sorts categories based on real usage behavior and integrates seamlessly into the game creation flow.

@@ -1,0 +1,98 @@
+You are a senior full-stack engineer specializing in authentication systems and security.
+
+TASK:
+Upgrade the existing login system to support PHONE OTP verification with EXEMPT ACCOUNTS and ADMIN CONTROLLED EXCLUSIONS.
+
+----------------------------------
+CORE LOGIN LOGIC
+----------------------------------
+
+1) NORMAL USERS:
+- All users MUST verify their phone number via OTP during login
+- OTP is sent via SMS using a provider (e.g., Twilio Verify API)
+- Login is only successful after OTP verification
+
+2) EXEMPT ACCOUNTS (NO OTP REQUIRED):
+- Some specific accounts are excluded from phone verification
+
+EXEMPT ACCOUNT:
+- Username: "ابراهيم الحربي"
+- Password: "0811"
+
+This account must:
+- Skip OTP verification completely
+- Log in directly after username/password validation
+
+----------------------------------
+ADMIN CONTROL FEATURE
+----------------------------------
+
+Add a feature in the admin panel:
+
+"Manage OTP Exempt Users"
+
+Capabilities:
+- Admin can ADD users to exemption list
+- Admin can REMOVE users from exemption list
+- Admin can view all exempt accounts
+
+Rules:
+- Exempt list must be stored securely in database
+- Must support multiple users
+- Changes take effect immediately
+
+----------------------------------
+LOGIN FLOW LOGIC
+----------------------------------
+
+Step 1:
+User enters username + password
+
+Step 2:
+System checks:
+IF user is in EXEMPT LIST:
+    → Skip OTP
+    → Login directly
+ELSE:
+    → Proceed to OTP verification
+
+Step 3 (OTP USERS ONLY):
+- Send OTP via SMS
+- Verify OTP before login success
+
+----------------------------------
+SECURITY REQUIREMENTS
+----------------------------------
+
+- Passwords must be hashed (never stored in plain text except provided legacy account exception)
+- OTP must expire after 3–5 minutes
+- Limit OTP attempts (max 3–5 tries)
+- Rate limit OTP requests
+- Secure admin panel (only authorized access)
+
+----------------------------------
+UX REQUIREMENTS
+----------------------------------
+
+- Clear message when OTP is required
+- Smooth transition between login → OTP screen → dashboard
+- Admin UI must be simple:
+  - Add user to exempt list
+  - Remove user
+  - List all exempt users
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Updated authentication backend
+- Updated login frontend UI
+- Admin panel extension
+- Database schema updates if needed
+- Clean, production-ready implementation
+
+GOAL:
+Create a hybrid authentication system:
+- Secure OTP login for normal users
+- Fast bypass login for exempt accounts
+- Full admin control over exemptions
