@@ -9,3 +9,4 @@ export * from "./site_settings";
 export * from "./study_mode";
 export * from "./feedback";
 export * from "./otp_codes";
+export * from "./user_favorites";

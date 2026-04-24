@@ -1,0 +1,112 @@
+You are a senior full-stack engineer.
+
+TASK:
+Fix and fully integrate the OTP authentication system into BOTH:
+- Login page
+- Sign up (Create Account) page
+
+The backend OTP system already exists, but it is NOT properly connected to the UI.
+
+----------------------------------
+CORE ISSUE
+----------------------------------
+
+- OTP verification exists in backend
+- BUT login and signup pages do NOT trigger OTP flow correctly
+- Users can proceed without proper verification UI flow
+
+----------------------------------
+REQUIRED FIX: LOGIN PAGE
+----------------------------------
+
+1) Login Flow must be:
+
+Step 1:
+User enters username + password
+
+Step 2:
+System checks:
+- If user is EXEMPT → login directly
+- If NOT exempt → proceed to OTP screen
+
+Step 3:
+- Show OTP input UI
+- Send OTP automatically after login credentials are validated
+- Block access until OTP is verified
+
+Step 4:
+- After correct OTP → allow login
+
+----------------------------------
+REQUIRED FIX: SIGN UP PAGE
+----------------------------------
+
+1) After user creates account:
+- Require phone number verification via OTP BEFORE completing registration
+
+Flow:
+
+Step 1:
+User enters registration data (username, password, phone)
+
+Step 2:
+System sends OTP to phone number
+
+Step 3:
+User must verify OTP
+
+Step 4:
+Only after OTP success → account is created and activated
+
+----------------------------------
+OTP UI REQUIREMENTS
+----------------------------------
+
+- Clean OTP input screen (6-digit input)
+- Auto-focus between fields (if split input used)
+- Resend OTP button with cooldown timer
+- Clear error messages:
+  - Invalid OTP
+  - Expired OTP
+  - Too many attempts
+
+----------------------------------
+SECURITY RULES
+----------------------------------
+
+- OTP must expire after 3–5 minutes
+- Max 3–5 attempts allowed
+- Rate limit OTP requests
+- Do NOT allow bypassing OTP flow via URL or UI tricks
+
+----------------------------------
+USER EXPERIENCE
+----------------------------------
+
+- Smooth transition between:
+  Login → OTP → Dashboard
+  Signup → OTP → Account Created → Dashboard
+
+- Show loading states during OTP sending
+- Mask phone number when showing confirmation
+
+----------------------------------
+EXEMPT ACCOUNTS RULE
+----------------------------------
+
+- If user is in EXEMPT list:
+  → Skip OTP completely in login only
+  → Signup still requires OTP
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Fully connected frontend + backend flow
+- Updated login page logic
+- Updated signup page logic
+- OTP UI implementation
+- Secure flow enforcement
+
+GOAL:
+Ensure OTP verification is fully enforced and properly integrated into both login and signup flows without any bypass possible.

@@ -10,6 +10,7 @@ import categoryLayoutsRouter from "./category-layouts";
 import siteSettingsRouter from "./site-settings";
 import studyModeRouter from "./study-mode";
 import feedbackRouter from "./feedback";
+import favoritesRouter from "./favorites";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(studyModeRouter);
 router.use(historyRouter);
 router.use(adminRouter);
 router.use(feedbackRouter);
+router.use(favoritesRouter);
 
 export default router;
