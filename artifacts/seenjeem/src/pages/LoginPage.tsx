@@ -375,7 +375,6 @@ function KuwaitPhoneInput({ value, onChange }: { value: string; onChange: (v: st
   return (
     <div>
       <label className="block text-white/80 text-sm mb-1.5">رقم الهاتف</label>
-
       {/* Combined row */}
       <div
         className="flex overflow-hidden rounded-xl transition-all"
@@ -420,12 +419,10 @@ function KuwaitPhoneInput({ value, onChange }: { value: string; onChange: (v: st
           </span>
         </div>
       </div>
-
       {/* Helper text */}
       <div className="flex items-center justify-between mt-1.5 px-0.5">
-        <p className="text-white/40 text-xs">
-          سيُرسَل رمز التحقق إلى رقمك الكويتي
-        </p>
+        <p className="text-white/40 text-xs">سيُرسَل رمز التحقق إلى رقمك
+</p>
         {isDirty && !isValid && digits.length > 0 && (
           <motion.p
             initial={{ opacity: 0 }}
