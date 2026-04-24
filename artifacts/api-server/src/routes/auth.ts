@@ -151,7 +151,14 @@ router.post("/auth/verify-otp", async (req, res) => {
   if (!payload) return res.status(401).json({ error: "الجلسة المؤقتة منتهية، يرجى تسجيل الدخول مجدداً" });
 
   try {
-    const ok = await verifyOtp(payload.userId, code.trim());
+    // Fetch phone to pass to Twilio Verify check
+    const [userRow] = await db
+      .select({ phone: usersTable.phone })
+      .from(usersTable)
+      .where(eq(usersTable.id, payload.userId))
+      .limit(1);
+
+    const ok = await verifyOtp(payload.userId, code.trim(), userRow?.phone ?? undefined);
     if (!ok) return res.status(400).json({ error: "الرمز غير صحيح أو منتهي الصلاحية" });
 
     const [user] = await db

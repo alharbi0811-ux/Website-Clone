@@ -1,0 +1,79 @@
+You are a senior backend engineer specializing in authentication and SMS OTP systems.
+
+TASK:
+Debug and fix the OTP SMS verification system because OTP is NOT being received by the user.
+
+The system is already implemented, but OTP delivery is failing or not reaching the phone.
+
+----------------------------------
+DEBUGGING OBJECTIVE
+----------------------------------
+
+You MUST analyze and check ALL possible causes of OTP failure and fix them.
+
+----------------------------------
+CHECK THESE POSSIBLE ISSUES:
+----------------------------------
+
+1) PHONE NUMBER FORMAT
+- Ensure number is in full international format:
+  +965XXXXXXXX
+- Reject invalid or incomplete formats
+
+2) TWILIO VERIFY CONFIGURATION
+- Ensure correct Verify Service SID is used:
+  VAd135cffdf1dd94ecf0f1badd29fdaecf
+- Ensure API endpoint is correct:
+  https://verify.twilio.com/v2/Services/{ServiceSID}/Verifications
+
+3) AUTHENTICATION ISSUES
+- Verify Account SID is correct
+- Verify Auth Token is correct
+- Ensure credentials are properly passed in request
+
+4) TWILIO TRIAL LIMITATIONS
+- Check if account is in trial mode
+- If trial:
+  → Ensure recipient number is verified in Twilio console
+
+5) API RESPONSE VALIDATION
+- Log full API response
+- Detect silent failures (status 200 but no SMS delivered)
+- Handle error messages properly
+
+6) REQUEST FORMAT ISSUES
+- Ensure POST request uses correct body:
+  - To
+  - Channel=sms
+- Ensure URLSearchParams or correct body encoding is used
+
+----------------------------------
+REQUIRED FIXES
+----------------------------------
+
+- Add proper error logging for OTP requests
+- Show clear success/failure response in backend logs
+- Validate phone number before sending OTP
+- Ensure OTP request is actually executed (not skipped silently)
+
+----------------------------------
+TEST MODE
+----------------------------------
+
+- Create a debug function that prints:
+  → request payload
+  → API response
+  → error details (if any)
+
+----------------------------------
+OUTPUT
+----------------------------------
+
+- Fixed OTP sending implementation
+- Debug logs added
+- Corrected API integration
+- Clear identification of root issue
+- Production-ready OTP flow
+
+GOAL:
+Ensure OTP SMS is reliably sent and received, and automatically detect and fix any misconfiguration causing delivery failure.
