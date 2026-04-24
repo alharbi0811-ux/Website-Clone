@@ -16,9 +16,8 @@ export function Hero() {
 
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden rounded-b-[4rem]">
-        <img src="/hero-bg.png" alt="" className="w-full h-full object-cover object-top" />
         <div className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(8,0,26,0.15) 0%, rgba(8,0,26,0.55) 100%)" }} />
+          style={{ background: "linear-gradient(135deg, #3a007a 0%, #5a1ab8 30%, #7B3FF2 60%, #a06eee 85%, #c49cf5 100%)" }} />
 
         {/* Ambient orbs */}
         {ORBS.map((o, i) => (
