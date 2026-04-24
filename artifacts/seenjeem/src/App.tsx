@@ -37,9 +37,22 @@ import ExternalPage from "@/pages/ExternalPage";
 
 const queryClient = new QueryClient();
 
+function AuthLoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(270 22% 9%)" }}>
+      <div className="flex flex-col items-center gap-4">
+        <div
+          className="w-12 h-12 rounded-full border-4 border-white/10 border-t-purple-500 animate-spin"
+        />
+        <p className="text-white/50 text-sm">جاري التحميل...</p>
+      </div>
+    </div>
+  );
+}
+
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
-  if (isLoading) return null;
+  if (isLoading) return <AuthLoadingScreen />;
   if (!user) return <Redirect to="/login" />;
   if (!user.isAdmin) return <Redirect to="/" />;
   return <AdminLayout>{children}</AdminLayout>;

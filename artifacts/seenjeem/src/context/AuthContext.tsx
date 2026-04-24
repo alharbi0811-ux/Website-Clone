@@ -20,6 +20,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const API_BASE = "/api";
+const TIMEOUT_MS = 8000;
+
+function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timer)
+  );
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -28,39 +37,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const savedToken = localStorage.getItem("rakez-auth-token");
-    if (savedToken) {
-      setToken(savedToken);
-      fetch(`${API_BASE}/auth/me`, {
-        headers: { Authorization: `Bearer ${savedToken}` },
-      })
-        .then((r) => {
-          if (r.status === 401 || r.status === 403) {
-            localStorage.removeItem("rakez-auth-token");
-            setToken(null);
-            setIsLoading(false);
-            return null;
-          }
-          return r.json();
-        })
-        .then((data) => {
-          if (!data) return;
-          if (data.user) setUser(data.user);
-        })
-        .catch(() => {
-          /* خطأ شبكة — نحافظ على التوكن ونحاول مرة ثانية */
-        })
-        .finally(() => setIsLoading(false));
-    } else {
+    if (!savedToken) {
       setIsLoading(false);
+      return;
     }
+
+    setToken(savedToken);
+
+    fetchWithTimeout(`${API_BASE}/auth/me`, {
+      headers: { Authorization: `Bearer ${savedToken}` },
+    })
+      .then((r) => {
+        if (r.status === 401 || r.status === 403) {
+          localStorage.removeItem("rakez-auth-token");
+          setToken(null);
+          return null;
+        }
+        return r.json();
+      })
+      .then((data) => {
+        if (data?.user) setUser(data.user);
+      })
+      .catch(() => {
+        /* timeout أو خطأ شبكة — نحافظ على التوكن ونكمل */
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   async function login(username: string, password: string): Promise<{ isAdmin: boolean }> {
-    const res = await fetch(`${API_BASE}/auth/login`, {
+    const res = await fetchWithTimeout(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
+    }).catch(() => {
+      throw new Error("تعذّر الاتصال بالخادم، تحقق من اتصالك وحاول مجدداً");
     });
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "خطأ في تسجيل الدخول");
     localStorage.setItem("rakez-auth-token", data.token);
@@ -70,11 +82,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(username: string, password: string) {
-    const res = await fetch(`${API_BASE}/auth/register`, {
+    const res = await fetchWithTimeout(`${API_BASE}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
+    }).catch(() => {
+      throw new Error("تعذّر الاتصال بالخادم، تحقق من اتصالك وحاول مجدداً");
     });
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "خطأ في إنشاء الحساب");
     localStorage.setItem("rakez-auth-token", data.token);
