@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { Swords, BookOpenCheck } from "lucide-react";
+import { Gamepad2, BookOpenCheck } from "lucide-react";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
@@ -13,7 +13,7 @@ import { FeedbackModal } from "@/components/FeedbackModal";
 
 const MODES = [
   {
-    Icon: Swords,
+    Icon: Gamepad2,
     title: "إنشاء لعبة",
     desc: "قسّم الفريقين، اختار الفئات\nوابدأ التحدي الحقيقي",
     cta: "ابدأ اللعبة",
