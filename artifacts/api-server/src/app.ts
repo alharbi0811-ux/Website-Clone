@@ -10,24 +10,31 @@ app.use(
   pinoHttp({
     logger,
     serializers: {
-      req(req) {
-        return {
-(req: any)          method: req.method,
-          url: req.url?.split("?")[0],
-        };
+      req(req: any) {
+      return {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+      };
       },
-(res: any)        return {
-          statusCode: res.statusCode,
-        };
-      },
+    res(res: any) {
+      return { statusCode: res.statusCode };
     },
-  }),
-);
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    },
+  });
 
-app.use("/api/uploads", express.static(path.join(process.cwd(), "uploads")));
-app.use("/api", router);
+app.use(cors());
 
 export default app;
+
+
+
+
+
+
+
+
+
+
+
+
